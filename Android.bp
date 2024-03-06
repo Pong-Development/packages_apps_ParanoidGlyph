@@ -64,6 +64,13 @@ android_app {
 }
 
 android_app {
+    name: "ParanoidGlyphPhone2a",
+    defaults: ["ParanoidGlyph_defaults"],
+    asset_dirs: ["phone2a/assets"],
+    resource_dirs: ["phone2a/res"],
+}
+
+android_app {
     name: "ParanoidGlyphPhone3a",
     defaults: ["ParanoidGlyph_defaults"],
     asset_dirs: ["phone3a/assets"],
