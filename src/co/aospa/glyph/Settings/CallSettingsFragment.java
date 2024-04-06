@@ -19,7 +19,6 @@ package co.aospa.glyph.Settings;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.Switch;
 
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -29,7 +28,8 @@ import androidx.preference.PreferenceScreen;
 
 import com.android.internal.util.ArrayUtils;
 import com.android.settingslib.widget.MainSwitchPreference;
-import com.android.settingslib.widget.OnMainSwitchChangeListener;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
@@ -39,7 +39,7 @@ import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
 
 public class CallSettingsFragment extends PreferenceFragment implements OnPreferenceChangeListener,
-        OnMainSwitchChangeListener {
+        OnCheckedChangeListener {
 
     private PreferenceScreen mScreen;
 
@@ -95,7 +95,7 @@ public class CallSettingsFragment extends PreferenceFragment implements OnPrefer
     }
 
     @Override
-    public void onSwitchChanged(Switch switchView, boolean isChecked) {
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         SettingsManager.setGlyphCallEnabled(isChecked);
         ServiceUtils.checkGlyphService();
         mGlyphAnimationPreference.updateAnimation(isChecked,
