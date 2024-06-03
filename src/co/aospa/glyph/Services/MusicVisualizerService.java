@@ -72,12 +72,7 @@ public class MusicVisualizerService extends Service {
         // Set the capture size to the maximum available
         bufferSize = Visualizer.getCaptureSizeRange()[1];
         mVisualizer.setCaptureSize(bufferSize);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (DEBUG) Log.d(TAG, "Starting service");
-
+        
         mHandler.post(() -> {
             // Set data capture listener for visualizer
             mVisualizer.setDataCaptureListener(
@@ -111,7 +106,11 @@ public class MusicVisualizerService extends Service {
             // Set the start time for the current one second interval
             mSystemTimeStartSec = System.currentTimeMillis();      
         });
+    }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (DEBUG) Log.d(TAG, "Starting service");
         return START_STICKY;
     }
 

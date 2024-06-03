@@ -26,7 +26,9 @@ import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
@@ -52,6 +54,9 @@ public class NotificationService extends NotificationListenerService
     private PowerManager mPowerManager;
     private WakeLock mWakeLock;
 
+    private HandlerThread thread;
+    private Handler mThreadHandler;
+
     private ContentResolver mContentResolver;
     private SettingObserver mSettingObserver;
 
@@ -60,6 +65,13 @@ public class NotificationService extends NotificationListenerService
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
+        
+        // Add a handler thread
+        thread = new HandlerThread("NotificationService");
+        thread.start();
+        Looper looper = thread.getLooper();
+        mThreadHandler = new Handler(looper);
+        
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
@@ -84,6 +96,7 @@ public class NotificationService extends NotificationListenerService
         AnimationManager.stopEssential();
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         mSettingObserver.unregister(mContentResolver);
+        thread.quit();
         super.onDestroy();
     }
 
@@ -119,7 +132,9 @@ public class NotificationService extends NotificationListenerService
                         && (packageImportance >= NotificationManager.IMPORTANCE_DEFAULT || packageImportance == -1)
                         && (interruptionFilter <= NotificationManager.INTERRUPTION_FILTER_ALL || packageCanBypassDnd)) {
             mWakeLock.acquire(2500);
-            AnimationManager.playCsv(SettingsManager.getGlyphNotifsAnimation());
+            mThreadHandler.post(() -> {
+                AnimationManager.playCsv(SettingsManager.getGlyphNotifsAnimation());
+            });
         }
         if (SettingsManager.isGlyphNotifsAppEssential(packageName)
                         && !sbn.isOngoing()
@@ -128,7 +143,9 @@ public class NotificationService extends NotificationListenerService
                         && (packageImportance >= NotificationManager.IMPORTANCE_DEFAULT || packageImportance == -1)
                         && (interruptionFilter <= NotificationManager.INTERRUPTION_FILTER_ALL || packageCanBypassDnd)
                         && mNotificationManager.isNotificationPolicyAccessGranted()) {
-            AnimationManager.playEssential();
+            mThreadHandler.post(() -> {
+                AnimationManager.playEssential();
+            });
         }
     }
 
@@ -180,7 +197,9 @@ public class NotificationService extends NotificationListenerService
             }
         }
         if (playEssential) {
-            AnimationManager.playEssential();
+            mThreadHandler.post(() -> {
+                AnimationManager.playEssential();
+            });
         } else {
             AnimationManager.stopEssential();
         }

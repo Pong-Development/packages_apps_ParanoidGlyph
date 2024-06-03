@@ -161,13 +161,13 @@ public class PowershareService extends Service {
                         try {
                             if (DEBUG) Log.d(TAG, "mPowershareActiveObserverLock.wait()");
                             mPowershareActiveObserverLock.wait();
-                        } catch (InterruptedException e) { }
+                        } catch (InterruptedException e) {}
                     }
                 }
                 updatePowershareState();
                 try {
                     Thread.sleep(500);
-                } catch (InterruptedException e) { }
+                } catch (InterruptedException e) {}
             }
         }
     }

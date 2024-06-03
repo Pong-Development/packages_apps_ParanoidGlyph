@@ -23,10 +23,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.IBinder;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
-import java.util.concurrent.Executors;
 
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
@@ -38,12 +39,28 @@ public class CallReceiverService extends Service {
 
     private AudioManager mAudioManager;
 
+    private HandlerThread thread;
+    private Handler mThreadHandler;
+
+    private Runnable playCall = new Runnable() {
+        @Override
+        public void run() {
+            AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+        }
+    };
+
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
 
+        // Add a handler thread
+        thread = new HandlerThread("CallReceiverService");
+        thread.start();
+        Looper looper = thread.getLooper();
+        mThreadHandler = new Handler(looper);
+
         mAudioManager = getSystemService(AudioManager.class);
-        mAudioManager.addOnModeChangedListener(Executors.newSingleThreadExecutor(), mAudioManagerOnModeChangedListener);
+        mAudioManager.addOnModeChangedListener(cmd -> mThreadHandler.post(cmd), mAudioManagerOnModeChangedListener);
         mAudioManagerOnModeChangedListener.onModeChanged(mAudioManager.getMode());
 
         IntentFilter callReceiver = new IntentFilter();
@@ -63,6 +80,7 @@ public class CallReceiverService extends Service {
         this.unregisterReceiver(mCallReceiver);
         mAudioManager.removeOnModeChangedListener(mAudioManagerOnModeChangedListener);
         disableCallAnimation();
+        thread.quit();
         super.onDestroy();
     }
 
@@ -73,11 +91,13 @@ public class CallReceiverService extends Service {
 
     private void enableCallAnimation() {
         if (DEBUG) Log.d(TAG, "enableCallAnimation");
-        AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+        mThreadHandler.post(playCall);
     }
 
     private void disableCallAnimation() {
         if (DEBUG) Log.d(TAG, "disableCallAnimation");
+        if (mThreadHandler.hasCallbacks(playCall))
+            mThreadHandler.removeCallbacks(playCall);
         AnimationManager.stopCall();
     }
 
@@ -105,10 +125,8 @@ public class CallReceiverService extends Service {
     private final AudioManager.OnModeChangedListener mAudioManagerOnModeChangedListener = new AudioManager.OnModeChangedListener() {
         @Override
         public void onModeChanged(int mode) {
-            if (DEBUG) Log.d(TAG, "mAudioManagerOnModeChangedListener: " + mode);
-            if (mode == AudioManager.MODE_RINGTONE) {
-                enableCallAnimation();
-            } else {
+            if (mode != AudioManager.MODE_RINGTONE) {
+                if (DEBUG) Log.d(TAG, "mAudioManagerOnModeChangedListener: " + mode);
                 disableCallAnimation();
             }
         }
