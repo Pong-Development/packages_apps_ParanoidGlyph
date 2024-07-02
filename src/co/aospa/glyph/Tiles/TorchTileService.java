@@ -38,7 +38,7 @@ public class TorchTileService extends TileService {
 
     private void updateState() {
         boolean enabled = getEnabled();
-        getQsTile().setContentDescription(enabled ?
+        getQsTile().setSubtitle(enabled ?
                 getString(R.string.glyph_accessibility_quick_settings_on) :
                 getString(R.string.glyph_accessibility_quick_settings_off));
         getQsTile().setState(enabled ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
