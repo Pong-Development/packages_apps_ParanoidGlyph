@@ -140,7 +140,7 @@ public class MusicVisualizerService extends Service {
         double nextFrequency = (k / 2.0 * sampleRate) / captureSize;
 
         // Sleeping period to light up leds
-        int sleep = 123;
+        int sleep = 119;
 
         try {
             // Sum the energy in the low frequency band
