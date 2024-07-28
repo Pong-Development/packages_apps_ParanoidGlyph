@@ -25,6 +25,7 @@ import android.util.Log;
 
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.SettingsManager;
+import co.aospa.glyph.Services.AutoBrightnessService;
 import co.aospa.glyph.Services.CallReceiverService;
 import co.aospa.glyph.Services.ChargingService;
 import co.aospa.glyph.Services.FlipToGlyphService;
@@ -111,6 +112,18 @@ public final class ServiceUtils {
                 UserHandle.CURRENT);
     }
 
+    private static void startAutoBrightnessService() {
+        if (DEBUG) Log.d(TAG, "Starting Auto Brightness service");
+        context.startServiceAsUser(new Intent(context, AutoBrightnessService.class),
+                UserHandle.CURRENT);
+    }
+
+    private static void stopAutoBrightnessService() {
+        if (DEBUG) Log.d(TAG, "Stopping Auto Brightness service");
+        context.stopServiceAsUser(new Intent(context, AutoBrightnessService.class),
+                UserHandle.CURRENT);
+    }
+
     public static void checkGlyphService() {
         if (SettingsManager.isGlyphEnabled()) {
             Constants.setBrightness(SettingsManager.getGlyphBrightness());
@@ -144,6 +157,11 @@ public final class ServiceUtils {
             } else {
                 stopVolumeLevelService();
             }
+            if (SettingsManager.isGlyphAutoBrightnessEnabled()) {
+                startAutoBrightnessService();
+            } else {
+                stopAutoBrightnessService();
+            }
         } else {
             stopChargingService();
             stopPowershareService();
@@ -151,6 +169,7 @@ public final class ServiceUtils {
             stopFlipToGlyphService();
             stopMusicVisualizerService();
             stopVolumeLevelService();
+            stopAutoBrightnessService();
         }
     }
 }

@@ -19,8 +19,14 @@
     <!-- Device -->
     <string name="glyph_settings_device" translatable="false"></string>
 
+    <!-- Auto brightness -->
+    <string name="glyph_light_sensor" translatable="false"></string>
+    <integer-array name="glyph_auto_brightness_levels" translatable="false">
+    </integer-array>
+
     <!-- Brighntess -->
     <integer name="glyph_settings_brightness_max" translatable="false"></integer>
+    <!-- Should be the same length as glyph_auto_brightness_levels array -->
     <integer-array name="glyph_settings_brightness_levels" translatable="false">
     </integer-array>
 

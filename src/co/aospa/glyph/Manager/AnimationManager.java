@@ -80,6 +80,7 @@ public final class AnimationManager {
                 return;
 
         StatusManager.setAnimationActive(true);
+        StatusManager.setLedsActive(true);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 ResourceUtils.getAnimation(name)))) {
@@ -101,6 +102,7 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation | name: " + name + " | exception: " + e);
         } finally {
             updateLedFrame(new float[5]);
+            StatusManager.setLedsActive(false);
             StatusManager.setAnimationActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
         }
@@ -111,6 +113,7 @@ public final class AnimationManager {
                 return;
 
         StatusManager.setAnimationActive(true);
+        StatusManager.setLedsActive(true);
 
         boolean batteryDot = ResourceUtils.getBoolean("glyph_settings_battery_dot");
         int[] batteryArray = new int[ResourceUtils.getInteger("glyph_settings_battery_levels_num")];
@@ -138,6 +141,7 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: charging");
             if (!StatusManager.isAllLedActive())
                 updateLedFrame(new int[batteryArray.length]);
+                StatusManager.setLedsActive(false);
         } finally {
             StatusManager.setAnimationActive(false);
             StatusManager.setBatteryLevelLast(batteryLevel);
@@ -155,6 +159,7 @@ public final class AnimationManager {
             return;
 
         StatusManager.setAnimationActive(true);
+        StatusManager.setLedsActive(true);
 
         int[] batteryArrayLast = StatusManager.getBatteryArrayLast();
 
@@ -173,9 +178,11 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss charging");
             if (!StatusManager.isAllLedActive()) {
                 updateLedFrame(new int[batteryArrayLast.length]);
+                StatusManager.setLedsActive(false);
             }
         } finally {
             StatusManager.setAnimationActive(false);
+            StatusManager.setLedsActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: Dismiss charging");
         }
     }
@@ -185,6 +192,7 @@ public final class AnimationManager {
             return;
 
         StatusManager.setAnimationActive(true);
+        StatusManager.setLedsActive(true);
 
         int[] volumeArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
         int amount = (int) (Math.floor((volumeLevel / 100D) * (volumeArray.length - 1)) + 1);
@@ -231,6 +239,7 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: volume");
             if (!StatusManager.isAllLedActive())
                 updateLedFrame(new int[volumeArray.length]);
+                StatusManager.setLedsActive(false);
         } finally {
             StatusManager.setAnimationActive(false);
             StatusManager.setVolumeLevelLast(volumeLevel);
@@ -248,6 +257,7 @@ public final class AnimationManager {
             return;
 
         StatusManager.setAnimationActive(true);
+        StatusManager.setLedsActive(true);
 
         int[] volumeArrayLast = StatusManager.getVolumeArrayLast();
 
@@ -266,9 +276,11 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss volume");
             if (!StatusManager.isAllLedActive()) {
                 updateLedFrame(new int[volumeArrayLast.length]);
+                StatusManager.setLedsActive(false);
             }
         } finally {
             StatusManager.setAnimationActive(false);
+            StatusManager.setLedsActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: Dismiss volume");
         }
     }
@@ -280,6 +292,7 @@ public final class AnimationManager {
             return;
 
         StatusManager.setCallLedActive(true);
+        StatusManager.setLedsActive(true);
 
         while (StatusManager.isCallLedEnabled()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -313,6 +326,7 @@ public final class AnimationManager {
         if (DEBUG) Log.d(TAG, "Disabling Call Animation");
         StatusManager.setCallLedEnabled(false);
         updateLedFrame(new float[5]);
+        StatusManager.setLedsActive(false);
         StatusManager.setCallLedActive(false);
         if (DEBUG) Log.d(TAG, "Done playing Call Animation");
     }
@@ -320,6 +334,7 @@ public final class AnimationManager {
     public static void playEssential() {
         if (DEBUG) Log.d(TAG, "Playing Essential Animation");
         int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
+        StatusManager.setLedsActive(true);
         if (!StatusManager.isEssentialLedActive()) {
                 if (!check("essential", true))
                     return;
@@ -352,6 +367,7 @@ public final class AnimationManager {
             int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
             updateLedSingle(led, 0);
         }
+        StatusManager.setLedsActive(false);
     }
 
     public static void playMusic(String name) {
@@ -379,6 +395,8 @@ public final class AnimationManager {
                 return;
         }
 
+        StatusManager.setLedsActive(true);
+
         try {
             updateLedFrame(pattern);
             Thread.sleep(85);
@@ -386,6 +404,7 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation | name: music: " + name + " | exception: " + e);
         } finally {
             updateLedFrame(new float[5]);
+            StatusManager.setLedsActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
         }
     }

@@ -47,6 +47,10 @@
         </receiver>
 
         <service
+            android:name=".Services.AutoBrightnessService">
+        </service>
+
+        <service
             android:name=".Services.CallReceiverService"
             android:permission="android.permission.READ_PHONE_STATE">
         </service>

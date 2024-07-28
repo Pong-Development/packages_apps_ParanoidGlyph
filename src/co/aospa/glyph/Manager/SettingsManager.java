@@ -127,4 +127,11 @@ public final class SettingsManager {
                 .getStringSet(Constants.GLYPH_NOTIFS_SUB_ESSENTIAL , new HashSet<String>());
         return selectedValues.contains(app) && isGlyphNotifsEnabled();
     }
+
+    public static boolean isGlyphAutoBrightnessEnabled() {
+        return !ResourceUtils.getString("glyph_light_sensor").isBlank() 
+            && PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(Constants.GLYPH_AUTO_BRIGHTNESS_ENABLE, false) 
+            && isGlyphEnabled();
+    }
 }
