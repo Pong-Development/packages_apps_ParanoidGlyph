@@ -204,7 +204,7 @@ public class GlyphAnimationPreference extends Preference {
                             if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + animationName + " | line: " + line);
                             updateAnimation(false);
                         }
-                        Thread.sleep(17);
+                        Thread.sleep(16, 666000);
                     }
                     Thread.sleep(animationTimeBetween);
                 } catch (Exception e) {
