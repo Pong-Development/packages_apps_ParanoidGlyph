@@ -80,7 +80,6 @@ public final class AnimationManager {
                 return;
 
         StatusManager.setAnimationActive(true);
-        StatusManager.setLedsActive(true);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 ResourceUtils.getAnimation(name)))) {
@@ -102,7 +101,6 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation | name: " + name + " | exception: " + e);
         } finally {
             updateLedFrame(new float[5]);
-            StatusManager.setLedsActive(false);
             StatusManager.setAnimationActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
         }
@@ -113,7 +111,6 @@ public final class AnimationManager {
                 return;
 
         StatusManager.setAnimationActive(true);
-        StatusManager.setLedsActive(true);
 
         boolean batteryDot = ResourceUtils.getBoolean("glyph_settings_battery_dot");
         int[] batteryArray = new int[ResourceUtils.getInteger("glyph_settings_battery_levels_num")];
@@ -125,7 +122,7 @@ public final class AnimationManager {
                 if ( i <= amount - 1 && batteryLevel > 0) {
                     if (checkInterruption("charging")) throw new InterruptedException();
                     StatusManager.setChargingLedLast(i);
-                    batteryArray[i] = Constants.getBrightness();
+                    batteryArray[i] = Constants.MAX_PATTERN_BRIGHTNESS;
                     if (batteryDot && i == 0) continue;
                     if (last == 0) {
                         updateLedFrame(batteryArray);
@@ -141,7 +138,6 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: charging");
             if (!StatusManager.isAllLedActive())
                 updateLedFrame(new int[batteryArray.length]);
-                StatusManager.setLedsActive(false);
         } finally {
             StatusManager.setAnimationActive(false);
             StatusManager.setBatteryLevelLast(batteryLevel);
@@ -159,7 +155,6 @@ public final class AnimationManager {
             return;
 
         StatusManager.setAnimationActive(true);
-        StatusManager.setLedsActive(true);
 
         int[] batteryArrayLast = StatusManager.getBatteryArrayLast();
 
@@ -178,11 +173,9 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss charging");
             if (!StatusManager.isAllLedActive()) {
                 updateLedFrame(new int[batteryArrayLast.length]);
-                StatusManager.setLedsActive(false);
             }
         } finally {
             StatusManager.setAnimationActive(false);
-            StatusManager.setLedsActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: Dismiss charging");
         }
     }
@@ -192,7 +185,6 @@ public final class AnimationManager {
             return;
 
         StatusManager.setAnimationActive(true);
-        StatusManager.setLedsActive(true);
 
         int[] volumeArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
         int amount = (int) (Math.floor((volumeLevel / 100D) * (volumeArray.length - 1)) + 1);
@@ -209,7 +201,7 @@ public final class AnimationManager {
                     for (int i = 0; i <= next; i++) {
                         if (checkInterruption("volume")) throw new InterruptedException();
                         StatusManager.setVolumeLedLast(i);
-                        volumeArray[i] = Constants.getBrightness();
+                        volumeArray[i] = Constants.MAX_PATTERN_BRIGHTNESS;
                         updateLedFrame(volumeArray);
                         Thread.sleep(16, 666000);
                     }
@@ -219,7 +211,7 @@ public final class AnimationManager {
                         for (int i = last; i <= next; i++) {
                             if (checkInterruption("volume")) throw new InterruptedException();
                             StatusManager.setVolumeLedLast(i);
-                            lastArray[i] = Constants.getBrightness();
+                            lastArray[i] = Constants.MAX_PATTERN_BRIGHTNESS;
                             updateLedFrame(lastArray);
                             Thread.sleep(16, 666000);
                         }
@@ -239,7 +231,6 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: volume");
             if (!StatusManager.isAllLedActive())
                 updateLedFrame(new int[volumeArray.length]);
-                StatusManager.setLedsActive(false);
         } finally {
             StatusManager.setAnimationActive(false);
             StatusManager.setVolumeLevelLast(volumeLevel);
@@ -257,7 +248,6 @@ public final class AnimationManager {
             return;
 
         StatusManager.setAnimationActive(true);
-        StatusManager.setLedsActive(true);
 
         int[] volumeArrayLast = StatusManager.getVolumeArrayLast();
 
@@ -276,11 +266,9 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss volume");
             if (!StatusManager.isAllLedActive()) {
                 updateLedFrame(new int[volumeArrayLast.length]);
-                StatusManager.setLedsActive(false);
             }
         } finally {
             StatusManager.setAnimationActive(false);
-            StatusManager.setLedsActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: Dismiss volume");
         }
     }
@@ -292,7 +280,6 @@ public final class AnimationManager {
             return;
 
         StatusManager.setCallLedActive(true);
-        StatusManager.setLedsActive(true);
 
         while (StatusManager.isCallLedEnabled()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -326,7 +313,6 @@ public final class AnimationManager {
         if (DEBUG) Log.d(TAG, "Disabling Call Animation");
         StatusManager.setCallLedEnabled(false);
         updateLedFrame(new float[5]);
-        StatusManager.setLedsActive(false);
         StatusManager.setCallLedActive(false);
         if (DEBUG) Log.d(TAG, "Done playing Call Animation");
     }
@@ -334,28 +320,26 @@ public final class AnimationManager {
     public static void playEssential() {
         if (DEBUG) Log.d(TAG, "Playing Essential Animation");
         int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
-        StatusManager.setLedsActive(true);
         if (!StatusManager.isEssentialLedActive()) {
-                if (!check("essential", true))
-                    return;
+            if (!check("essential", true))
+                return;
 
-                StatusManager.setAnimationActive(true);
+            StatusManager.setAnimationActive(true);
 
-                try {
+            try {
+                if (checkInterruption("essential")) throw new InterruptedException();
+                int[] steps = {12, 24, 36, 48, 60};
+                for (int i : steps) {
                     if (checkInterruption("essential")) throw new InterruptedException();
-                    int[] steps = {12, 24, 36, 50};
-                    for (int i : steps) {
-                        if (checkInterruption("essential")) throw new InterruptedException();
-                        updateLedSingle(led, Constants.getMaxBrightness() / 100 * i);
-                        Thread.sleep(16, 666000);
-                    }
-                } catch (InterruptedException e) {}
-
-                StatusManager.setAnimationActive(false);
-                StatusManager.setEssentialLedActive(true);
-                if (DEBUG) Log.d(TAG, "Done playing animation | name: essential");
+                    updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * i);
+                    Thread.sleep(16, 666000);
+                }
+            } catch (InterruptedException e) {}
+            StatusManager.setAnimationActive(false);
+            StatusManager.setEssentialLedActive(true);
+            if (DEBUG) Log.d(TAG, "Done playing animation | name: essential");
         } else {
-            updateLedSingle(led, Constants.getMaxBrightness() / 100 * 50);
+            updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60);
             return;
         }
     }
@@ -367,35 +351,32 @@ public final class AnimationManager {
             int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
             updateLedSingle(led, 0);
         }
-        StatusManager.setLedsActive(false);
     }
 
     public static void playMusic(String name) {
-        float maxBrightness = (float) Constants.getMaxBrightness();
+        float maxPatternBrightness = (float) Constants.MAX_PATTERN_BRIGHTNESS;
         float[] pattern = new float[5];
 
         switch (name) {
             case "low":
-                pattern[4] = maxBrightness;
+                pattern[4] = maxPatternBrightness;
                 break;
             case "mid_low":
-                pattern[3] = maxBrightness;
+                pattern[3] = maxPatternBrightness;
                 break;
             case "mid":
-                pattern[2] = maxBrightness;
+                pattern[2] = maxPatternBrightness;
                 break;
             case "mid_high":
-                pattern[0] = maxBrightness;
+                pattern[0] = maxPatternBrightness;
                 break;
             case "high":
-                pattern[1] = maxBrightness;
+                pattern[1] = maxPatternBrightness;
                 break;
             default:
                 if (DEBUG) Log.d(TAG, "Name doesn't match any zone, returning | name: " + name);
                 return;
         }
-
-        StatusManager.setLedsActive(true);
 
         try {
             updateLedFrame(pattern);
@@ -404,7 +385,6 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation | name: music: " + name + " | exception: " + e);
         } finally {
             updateLedFrame(new float[5]);
-            StatusManager.setLedsActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
         }
     }
@@ -425,21 +405,24 @@ public final class AnimationManager {
 
     private static void updateLedFrame(float[] pattern) {
         //if (DEBUG) Log.d(TAG, "Updating pattern: " + pattern);
-        float maxBrightness = (float) Constants.getMaxBrightness();
+        float maxPatternBrightness = (float) Constants.MAX_PATTERN_BRIGHTNESS;
+        float currentBrightness = (float) Constants.getBrightness();
         int essentialLed = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
+
         if (StatusManager.isEssentialLedActive()) {
             if (pattern.length == 5) { // Phone (1) pattern
-                if (pattern[1] < (maxBrightness / 100 * 50)) {
-                    pattern[1] = maxBrightness / 100 * 50;
+                if (pattern[1] < (maxPatternBrightness / 100 * 60)) {
+                    pattern[1] = maxPatternBrightness / 100 * 60;
                 }
             } else if (pattern.length == 33) { // Phone (2) pattern
-                if (pattern[2] < (maxBrightness / 100 * 50)) {
-                    pattern[2] = maxBrightness / 100 * 50;
+                if (pattern[2] < (maxPatternBrightness / 100 * 60)) {
+                    pattern[2] = maxPatternBrightness / 100 * 60;
                 }
             }
         }
+
         for (int i = 0; i < pattern.length; i++) {
-            pattern[i] = pattern[i] / maxBrightness * Constants.getBrightness();
+            pattern[i] = pattern[i] / maxPatternBrightness * currentBrightness;
         }
         FileUtils.writeFrameLed(pattern);
     }
@@ -454,13 +437,18 @@ public final class AnimationManager {
 
     private static void updateLedSingle(int led, float brightness) {
         //if (DEBUG) Log.d(TAG, "Updating led | led: " + led + " | brightness: " + brightness);
-        float maxBrightness = (float) Constants.getMaxBrightness();
+        float maxPatternBrightness = (float) Constants.MAX_PATTERN_BRIGHTNESS;
+        float currentBrightness = (float) Constants.getBrightness();
         int essentialLed = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
+
         if (StatusManager.isEssentialLedActive()
                 && led == essentialLed
-                && brightness < (maxBrightness / 100 * 50)) {
-            brightness = maxBrightness / 100 * 50;
+                && brightness < (maxPatternBrightness / 100 * 60)) {
+            brightness = maxPatternBrightness / 100 * 60;
         }
-        FileUtils.writeSingleLed(led, brightness / maxBrightness * Constants.getBrightness());
+
+        brightness = brightness / maxPatternBrightness * currentBrightness;
+
+        FileUtils.writeSingleLed(led, brightness);
     }
 }

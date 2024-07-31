@@ -29,7 +29,6 @@ import android.util.Log;
 import java.util.List;
 
 import co.aospa.glyph.Constants.Constants;
-import co.aospa.glyph.Manager.StatusManager;
 import co.aospa.glyph.Utils.ResourceUtils;
 
 public class AutoBrightnessService extends Service {
@@ -85,29 +84,27 @@ public class AutoBrightnessService extends Service {
     private final SensorEventListener mSensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
-            if (!StatusManager.isLedActive()) {
-                int lux = (int) event.values[0];
-                int lux_index = 0;
-                int brightnessValue;
+            int lux = (int) event.values[0];
+            int lux_index = 0;
+            int brightnessValue;
 
-                for (int i = 1; i < AutoBrightnessLux.length; i++) {
-                    if (lux < AutoBrightnessLux[i]) {
-                        break;
-                    } else if (lux >= AutoBrightnessLux[i]) {
-                        lux_index = i;
-                    }
+            for (int i = 1; i < AutoBrightnessLux.length; i++) {
+                if (lux < AutoBrightnessLux[i]) {
+                    break;
+                } else if (lux >= AutoBrightnessLux[i]) {
+                    lux_index = i;
                 }
+            }
 
-                brightnessValue = BrightnessValues[lux_index];
+            brightnessValue = BrightnessValues[lux_index];
 
-                if (brightnessValue != Constants.getBrightness()) {
-                    if (DEBUG) {
-                        int led_lux = AutoBrightnessLux[lux_index];
-                        Log.d(TAG, "Brightness changed: " + "RealLux: " + lux + 
-                        " | BrightnessLux: " + led_lux + " | BrightnessValue: " + brightnessValue);
-                    }
-                    Constants.setBrightness(brightnessValue);
+            if (brightnessValue != Constants.getBrightness()) {
+                if (DEBUG) {
+                    int led_lux = AutoBrightnessLux[lux_index];
+                    Log.d(TAG, "Brightness changed: " + "RealLux: " + lux + 
+                    " | BrightnessLux: " + led_lux + " | BrightnessValue: " + brightnessValue);
                 }
+                Constants.setBrightness(brightnessValue);
             }
         }
 

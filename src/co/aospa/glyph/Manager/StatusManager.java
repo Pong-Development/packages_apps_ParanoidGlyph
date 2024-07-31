@@ -25,7 +25,6 @@ public final class StatusManager {
     private static boolean animationActive = false;
     private static boolean callLedActive = false;
     private static boolean essentialLedActive = false;
-    private static boolean ledActive = false;
     private static int chargingLedLast = 0;
     private static int batteryLevelLast = 0;
     private static int[] batteryArrayLast;
@@ -122,13 +121,4 @@ public final class StatusManager {
     public static void setCallLedEnabled(boolean status) {
         callLedEnabled = status;
     }
-
-    public static boolean isLedActive() {
-        return ledActive;
-    }
-
-    public static void setLedsActive(boolean status) {
-        ledActive = status;
-    }
-
 }

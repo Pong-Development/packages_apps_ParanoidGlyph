@@ -26,6 +26,7 @@ public final class Constants {
     private static final boolean DEBUG = true;
 
     public static Context CONTEXT;
+    public static final int MAX_PATTERN_BRIGHTNESS = 4095;
 
     private static String device = null;
 
