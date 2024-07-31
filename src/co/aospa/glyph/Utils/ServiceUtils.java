@@ -24,7 +24,9 @@ import android.os.UserHandle;
 import android.util.Log;
 
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
+import co.aospa.glyph.Manager.StatusManager;
 import co.aospa.glyph.Services.AutoBrightnessService;
 import co.aospa.glyph.Services.CallReceiverService;
 import co.aospa.glyph.Services.ChargingService;
@@ -126,7 +128,11 @@ public final class ServiceUtils {
 
     public static void checkGlyphService() {
         if (SettingsManager.isGlyphEnabled()) {
-            Constants.setBrightness(SettingsManager.getGlyphBrightness());
+            if (SettingsManager.getGlyphBrightness() != Constants.getBrightness()) {
+                Constants.setBrightness(SettingsManager.getGlyphBrightness());
+                if (StatusManager.isEssentialLedActive())
+                    AnimationManager.playEssential();
+            }
             if (SettingsManager.isGlyphChargingEnabled()) {
                 startChargingService();
             } else {

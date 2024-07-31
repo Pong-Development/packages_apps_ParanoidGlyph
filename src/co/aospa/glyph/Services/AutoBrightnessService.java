@@ -29,6 +29,8 @@ import android.util.Log;
 import java.util.List;
 
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.Manager.AnimationManager;
+import co.aospa.glyph.Manager.StatusManager;
 import co.aospa.glyph.Utils.ResourceUtils;
 
 public class AutoBrightnessService extends Service {
@@ -105,6 +107,8 @@ public class AutoBrightnessService extends Service {
                     " | BrightnessLux: " + led_lux + " | BrightnessValue: " + brightnessValue);
                 }
                 Constants.setBrightness(brightnessValue);
+                if (StatusManager.isEssentialLedActive())
+                    AnimationManager.playEssential();
             }
         }
 
