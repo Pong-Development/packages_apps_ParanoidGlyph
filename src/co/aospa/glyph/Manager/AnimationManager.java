@@ -23,6 +23,9 @@ import com.android.internal.util.ArrayUtils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Utils.FileUtils;
@@ -32,6 +35,11 @@ public final class AnimationManager {
 
     private static final String TAG = "GlyphAnimationManager";
     private static final boolean DEBUG = true;
+
+    private static Future<?> submit(Runnable runnable) {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        return executorService.submit(runnable);
+    }
 
     private static boolean check(String name, boolean wait) {
         if (DEBUG) Log.d(TAG, "Playing animation | name: " + name + " | waiting: " + Boolean.toString(wait));
@@ -76,34 +84,36 @@ public final class AnimationManager {
     }
 
     public static void playCsv(String name, boolean wait) {
-        if (!check(name, wait))
-                return;
+        submit(() -> {
+            if (!check(name, wait))
+                    return;
 
-        StatusManager.setAnimationActive(true);
+            StatusManager.setAnimationActive(true);
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                ResourceUtils.getAnimation(name)))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (checkInterruption("csv")) throw new InterruptedException();
-                line = line.replace(" ", "");
-                line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
-                String[] pattern = line.split(",");
-                if (ArrayUtils.contains(Constants.getSupportedAnimationPatternLengths(), pattern.length)) {
-                    updateLedFrame(pattern);
-                } else {
-                    if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + name + " | line: " + line);
-                    throw new InterruptedException();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    ResourceUtils.getAnimation(name)))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (checkInterruption("csv")) throw new InterruptedException();
+                    line = line.replace(" ", "");
+                    line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
+                    String[] pattern = line.split(",");
+                    if (ArrayUtils.contains(Constants.getSupportedAnimationPatternLengths(), pattern.length)) {
+                        updateLedFrame(pattern);
+                    } else {
+                        if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + name + " | line: " + line);
+                        throw new InterruptedException();
+                    }
+                    Thread.sleep(16, 666000);
                 }
-                Thread.sleep(16, 666000);
+            } catch (Exception e) {
+                if (DEBUG) Log.d(TAG, "Exception while playing animation | name: " + name + " | exception: " + e);
+            } finally {
+                updateLedFrame(new float[5]);
+                StatusManager.setAnimationActive(false);
+                if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
             }
-        } catch (Exception e) {
-            if (DEBUG) Log.d(TAG, "Exception while playing animation | name: " + name + " | exception: " + e);
-        } finally {
-            updateLedFrame(new float[5]);
-            StatusManager.setAnimationActive(false);
-            if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
-        }
+        });
     }
 
     public static void playCharging(int batteryLevel, boolean wait) {
@@ -321,23 +331,25 @@ public final class AnimationManager {
         if (DEBUG) Log.d(TAG, "Playing Essential Animation");
         int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
         if (!StatusManager.isEssentialLedActive()) {
-            if (!check("essential", true))
-                return;
+            submit(() -> {
+                if (!check("essential", true))
+                    return;
 
-            StatusManager.setAnimationActive(true);
+                StatusManager.setAnimationActive(true);
 
-            try {
-                if (checkInterruption("essential")) throw new InterruptedException();
-                int[] steps = {12, 24, 36, 48, 60};
-                for (int i : steps) {
+                try {
                     if (checkInterruption("essential")) throw new InterruptedException();
-                    updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * i);
-                    Thread.sleep(16, 666000);
-                }
-            } catch (InterruptedException e) {}
-            StatusManager.setAnimationActive(false);
-            StatusManager.setEssentialLedActive(true);
-            if (DEBUG) Log.d(TAG, "Done playing animation | name: essential");
+                    int[] steps = {12, 24, 36, 48, 60};
+                    for (int i : steps) {
+                        if (checkInterruption("essential")) throw new InterruptedException();
+                        updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * i);
+                        Thread.sleep(16, 666000);
+                    }
+                } catch (InterruptedException e) {}
+                StatusManager.setAnimationActive(false);
+                StatusManager.setEssentialLedActive(true);
+                if (DEBUG) Log.d(TAG, "Done playing animation | name: essential");
+            });
         } else {
             updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60);
             return;
