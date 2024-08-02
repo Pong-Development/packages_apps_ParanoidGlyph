@@ -123,14 +123,14 @@ public class VolumeLevelService extends Service {
                     mThreadHandler.removeCallbacks(dismissVolume);
 
                 if (delta < 0) {
-                    if (DEBUG) Log.d(TAG, "Increased: " + (int) (Math.floor(100D / getMaxVolume() * getCurrentVolume())));
+                    if (DEBUG) Log.d(TAG, "Increased: " + (int) (Math.round(100D / getMaxVolume() * getCurrentVolume())));
                     mThreadHandler.post(() -> {
-                        AnimationManager.playVolume((int) (Math.floor(100D / getMaxVolume() * getCurrentVolume())), false, true, false);
+                        AnimationManager.playVolume((int) (Math.round(100D / getMaxVolume() * getCurrentVolume())), false);
                     });
                 } else if (delta > 0) {
-                    if (DEBUG) Log.d(TAG, "Decreased: " + (int) (Math.floor(100D / getMaxVolume() * getCurrentVolume())));
+                    if (DEBUG) Log.d(TAG, "Decreased: " + (int) (Math.round(100D / getMaxVolume() * getCurrentVolume())));
                     mThreadHandler.post(() -> {
-                        AnimationManager.playVolume((int) (Math.floor(100D / getMaxVolume() * getCurrentVolume())), false, false, true);
+                        AnimationManager.playVolume((int) (Math.round(100D / getMaxVolume() * getCurrentVolume())), false);
                     });
                 }
 

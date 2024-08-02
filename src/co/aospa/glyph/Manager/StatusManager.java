@@ -16,6 +16,8 @@
 
 package co.aospa.glyph.Manager;
 
+import co.aospa.glyph.Utils.ResourceUtils;
+
 public final class StatusManager {
 
     private static final String TAG = "GlyphStatusManager";
@@ -29,8 +31,7 @@ public final class StatusManager {
     private static int batteryLevelLast = 0;
     private static int[] batteryArrayLast;
     private static int volumeLedLast = 0;
-    private static int volumeLevelLast = 0;
-    private static int[] volumeArrayLast;
+    private static int[] volumeArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
 
     private static boolean callLedEnabled = false;
 
@@ -73,7 +74,7 @@ public final class StatusManager {
     public static void setChargingLedLast(int last) {
         chargingLedLast = last;
     }
-    
+
     public static int getBatteryLevelLast() {
         return batteryLevelLast;
     }
@@ -98,20 +99,12 @@ public final class StatusManager {
         volumeLedLast = last;
     }
 
-    public static int getVolumeLevelLast() {
-        return volumeLevelLast;
+    public static int[] getVolumeArray() {
+        return volumeArray;
     }
 
-    public static void setVolumeLevelLast(int volumeLevel) {
-        volumeLevelLast = volumeLevel;
-    }
-
-    public static int[] getVolumeArrayLast() {
-        return volumeArrayLast;
-    }
-
-    public static void setVolumeArrayLast(int[] volumeArray) {
-        volumeArrayLast = volumeArray;
+    public static void setVolumeArray(int[] volumeArrayNext) {
+        volumeArray = volumeArrayNext;
     }
 
     public static boolean isCallLedEnabled() {
