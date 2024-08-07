@@ -28,8 +28,7 @@ public final class StatusManager {
     private static boolean callLedActive = false;
     private static boolean essentialLedActive = false;
     private static int chargingLedLast = 0;
-    private static int batteryLevelLast = 0;
-    private static int[] batteryArrayLast;
+    private static int[] batteryArray = new int[ResourceUtils.getInteger("glyph_settings_battery_levels_num")];
     private static int volumeLedLast = 0;
     private static int[] volumeArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
 
@@ -75,20 +74,12 @@ public final class StatusManager {
         chargingLedLast = last;
     }
 
-    public static int getBatteryLevelLast() {
-        return batteryLevelLast;
+    public static int[] getBatteryArray() {
+        return batteryArray;
     }
 
-    public static void setBatteryLevelLast(int batteryLevel) {
-        batteryLevelLast = batteryLevel;
-    }
-
-    public static int[] getBatteryArrayLast() {
-        return batteryArrayLast;
-    }
-
-    public static void setBatteryArrayLast(int[] batteryArray) {
-        batteryArrayLast = batteryArray;
+    public static void setBatteryArray(int[] batteryArrayNext) {
+        batteryArray = batteryArrayNext;
     }
 
     public static int getVolumeLedLast() {
