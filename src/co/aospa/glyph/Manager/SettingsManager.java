@@ -39,13 +39,16 @@ public final class SettingsManager {
     private static Context context = Constants.CONTEXT;
 
     public static boolean enableGlyph(boolean enable) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putBoolean(Constants.GLYPH_ENABLE, enable).apply();
+
         return Settings.Secure.putInt(context.getContentResolver(),
                 Constants.GLYPH_ENABLE, enable ? 1 : 0);
     }
 
     public static boolean isGlyphEnabled() {
-        return Settings.Secure.getInt(context.getContentResolver(),
-                Constants.GLYPH_ENABLE, 1) != 0;
+        return (Settings.Secure.getInt(context.getContentResolver(),Constants.GLYPH_ENABLE, 1) != 0 
+            || PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Constants.GLYPH_ENABLE, false));
     }
 
     public static boolean isGlyphFlipEnabled() {
