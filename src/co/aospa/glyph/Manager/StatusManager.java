@@ -25,6 +25,8 @@ public final class StatusManager {
 
     private static boolean allLedActive = false;
     private static boolean animationActive = false;
+    private static boolean chargingAnimationActive = false;
+    private static boolean volumeAnimationActive = false;
     private static boolean callLedActive = false;
     private static boolean essentialLedActive = false;
     private static int chargingLedLast = 0;
@@ -40,6 +42,22 @@ public final class StatusManager {
 
     public static void setAnimationActive(boolean status) {
         animationActive = status;
+    }
+
+    public static boolean isChargingAnimationActive() {
+        return chargingAnimationActive;
+    }
+
+    public static void setChargingAnimationActive(boolean status) {
+        chargingAnimationActive = status;
+    }
+
+    public static boolean isVolumeAnimationActive() {
+        return volumeAnimationActive;
+    }
+
+    public static void setVolumeAnimationActive(boolean status) {
+        volumeAnimationActive = status;
     }
 
     public static boolean isAllLedActive() {
