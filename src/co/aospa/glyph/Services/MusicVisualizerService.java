@@ -134,7 +134,7 @@ public class MusicVisualizerService extends Service {
 
         // Calculate the average instantaneous energy of the low frequency band
         int k = 2;
-        double captureSize = mVisualizer.getCaptureSize() / 2.0;
+        double captureSize = audioBytes.length / 2.0;
         int sampleRate = samplingRate / 2000;
         double nextFrequency = (k / 2.0 * sampleRate) / captureSize;
 
