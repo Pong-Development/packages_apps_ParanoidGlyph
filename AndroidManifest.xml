@@ -114,14 +114,6 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
-        <activity
-            android:name=".Tiles.TileActivity"
-            android:exported="true"
-            android:theme="@style/Theme.SubSettingsBase">
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
-            </intent-filter>
-        </activity>
 
         <activity
             android:name=".Settings.SettingsActivity"
@@ -131,6 +123,9 @@
             android:theme="@style/Theme.SubSettingsBase">
             <intent-filter>
                 <action android:name="com.android.settings.action.IA_SETTINGS" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
             <meta-data
                 android:name="com.android.settings.category"
