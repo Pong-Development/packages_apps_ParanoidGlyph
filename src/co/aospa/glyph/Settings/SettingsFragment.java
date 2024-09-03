@@ -83,11 +83,12 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         mFlipPreference.setOnPreferenceChangeListener(this);
 
         mAutoBrightnessPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_AUTO_BRIGHTNESS_ENABLE);
+        mAutoBrightnessPreference.setEnabled(glyphEnabled);
+        mAutoBrightnessPreference.setOnPreferenceChangeListener(this);
+        mAutoBrightnessPreference.setChecked(SettingsManager.isGlyphAutoBrightnessEnabled());
         if (ResourceUtils.getString("glyph_light_sensor").isBlank()) {
             getPreferenceScreen().removePreference(mAutoBrightnessPreference);
         }
-        mAutoBrightnessPreference.setEnabled(glyphEnabled);
-        mAutoBrightnessPreference.setOnPreferenceChangeListener(this);
 
         mBrightnessPreference = (SeekBarPreference) findPreference(Constants.GLYPH_BRIGHTNESS);
         if (mAutoBrightnessPreference.isChecked()) {
