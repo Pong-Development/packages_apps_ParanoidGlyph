@@ -135,7 +135,7 @@ public final class AnimationManager {
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = Constants.MAX_PATTERN_BRIGHTNESS;
                     updateLedFrame(batteryArray);
-                    Thread.sleep(23);
+                    Thread.sleep(22);
                 }
             } else if (last > next) {
                 for (int i = last; i > next; i--) {
@@ -143,7 +143,7 @@ public final class AnimationManager {
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = 0;
                     updateLedFrame(batteryArray);
-                    Thread.sleep(23);
+                    Thread.sleep(22);
                 }
             }
         } catch (InterruptedException e) {
@@ -180,7 +180,7 @@ public final class AnimationManager {
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = 0;
                     updateLedFrame(batteryArray);
-                    Thread.sleep(23);
+                    Thread.sleep(22);
                 }
             }
         } catch (InterruptedException e) {
@@ -214,7 +214,7 @@ public final class AnimationManager {
                     StatusManager.setVolumeLedLast(i);
                     volumeArray[i] = Constants.MAX_PATTERN_BRIGHTNESS;
                     updateLedFrame(volumeArray);
-                    Thread.sleep(23);
+                    Thread.sleep(22);
                 }
             } else if (last > next) {
                 for (int i = last; i > next; i--) {
@@ -222,7 +222,7 @@ public final class AnimationManager {
                     StatusManager.setVolumeLedLast(i);
                     volumeArray[i] = 0;
                     updateLedFrame(volumeArray);
-                    Thread.sleep(23);
+                    Thread.sleep(22);
                 }
             }
         } catch (InterruptedException e) {
@@ -259,7 +259,7 @@ public final class AnimationManager {
                     StatusManager.setVolumeLedLast(i);
                     volumeArray[i] = 0;
                     updateLedFrame(volumeArray);
-                    Thread.sleep(23);
+                    Thread.sleep(22);
                 }
             }
         } catch (InterruptedException e) {
