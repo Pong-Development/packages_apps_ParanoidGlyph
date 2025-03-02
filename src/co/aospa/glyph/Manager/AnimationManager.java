@@ -402,7 +402,7 @@ public final class AnimationManager {
                 .toArray());
     }
 
-    private static void updateLedFrame(int[] pattern) {
+    public static void updateLedFrame(int[] pattern) {
         float[] floatPattern = new float[pattern.length];
         for (int i = 0; i < pattern.length; i++) {
             floatPattern[i] = (float) pattern[i];
