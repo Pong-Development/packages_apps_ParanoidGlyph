@@ -203,6 +203,11 @@ public final class AnimationManager {
         StatusManager.setVolumeAnimationActive(true);
 
         int[] volumeArray = StatusManager.getVolumeArray();
+        if (volumeArray == null) {
+            if (DEBUG) Log.d(TAG, "Volume array is null, cannot play animation");
+            return;
+        }
+
         int amount = (int) Math.round((volumeLevel / 100D) * volumeArray.length);
         int last = StatusManager.getVolumeLedLast();
         int next = amount - 1;
