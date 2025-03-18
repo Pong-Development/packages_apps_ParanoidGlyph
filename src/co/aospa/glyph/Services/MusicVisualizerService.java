@@ -28,6 +28,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import co.aospa.glyph.Manager.AnimationManager;
+import co.aospa.glyph.Manager.StatusManager;
 
 public class MusicVisualizerService extends Service {
 
@@ -83,7 +84,7 @@ public class MusicVisualizerService extends Service {
 
                     @Override
                     public void onFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate) {
-                        if (mAudioManager.isMusicActive()) {
+                        if (mAudioManager.isMusicActive() && StatusManager.isGlyphIdle()) {
                             if (DEBUG) Log.d(TAG, "Music is active");
                             processAudioFFT(fft, samplingRate);
                         }

@@ -123,4 +123,13 @@ public final class StatusManager {
     public static void setCallLedEnabled(boolean status) {
         callLedEnabled = status;
     }
+    
+    public static boolean isGlyphIdle() {
+        if (isAllLedActive() || isCallLedActive() || isAnimationActive() 
+            || isChargingAnimationActive() || isVolumeAnimationActive() || isCallLedEnabled()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

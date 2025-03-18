@@ -362,10 +362,6 @@ public final class AnimationManager {
     }
 
     public static void playMusic(String name) {
-        if (StatusManager.isAnimationActive() || StatusManager.isChargingAnimationActive() 
-            || StatusManager.isVolumeAnimationActive() || StatusManager.isCallLedEnabled())
-            return;
-
         float maxPatternBrightness = (float) Constants.MAX_PATTERN_BRIGHTNESS;
         float[] pattern = new float[5];
 
@@ -391,13 +387,17 @@ public final class AnimationManager {
         }
 
         try {
-            updateLedFrame(pattern);
-            Thread.sleep(106);
+            if (StatusManager.isGlyphIdle()) {
+                updateLedFrame(pattern);
+                Thread.sleep(106);
+            }
         } catch (Exception e) {
             if (DEBUG) Log.d(TAG, "Exception while playing animation | name: music: " + name + " | exception: " + e);
         } finally {
-            updateLedFrame(new float[5]);
-            if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
+            if (StatusManager.isGlyphIdle()) {
+                updateLedFrame(new float[5]);
+                if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
+            }
         }
     }
 
