@@ -16,6 +16,8 @@
 
 package co.aospa.glyph.Manager;
 
+import android.content.Context;
+import android.os.PowerManager;
 import android.util.Log;
 
 import com.android.internal.util.ArrayUtils;
@@ -35,6 +37,24 @@ public final class AnimationManager {
 
     private static final String TAG = "GlyphAnimationManager";
     private static final boolean DEBUG = true;
+    private static PowerManager.WakeLock sWakeLock;
+
+    private static void acquireWakeLock(Context context) {
+        if (sWakeLock == null || !sWakeLock.isHeld()) {
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            sWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+            sWakeLock.setReferenceCounted(false);
+            sWakeLock.acquire(); // or manually release after
+            if (DEBUG) Log.d(TAG, "Acquired wakelock");
+        }
+    }
+
+    private static void releaseWakeLock() {
+        if (sWakeLock != null && sWakeLock.isHeld()) {
+            sWakeLock.release();
+            if (DEBUG) Log.d(TAG, "Released wakelock");
+        }
+    }
 
     private static Future<?> submit(Runnable runnable) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -79,14 +99,16 @@ public final class AnimationManager {
         return false;
     }
 
-    public static void playCsv(String name) {
-        playCsv(name, false);
+    public static void playCsv(Context context, String name) {
+        playCsv(context, name, false);
     }
 
-    public static void playCsv(String name, boolean wait) {
+    public static void playCsv(Context context, String name, boolean wait) {
         submit(() -> {
             if (!check(name, wait))
                     return;
+
+            acquireWakeLock(context);
 
             StatusManager.setAnimationActive(true);
 
@@ -112,6 +134,7 @@ public final class AnimationManager {
                 updateLedFrame(new float[5]);
                 StatusManager.setAnimationActive(false);
                 if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
+                releaseWakeLock();
             }
         });
     }
@@ -195,9 +218,11 @@ public final class AnimationManager {
         }
     }
 
-    public static void playVolume(int volumeLevel, boolean wait) {
+    public static void playVolume(Context context, int volumeLevel, boolean wait) {
         if (!check("volume", wait))
             return;
+
+        acquireWakeLock(context);
 
         StatusManager.setAnimationActive(true);
         StatusManager.setVolumeAnimationActive(true);
@@ -236,6 +261,7 @@ public final class AnimationManager {
                 StatusManager.setVolumeLedLast(0);
                 volumeArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
                 updateLedFrame(volumeArray);
+                releaseWakeLock();
             }
         } finally {
             StatusManager.setAnimationActive(false);
@@ -271,11 +297,13 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss volume");
             if (!StatusManager.isAllLedActive())
                 updateLedFrame(new int[volumeArray.length]);
+            releaseWakeLock();
         } finally {
             StatusManager.setVolumeLedLast(0);
             StatusManager.setVolumeAnimationActive(false);
             StatusManager.setAnimationActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: Dismiss volume");
+            releaseWakeLock();
         }
     }
 

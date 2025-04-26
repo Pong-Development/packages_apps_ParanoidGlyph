@@ -105,7 +105,7 @@ public class VolumeLevelService extends Service {
                                   ": oldVolumePercent: " + oldVolumePercent + ", currentVolumePercent: " + currentVolumePercent);
                         }
                         mThreadHandler.post(() -> {
-                            AnimationManager.playVolume(currentVolumePercent, false);
+                            AnimationManager.playVolume(context, currentVolumePercent, false);
                         });
                         mThreadHandler.postDelayed(dismissVolume, 3000);
                     }

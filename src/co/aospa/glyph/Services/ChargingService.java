@@ -64,7 +64,7 @@ public class ChargingService extends Service {
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
-        
+
         // Add a handler thread
         thread = new HandlerThread("ChargingService");
         thread.start();
