@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 import co.aospa.glyph.Manager.AnimationManager
+import co.aospa.glyph.Manager.StatusManager
 import com.nothing.thirdparty.IGlyphService
 
 class ThirdPartyService : Service() {
@@ -21,10 +22,12 @@ class ThirdPartyService : Service() {
         override fun openSession() {
             Log.d("IGlyphServiceImpl", "openSession")
             acquireWakeLock() // Acquire the wake lock when opening the session
+            StatusManager.setAnimationActive(true);
         }
 
         override fun closeSession() {
             Log.d("IGlyphServiceImpl", "closeSession")
+            StatusManager.setAnimationActive(false);
             releaseWakeLock() // Release the wake lock when closing the session
         }
 
