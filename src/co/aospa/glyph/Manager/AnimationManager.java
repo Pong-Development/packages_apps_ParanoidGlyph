@@ -104,39 +104,37 @@ public final class AnimationManager {
     }
 
     public static void playCsv(Context context, String name, boolean wait) {
-        submit(() -> {
-            if (!check(name, wait))
-                    return;
+        if (!check(name, wait))
+                return;
 
-            acquireWakeLock(context);
+        acquireWakeLock(context);
 
-            StatusManager.setAnimationActive(true);
+        StatusManager.setAnimationActive(true);
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    ResourceUtils.getAnimation(name)))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (checkInterruption("csv")) throw new InterruptedException();
-                    line = line.replace(" ", "");
-                    line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
-                    String[] pattern = line.split(",");
-                    if (ArrayUtils.contains(Constants.getSupportedAnimationPatternLengths(), pattern.length)) {
-                        updateLedFrame(pattern);
-                    } else {
-                        if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + name + " | line: " + line);
-                        throw new InterruptedException();
-                    }
-                    Thread.sleep(16, 666000);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                ResourceUtils.getAnimation(name)))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (checkInterruption("csv")) throw new InterruptedException();
+                line = line.replace(" ", "");
+                line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
+                String[] pattern = line.split(",");
+                if (ArrayUtils.contains(Constants.getSupportedAnimationPatternLengths(), pattern.length)) {
+                    updateLedFrame(pattern);
+                } else {
+                    if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + name + " | line: " + line);
+                    throw new InterruptedException();
                 }
-            } catch (Exception e) {
-                if (DEBUG) Log.d(TAG, "Exception while playing animation | name: " + name + " | exception: " + e);
-            } finally {
-                updateLedFrame(new float[5]);
-                StatusManager.setAnimationActive(false);
-                if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
-                releaseWakeLock();
+                Thread.sleep(16, 666000);
             }
-        });
+        } catch (Exception e) {
+            if (DEBUG) Log.d(TAG, "Exception while playing animation | name: " + name + " | exception: " + e);
+        } finally {
+            updateLedFrame(new float[5]);
+            StatusManager.setAnimationActive(false);
+            if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
+            releaseWakeLock();
+        }
     }
 
     public static void playCharging(int batteryLevel, boolean wait) {

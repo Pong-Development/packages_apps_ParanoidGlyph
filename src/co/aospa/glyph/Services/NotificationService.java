@@ -26,7 +26,9 @@ import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
@@ -50,6 +52,9 @@ public class NotificationService extends NotificationListenerService
 
     private NotificationManager mNotificationManager;
 
+    private HandlerThread thread;
+    private Handler mThreadHandler;
+
     private ContentResolver mContentResolver;
     private SettingObserver mSettingObserver;
 
@@ -58,6 +63,12 @@ public class NotificationService extends NotificationListenerService
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
+
+        // Add a handler thread
+        thread = new HandlerThread("NotificationService");
+        thread.start();
+        Looper looper = thread.getLooper();
+        mThreadHandler = new Handler(looper);
 
         mContext = this;
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -82,6 +93,7 @@ public class NotificationService extends NotificationListenerService
         AnimationManager.stopEssential();
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         mSettingObserver.unregister(mContentResolver);
+        thread.quit();
         super.onDestroy();
     }
 
@@ -116,7 +128,9 @@ public class NotificationService extends NotificationListenerService
                         && !ArrayUtils.contains(Constants.NOTIFS_TO_IGNORE, packageName + ":" + packageChannelID)
                         && (packageImportance >= NotificationManager.IMPORTANCE_DEFAULT || packageImportance == -1)
                         && (interruptionFilter <= NotificationManager.INTERRUPTION_FILTER_ALL || packageCanBypassDnd)) {
-            AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
+            mThreadHandler.post(() -> {
+                AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
+            });
         }
         if (SettingsManager.isGlyphNotifsAppEssential(packageName)
                         && !sbn.isOngoing()
