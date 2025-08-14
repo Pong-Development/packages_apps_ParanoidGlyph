@@ -74,7 +74,7 @@ public class FlipToGlyphService extends Service {
         if (flipped) {
             AnimationManager.playCsv(mContext, "flip");
             ringerMode = mAudioManager.getRingerModeInternal();
-            mAudioManager.setRingerModeInternal(AudioManager.RINGER_MODE_SILENT);
+            mAudioManager.setRingerModeInternal(AudioManager.RINGER_MODE_VIBRATE);
         } else {
             mAudioManager.setRingerModeInternal(ringerMode);
         }
