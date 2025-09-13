@@ -27,12 +27,12 @@ import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
-import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.internal.util.ArrayUtils;
 import com.android.settingslib.widget.MainSwitchPreference;
+import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import co.aospa.glyph.Preference.GlyphAnimationPreference;
 import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
 
-public class NotifsSettingsFragment extends PreferenceFragment implements OnPreferenceChangeListener,
+public class NotifsSettingsFragment extends SettingsBasePreferenceFragment implements OnPreferenceChangeListener,
         OnCheckedChangeListener {
 
     private PreferenceScreen mScreen;
