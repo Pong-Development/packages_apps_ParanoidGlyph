@@ -40,18 +40,22 @@ public class VolumeLevelService extends Service {
     private Handler mThreadHandler;
     private VolumeChangeReceiver mVolumeChangeReceiver;
 
+    private Context mContext;
+
     private AudioManager audioManager;
     private Runnable dismissVolume = new Runnable() {
         @Override
         public void run() {
-            AnimationManager.dismissVolume();
+            AnimationManager.dismissVolume(mContext);
         }
     };
 
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
-        
+
+        mContext = this;
+
         // Add a handler thread
         thread = new HandlerThread("VolumeLevelService");
         thread.start();

@@ -40,18 +40,18 @@ public final class AnimationManager {
     private static PowerManager.WakeLock sWakeLock;
 
     private static void acquireWakeLock(Context context) {
-        if (sWakeLock == null || !sWakeLock.isHeld()) {
+        if (sWakeLock == null) {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
             sWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-            sWakeLock.setReferenceCounted(false);
-            sWakeLock.acquire(); // or manually release after
+            sWakeLock.acquire();
             if (DEBUG) Log.d(TAG, "Acquired wakelock");
         }
     }
 
     private static void releaseWakeLock() {
-        if (sWakeLock != null && sWakeLock.isHeld()) {
+        if (sWakeLock != null) {
             sWakeLock.release();
+            sWakeLock = null;
             if (DEBUG) Log.d(TAG, "Released wakelock");
         }
     }
@@ -261,16 +261,16 @@ public final class AnimationManager {
                 StatusManager.setVolumeLedLast(0);
                 volumeArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
                 updateLedFrame(volumeArray);
-                releaseWakeLock();
             }
         } finally {
             StatusManager.setAnimationActive(false);
             StatusManager.setVolumeArray(volumeArray);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: volume");
+            releaseWakeLock();
         }
     }
 
-    public static void dismissVolume() {
+    public static void dismissVolume(Context context) {
         int[] emptyArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
         int[] volumeArray = StatusManager.getVolumeArray();
 
@@ -279,6 +279,8 @@ public final class AnimationManager {
 
         if (!check("Dismiss volume", false))
             return;
+
+        acquireWakeLock(context);
 
         StatusManager.setAnimationActive(true);
 
@@ -297,7 +299,6 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss volume");
             if (!StatusManager.isAllLedActive())
                 updateLedFrame(new int[volumeArray.length]);
-            releaseWakeLock();
         } finally {
             StatusManager.setVolumeLedLast(0);
             StatusManager.setVolumeAnimationActive(false);

@@ -12,7 +12,7 @@ import com.nothing.thirdparty.IGlyphService
 
 class ThirdPartyService : Service() {
 
-    private lateinit var wakeLock: PowerManager.WakeLock
+    private var wakeLock: PowerManager.WakeLock? = null
     private val binder = object : IGlyphService.Stub() {
         override fun setFrameColors(iArray: IntArray?) {
             Log.d("ThirdPartyService", "received data: ${iArray.contentToString()}")
@@ -37,10 +37,6 @@ class ThirdPartyService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
-        // Initialize the wake lock
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ThirdPartyService::WakeLock")
     }
 
     override fun onBind(intent: Intent?): IBinder {
@@ -48,15 +44,18 @@ class ThirdPartyService : Service() {
     }
 
     private fun acquireWakeLock() {
-        if (!wakeLock.isHeld) {
-            wakeLock.acquire()
+        if (wakeLock == null) {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ThirdPartyService::WakeLock")
+            wakeLock?.acquire()
             Log.d("ThirdPartyService", "WakeLock acquired")
         }
     }
 
     private fun releaseWakeLock() {
-        if (wakeLock.isHeld) {
-            wakeLock.release()
+        if (wakeLock != null) {
+            wakeLock?.release()
+            wakeLock = null
             Log.d("ThirdPartyService", "WakeLock released")
         }
     }
