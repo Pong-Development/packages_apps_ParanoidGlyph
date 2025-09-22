@@ -78,6 +78,10 @@ public final class Constants {
         return device;
     }
 
+    public static boolean isPowershareSupported() {
+       return !ResourceUtils.getString("glyph_settings_paths_powershare_active_absolute").isEmpty();
+    }
+
     public static boolean setBrightness(int b) {
         if (b > ResourceUtils.getInteger("glyph_settings_brightness_max"))
             return false;

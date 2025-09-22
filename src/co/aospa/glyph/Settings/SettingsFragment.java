@@ -125,8 +125,13 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mChargingLevelPreference.setOnPreferenceChangeListener(this);
 
         mChargingPowersharePreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_CHARGING_POWERSHARE_ENABLE);
-        mChargingPowersharePreference.setEnabled(glyphEnabled);
-        mChargingPowersharePreference.setOnPreferenceChangeListener(this);
+
+        if (Constants.isPowershareSupported()) {
+           mChargingPowersharePreference.setEnabled(glyphEnabled);
+           mChargingPowersharePreference.setOnPreferenceChangeListener(this);
+        } else {
+           mChargingPowersharePreference.setVisible(false);
+        }
 
         mVolumeLevelPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_VOLUME_LEVEL_ENABLE);
         mVolumeLevelPreference.setEnabled(glyphEnabled);
@@ -192,7 +197,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mCallPreference.setEnabled(isChecked);
         mCallPreference.setSwitchEnabled(isChecked);
         mChargingLevelPreference.setEnabled(isChecked);
-        mChargingPowersharePreference.setEnabled(isChecked);
+        if (Constants.isPowershareSupported()) {
+            mChargingPowersharePreference.setEnabled(isChecked);
+        }
         mVolumeLevelPreference.setEnabled(isChecked);
         mMusicVisualizerPreference.setEnabled(isChecked);
         mFlipRingerModePreference.setEnabled(isChecked && mFlipPreference.isChecked());

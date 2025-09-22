@@ -175,10 +175,12 @@ public final class ServiceUtils {
             } else {
                 stopChargingService();
             }
-            if (SettingsManager.isGlyphPowershareEnabled()) {
-                startPowershareService();
-            } else {
-                stopPowershareService();
+            if (Constants.isPowershareSupported()) {
+                if (SettingsManager.isGlyphPowershareEnabled()) {
+                    startPowershareService();
+                } else {
+                    stopPowershareService();
+                }
             }
             if (SettingsManager.isGlyphCallEnabled()) {
                 startCallReceiverService();
@@ -207,7 +209,9 @@ public final class ServiceUtils {
             }
         } else {
             stopChargingService();
-            stopPowershareService();
+            if (Constants.isPowershareSupported()) {
+                stopPowershareService();
+            }
             stopCallReceiverService();
             stopFlipToGlyphService();
             stopMusicVisualizerService();
