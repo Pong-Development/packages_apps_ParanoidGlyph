@@ -390,27 +390,53 @@ public final class AnimationManager {
 
     public static void playMusic(String name) {
         float maxPatternBrightness = (float) Constants.MAX_PATTERN_BRIGHTNESS;
-        float[] pattern = new float[5];
 
-        switch (name) {
-            case "low":
-                pattern[4] = maxPatternBrightness;
-                break;
-            case "mid_low":
-                pattern[3] = maxPatternBrightness;
-                break;
-            case "mid":
-                pattern[2] = maxPatternBrightness;
-                break;
-            case "mid_high":
-                pattern[0] = maxPatternBrightness;
-                break;
-            case "high":
-                pattern[1] = maxPatternBrightness;
-                break;
-            default:
-                if (DEBUG) Log.d(TAG, "Name doesn't match any zone, returning | name: " + name);
-                return;
+        float[] pattern;
+
+        if (Constants.getDevice().equals("phone3a")) {
+            float[] zone1 = new float[20]; // largest (left 2)
+            float[] zone2 = new float[11]; // medium (right 1)
+            float[] zone3 = new float[5]; // smallest (left)
+
+            switch (name) {
+                case "low":
+                    Arrays.fill(zone1, maxPatternBrightness);
+                    break;
+                case "mid":
+                    Arrays.fill(zone2, maxPatternBrightness);
+                    break;
+                case "high":
+                    Arrays.fill(zone3, maxPatternBrightness);
+                    break;
+                default:
+                    if (DEBUG) Log.d(TAG, "Name doesn't match any zone, returning | name: " + name);
+                    return;
+            }
+            pattern = ResourceUtils.buildPatternArray(zone1, zone2, zone3); // pattern = float[zone1.length + zone2.length + zone3.length] fill with zone values
+
+        } else {
+            pattern = new float[5];
+
+            switch (name) {
+                case "low":
+                    pattern[4] = maxPatternBrightness;
+                    break;
+                case "mid_low":
+                    pattern[3] = maxPatternBrightness;
+                    break;
+                case "mid":
+                    pattern[2] = maxPatternBrightness;
+                    break;
+                case "mid_high":
+                    pattern[0] = maxPatternBrightness;
+                    break;
+                case "high":
+                    pattern[1] = maxPatternBrightness;
+                    break;
+                default:
+                    if (DEBUG) Log.d(TAG, "Name doesn't match any zone, returning | name: " + name);
+                    return;
+            }
         }
 
         try {
@@ -422,7 +448,11 @@ public final class AnimationManager {
             if (DEBUG) Log.d(TAG, "Exception while playing animation | name: music: " + name + " | exception: " + e);
         } finally {
             if (StatusManager.isGlyphIdle()) {
-                updateLedFrame(new float[5]);
+                if (Constants.getDevice().equals("phone3a")) { 
+                    updateLedFrame(new float[36]);
+                } else {
+                    updateLedFrame(new float[5]);
+                }
                 if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
             }
         }
