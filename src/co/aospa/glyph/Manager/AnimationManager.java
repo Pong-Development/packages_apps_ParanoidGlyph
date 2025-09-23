@@ -155,7 +155,11 @@ public final class AnimationManager {
                     if (checkInterruption("charging")) throw new InterruptedException();
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = Constants.MAX_PATTERN_BRIGHTNESS;
+                    if (Constants.getDevice().equals("phone3a")) {
+                        updateLedFrame(ResourceUtils.buildPatternArray(new int[20], ResourceUtils.reverseFrameArray(batteryArray), new int[5]));
+                    } else {
                     updateLedFrame(batteryArray);
+                    }
                     Thread.sleep(16, 666000);
                 }
             } else if (last > next) {
@@ -163,7 +167,11 @@ public final class AnimationManager {
                     if (checkInterruption("charging")) throw new InterruptedException();
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = 0;
+                    if (Constants.getDevice().equals("phone3a")) {
+                        updateLedFrame(ResourceUtils.buildPatternArray(new int[20], ResourceUtils.reverseFrameArray(batteryArray), new int[5]));
+                    } else {
                     updateLedFrame(batteryArray);
+                    }
                     Thread.sleep(16, 666000);
                 }
             }
@@ -172,7 +180,11 @@ public final class AnimationManager {
             if (!StatusManager.isAllLedActive()) {
                 StatusManager.setChargingLedLast(0);
                 batteryArray = new int[ResourceUtils.getInteger("glyph_settings_battery_levels_num")];
+                if (Constants.getDevice().equals("phone3a")) {
+                    updateLedFrame(ResourceUtils.buildPatternArray(new int[20], ResourceUtils.reverseFrameArray(batteryArray), new int[5]));
+                } else {
                 updateLedFrame(batteryArray);
+                }
             }
         } finally {
             StatusManager.setAnimationActive(false);
@@ -200,7 +212,11 @@ public final class AnimationManager {
                 if (batteryArray[i] != 0) {
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = 0;
+                    if (Constants.getDevice().equals("phone3a")) {
+                        updateLedFrame(ResourceUtils.buildPatternArray(new int[20], ResourceUtils.reverseFrameArray(batteryArray), new int[5]));
+                    } else {
                     updateLedFrame(batteryArray);
+                    }
                     Thread.sleep(16, 666000);
                 }
             }

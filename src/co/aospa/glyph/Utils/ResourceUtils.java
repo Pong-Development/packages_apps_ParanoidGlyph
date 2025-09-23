@@ -119,6 +119,22 @@ public final class ResourceUtils {
         return result;
     }
 
+    public static int[] reverseFrameArray(int[] array) {
+        int[] copy = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            copy[i] = array[array.length - 1 - i];
+        }
+        return copy;
+    }
+
+    public static float[] reverseFrameArray(float[] array) {
+        float[] copy = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            copy[i] = array[array.length - 1 - i];
+        }
+        return copy;
+    }
+
     public static String[] getCallAnimations() {
         if (callAnimations == null) {
             try {
