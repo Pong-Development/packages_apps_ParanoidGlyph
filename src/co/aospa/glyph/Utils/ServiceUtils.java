@@ -19,8 +19,11 @@
 package co.aospa.glyph.Utils;
 
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.UserHandle;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 
 import co.aospa.glyph.Constants.Constants;
@@ -42,6 +45,21 @@ public final class ServiceUtils {
     private static final boolean DEBUG = true;
 
     private static Context context = Constants.CONTEXT;
+
+    public static boolean isNotificationServiceEnabled() {
+        String pkgName = context.getPackageName();
+        final String flat = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ENABLED_NOTIFICATION_LISTENERS);
+        if (flat != null) {
+            String[] names = flat.split(":");
+            for (String name : names) {
+                ComponentName cn = ComponentName.unflattenFromString(name);
+                if (cn != null && TextUtils.equals(pkgName, cn.getPackageName())) {
+                    return true;
+                }
+            }
+        }
+    return false;
+    }
 
     private static void startCallReceiverService() {
         if (DEBUG) Log.d(TAG, "Starting Glyph call receiver service");

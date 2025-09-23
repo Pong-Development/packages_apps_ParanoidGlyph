@@ -18,7 +18,9 @@
 
 package co.aospa.glyph.Settings;
 
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -173,6 +175,25 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mMusicVisualizerPreference.setEnabled(isChecked);
 
         mHandler.post(() -> ServiceUtils.checkGlyphService());
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+    if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey())) {
+            if (!ServiceUtils.isNotificationServiceEnabled()) {
+                new AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.glyph_settings_notifs_permission_dialog_title)
+                    .setMessage(R.string.glyph_settings_notifs_permission_dialog_message)
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+                        requireContext().startActivity(intent);
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+                return true;
+            }
+        }
+    return super.onPreferenceTreeClick(preference);
     }
 
     @Override
