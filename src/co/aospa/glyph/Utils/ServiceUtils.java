@@ -43,8 +43,17 @@ public final class ServiceUtils {
 
     private static final String TAG = "GlyphServiceUtils";
     private static final boolean DEBUG = true;
+    private static Context context;
 
-    private static Context context = Constants.CONTEXT;
+    private static Context getContext() {
+        if (context == null) {
+            context = Constants.CONTEXT;
+            if (context == null) {
+                throw new IllegalStateException("Constants.CONTEXT is not initialized");
+            }
+        }
+        return context;
+    }
 
     public static boolean isNotificationServiceEnabled() {
         String pkgName = context.getPackageName();
@@ -63,97 +72,97 @@ public final class ServiceUtils {
 
     private static void startCallReceiverService() {
         if (DEBUG) Log.d(TAG, "Starting Glyph call receiver service");
-        context.startServiceAsUser(new Intent(context, CallReceiverService.class),
+        getContext().startServiceAsUser(new Intent(getContext(), CallReceiverService.class),
                 UserHandle.CURRENT);
     }
 
     private static void stopCallReceiverService() {
         if (DEBUG) Log.d(TAG, "Stopping Glyph call receiver service");
-        context.stopServiceAsUser(new Intent(context, CallReceiverService.class),
+        getContext().stopServiceAsUser(new Intent(getContext(), CallReceiverService.class),
                 UserHandle.CURRENT);
     }
 
     private static void startChargingService() {
         if (DEBUG) Log.d(TAG, "Starting Glyph charging service");
-        context.startServiceAsUser(new Intent(context, ChargingService.class),
+        getContext().startServiceAsUser(new Intent(getContext(), ChargingService.class),
                 UserHandle.CURRENT);
     }
 
     private static void stopChargingService() {
         if (DEBUG) Log.d(TAG, "Stopping Glyph charging service");
-        context.stopServiceAsUser(new Intent(context, ChargingService.class),
+        getContext().stopServiceAsUser(new Intent(getContext(), ChargingService.class),
                 UserHandle.CURRENT);
     }
 
     private static void startFlipToGlyphService() {
         if (DEBUG) Log.d(TAG, "Starting Flip to Glyph service");
-        context.startServiceAsUser(new Intent(context, FlipToGlyphService.class),
+        getContext().startServiceAsUser(new Intent(getContext(), FlipToGlyphService.class),
                 UserHandle.CURRENT);
     }
 
     private static void stopFlipToGlyphService() {
         if (DEBUG) Log.d(TAG, "Stopping Flip to Glyph service");
-        context.stopServiceAsUser(new Intent(context, FlipToGlyphService.class),
+        getContext().stopServiceAsUser(new Intent(getContext(), FlipToGlyphService.class),
                 UserHandle.CURRENT);
     }
 
     public static void startMusicVisualizerService() {
         if (DEBUG) Log.d(TAG, "Starting Music Visualizer service");
-        context.startServiceAsUser(new Intent(context, MusicVisualizerService.class),
+        getContext().startServiceAsUser(new Intent(getContext(), MusicVisualizerService.class),
                 UserHandle.CURRENT);
     }
 
     protected static void stopMusicVisualizerService() {
         if (DEBUG) Log.d(TAG, "Stopping Music Visualizer service");
-        context.stopServiceAsUser(new Intent(context, MusicVisualizerService.class),
+        getContext().stopServiceAsUser(new Intent(getContext(), MusicVisualizerService.class),
                 UserHandle.CURRENT);
     }
 
     private static void startPowershareService() {
         if (DEBUG) Log.d(TAG, "Starting Glyph powershare service");
-        context.startServiceAsUser(new Intent(context, PowershareService.class),
+        getContext().startServiceAsUser(new Intent(getContext(), PowershareService.class),
                 UserHandle.CURRENT);
     }
 
     private static void stopPowershareService() {
         if (DEBUG) Log.d(TAG, "Stopping Glyph powershare service");
-        context.stopServiceAsUser(new Intent(context, PowershareService.class),
+        getContext().stopServiceAsUser(new Intent(getContext(), PowershareService.class),
                 UserHandle.CURRENT);
     }
 
     public static void startVolumeLevelService() {
         if (DEBUG) Log.d(TAG, "Starting Volume Level service");
-        context.startServiceAsUser(new Intent(context, VolumeLevelService.class),
+        getContext().startServiceAsUser(new Intent(getContext(), VolumeLevelService.class),
                 UserHandle.CURRENT);
     }
 
     protected static void stopVolumeLevelService() {
         if (DEBUG) Log.d(TAG, "Stopping Volume Listener service");
-        context.stopServiceAsUser(new Intent(context, VolumeLevelService.class),
+        getContext().stopServiceAsUser(new Intent(getContext(), VolumeLevelService.class),
                 UserHandle.CURRENT);
     }
 
     private static void startAutoBrightnessService() {
         if (DEBUG) Log.d(TAG, "Starting Auto Brightness service");
-        context.startServiceAsUser(new Intent(context, AutoBrightnessService.class),
+        getContext().startServiceAsUser(new Intent(getContext(), AutoBrightnessService.class),
                 UserHandle.CURRENT);
     }
 
     private static void stopAutoBrightnessService() {
         if (DEBUG) Log.d(TAG, "Stopping Auto Brightness service");
-        context.stopServiceAsUser(new Intent(context, AutoBrightnessService.class),
+        getContext().stopServiceAsUser(new Intent(getContext(), AutoBrightnessService.class),
                 UserHandle.CURRENT);
     }
 
     public static void startThirdPartyService() {
         if (DEBUG) Log.d(TAG, "Starting ThirdParty service");
-        context.startServiceAsUser(new Intent(context, ThirdPartyService.class),
+        getContext().startServiceAsUser(new Intent(getContext(), ThirdPartyService.class),
                 UserHandle.CURRENT);
     }
 
     protected static void stopThirdPartyService() {
         if (DEBUG) Log.d(TAG, "Stopping ThirdParty service");
-        context.stopServiceAsUser(new Intent(context, ThirdPartyService.class),
+        getContext().stopServiceAsUser(new Intent(getContext(), ThirdPartyService.class),
                 UserHandle.CURRENT);
     }
 
