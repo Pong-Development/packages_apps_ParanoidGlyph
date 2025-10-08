@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.Manager.ShakeManager;
 import co.aospa.glyph.Utils.ServiceUtils;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
@@ -36,5 +37,11 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         if (DEBUG) Log.d(TAG, "Received boot completed intent");
         Constants.CONTEXT = context.getApplicationContext();
         ServiceUtils.checkGlyphService();
+        
+        // Start shake service if enabled
+        if (ShakeManager.isShakeEnabled(context)) {
+            ShakeManager.startShakeService(context);
+            if (DEBUG) Log.d(TAG, "Shake service started on boot");
+        }
     }
 }

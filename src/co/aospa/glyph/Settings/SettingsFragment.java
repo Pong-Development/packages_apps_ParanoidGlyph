@@ -43,6 +43,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.SettingsManager;
+import co.aospa.glyph.Manager.ShakeManager;
 import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
 
@@ -59,6 +60,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private SwitchPreferenceCompat mChargingLevelPreference;
     private SwitchPreferenceCompat mChargingPowersharePreference;
     private SwitchPreferenceCompat mVolumeLevelPreference;
+    private SwitchPreferenceCompat mShakeTorchPreference;
+    private SeekBarPreference mShakeSensitivityPreference;
     private SwitchPreferenceCompat mMusicVisualizerPreference;
 
     private ContentResolver mContentResolver;
@@ -128,6 +131,15 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mVolumeLevelPreference.setEnabled(glyphEnabled);
         mVolumeLevelPreference.setOnPreferenceChangeListener(this);
 
+        mShakeTorchPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_SHAKE_TORCH_ENABLE);
+        mShakeTorchPreference.setEnabled(glyphEnabled);
+        mShakeTorchPreference.setOnPreferenceChangeListener(this);
+
+        mShakeSensitivityPreference = (SeekBarPreference) findPreference(Constants.GLYPH_SHAKE_SENSITIVITY);
+        mShakeSensitivityPreference.setEnabled(glyphEnabled && mShakeTorchPreference.isChecked());
+        mShakeSensitivityPreference.setUpdatesContinuously(false);
+        mShakeSensitivityPreference.setOnPreferenceChangeListener(this);
+
         mMusicVisualizerPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE);
         mMusicVisualizerPreference.setEnabled(glyphEnabled);
         mMusicVisualizerPreference.setOnPreferenceChangeListener(this);
@@ -151,6 +163,21 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             mBrightnessPreference.setEnabled(mAutoBrightnessPreference.isChecked());
         }
 
+        if (preferenceKey.equals(Constants.GLYPH_SHAKE_TORCH_ENABLE)) {
+            boolean enabled = (Boolean) newValue;
+            if (enabled) {
+                ShakeManager.startShakeService(getContext());
+            } else {
+                ShakeManager.stopShakeService(getContext());
+            }
+        }
+
+        if (preferenceKey.equals(Constants.GLYPH_SHAKE_SENSITIVITY)) {
+            if (mShakeTorchPreference.isChecked()) {
+                ShakeManager.restartShakeService(getContext());
+            }
+        }
+
         mHandler.post(() -> ServiceUtils.checkGlyphService());
 
         return true;
@@ -172,6 +199,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mChargingLevelPreference.setEnabled(isChecked);
         mChargingPowersharePreference.setEnabled(isChecked);
         mVolumeLevelPreference.setEnabled(isChecked);
+        mShakeTorchPreference.setEnabled(isChecked);
+        mShakeSensitivityPreference.setEnabled(isChecked && mShakeTorchPreference.isChecked());
         mMusicVisualizerPreference.setEnabled(isChecked);
 
         mHandler.post(() -> ServiceUtils.checkGlyphService());
@@ -179,7 +208,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-    if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey())) {
+        if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey())) {
             if (!ServiceUtils.isNotificationServiceEnabled()) {
                 new AlertDialog.Builder(requireContext())
                     .setTitle(R.string.glyph_settings_notifs_permission_dialog_title)
@@ -193,7 +222,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
                 return true;
             }
         }
-    return super.onPreferenceTreeClick(preference);
+        return super.onPreferenceTreeClick(preference);
     }
 
     @Override
