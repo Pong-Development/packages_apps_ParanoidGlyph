@@ -22,4 +22,16 @@
     <integer-array name="glyph_settings_empty_array_integer" translatable="false">
     </integer-array>
 
+    <string-array name="glyph_flip_ringer_mode_entries">
+        <item>@string/glyph_settings_flip_ringer_mode_vibrate</item>
+        <item>@string/glyph_settings_flip_ringer_mode_silent</item>
+        <item>@string/glyph_settings_flip_ringer_mode_normal</item>
+    </string-array>
+
+    <string-array name="glyph_flip_ringer_mode_values">
+        <item>1</item>
+        <item>0</item>
+        <item>2</item>
+    </string-array>
+
 </resources>

@@ -26,6 +26,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import co.aospa.glyph.Manager.AnimationManager;
+import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Sensors.FlipToGlyphSensor;
 
 public class FlipToGlyphService extends Service {
@@ -74,7 +75,9 @@ public class FlipToGlyphService extends Service {
         if (flipped) {
             AnimationManager.playCsv(mContext, "flip");
             ringerMode = mAudioManager.getRingerModeInternal();
-            mAudioManager.setRingerModeInternal(AudioManager.RINGER_MODE_VIBRATE);
+            int preferredMode = SettingsManager.getFlipRingerMode();
+            if (DEBUG) Log.d(TAG, "Setting ringer mode to: " + preferredMode);
+            mAudioManager.setRingerModeInternal(preferredMode);
         } else {
             mAudioManager.setRingerModeInternal(ringerMode);
         }
