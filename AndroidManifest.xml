@@ -174,5 +174,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".Settings.GlyphPatternPreviewActivity"
+            android:label="Pattern Preview"
+            android:theme="@android:style/Theme.DeviceDefault.Dialog"
+            android:exported="false" />
+
     </application>
 </manifest>

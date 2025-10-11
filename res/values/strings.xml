@@ -99,4 +99,6 @@
     <string name="glyph_settings_composer_enable_summary">Sync Glyphs with custom ringtone patterns</string>
     <string name="glyph_settings_composer_fallback_title">Fallback to animations</string>
     <string name="glyph_settings_composer_fallback_summary">Use standard animations when no pattern is found</string>
+    <string name="glyph_settings_composer_preview_title">Preview patterns</string>
+    <string name="glyph_settings_composer_preview_summary">Preview composer and fallback animations</string>
 </resources>

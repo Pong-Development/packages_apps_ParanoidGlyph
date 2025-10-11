@@ -260,6 +260,13 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
                 return true;
             }
         }
+
+        if ("glyph_settings_composer_preview".equals(preference.getKey())) {
+            Intent intent = new Intent(getActivity(), GlyphPatternPreviewActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        
         return super.onPreferenceTreeClick(preference);
     }
 

@@ -77,6 +77,11 @@
             android:defaultValue="true"
             android:dependency="glyph_settings_composer_enable" />
 
+        <Preference
+            android:key="glyph_settings_composer_preview"
+            android:title="@string/glyph_settings_composer_preview_title"
+            android:summary="@string/glyph_settings_composer_preview_summary" />
+
     <PreferenceCategory
         android:key="glyph_settings_notifs"
         android:title="@string/glyph_settings_notifs_title" />
