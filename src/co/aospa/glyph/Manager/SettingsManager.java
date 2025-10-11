@@ -17,6 +17,7 @@
 package co.aospa.glyph.Manager;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -136,5 +137,10 @@ public final class SettingsManager {
             && PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(Constants.GLYPH_AUTO_BRIGHTNESS_ENABLE, false) 
             && isGlyphEnabled();
+    }
+
+    public static int getFlipRingerMode() {
+        return Settings.Secure.getInt(Constants.CONTEXT.getContentResolver(),
+                Constants.GLYPH_FLIP_RINGER_MODE, AudioManager.RINGER_MODE_VIBRATE);
     }
 }

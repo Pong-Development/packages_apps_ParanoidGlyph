@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.provider.Settings;
 
 import androidx.preference.Preference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceManager;
@@ -63,6 +64,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private SwitchPreferenceCompat mShakeTorchPreference;
     private SeekBarPreference mShakeSensitivityPreference;
     private SwitchPreferenceCompat mMusicVisualizerPreference;
+    private ListPreference mFlipRingerModePreference;
 
     private ContentResolver mContentResolver;
     private SettingObserver mSettingObserver;
@@ -144,6 +146,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mMusicVisualizerPreference.setEnabled(glyphEnabled);
         mMusicVisualizerPreference.setOnPreferenceChangeListener(this);
 
+        mFlipRingerModePreference = (ListPreference) findPreference(Constants.GLYPH_FLIP_RINGER_MODE);
+        mFlipRingerModePreference.setEnabled(glyphEnabled && mFlipPreference.isChecked());
+        mFlipRingerModePreference.setOnPreferenceChangeListener(this);
+
         mHandler.post(() -> ServiceUtils.checkGlyphService());
     }
 
@@ -178,6 +184,17 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             }
         }
 
+        if (preferenceKey.equals(Constants.GLYPH_FLIP_RINGER_MODE)) {
+            int mode = Integer.parseInt((String) newValue);
+            Settings.Secure.putInt(mContentResolver, 
+                Constants.GLYPH_FLIP_RINGER_MODE, mode);
+        }
+
+        if (preferenceKey.equals(Constants.GLYPH_FLIP_ENABLE)) {
+            boolean flipEnabled = (Boolean) newValue;
+            mFlipRingerModePreference.setEnabled(flipEnabled && SettingsManager.isGlyphEnabled());
+        }
+
         mHandler.post(() -> ServiceUtils.checkGlyphService());
 
         return true;
@@ -202,6 +219,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mShakeTorchPreference.setEnabled(isChecked);
         mShakeSensitivityPreference.setEnabled(isChecked && mShakeTorchPreference.isChecked());
         mMusicVisualizerPreference.setEnabled(isChecked);
+        mFlipRingerModePreference.setEnabled(isChecked && mFlipPreference.isChecked());
 
         mHandler.post(() -> ServiceUtils.checkGlyphService());
     }

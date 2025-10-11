@@ -31,6 +31,15 @@
         android:title="@string/glyph_settings_flip_toggle_title"
         android:summary="@string/glyph_settings_flip_toggle_summary" />
 
+    <ListPreference
+        android:key="glyph_settings_flip_ringer_mode"
+        android:title="@string/glyph_settings_flip_ringer_mode_title"
+        android:summary="@string/glyph_settings_flip_ringer_mode_summary"
+        android:entries="@array/glyph_flip_ringer_mode_entries"
+        android:entryValues="@array/glyph_flip_ringer_mode_values"
+        android:defaultValue="1"
+        android:dependency="glyph_settings_flip_toggle" />
+
     <SwitchPreferenceCompat
         android:key="glyph_settings_auto_brightness_toggle"
         android:defaultValue="true"
