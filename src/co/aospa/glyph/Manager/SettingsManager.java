@@ -143,4 +143,19 @@ public final class SettingsManager {
         return Settings.Secure.getInt(Constants.CONTEXT.getContentResolver(),
                 Constants.GLYPH_FLIP_RINGER_MODE, AudioManager.RINGER_MODE_VIBRATE);
     }
+
+    public static boolean isGlyphComposerEnabled() {
+        return Settings.Secure.getInt(Constants.CONTEXT.getContentResolver(),
+                Constants.GLYPH_COMPOSER_ENABLE, 1) == 1;
+    }
+
+    public static void setGlyphComposerEnabled(boolean enabled) {
+        Settings.Secure.putInt(Constants.CONTEXT.getContentResolver(),
+                Constants.GLYPH_COMPOSER_ENABLE, enabled ? 1 : 0);
+    }
+
+    public static boolean useComposerFallback() {
+        return Settings.Secure.getInt(Constants.CONTEXT.getContentResolver(),
+                Constants.GLYPH_COMPOSER_FALLBACK, 1) == 1;
+    }
 }

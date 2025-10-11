@@ -58,6 +58,8 @@ public final class Constants {
     public static final String GLYPH_SHAKE_TORCH_ENABLE = "glyph_settings_shake_torch_toggle";
     public static final String GLYPH_SHAKE_SENSITIVITY = "glyph_settings_shake_sensitivity";
     public static final String GLYPH_FLIP_RINGER_MODE = "glyph_settings_flip_ringer_mode";
+    public static final String GLYPH_COMPOSER_ENABLE = "glyph_settings_composer_enable";
+    public static final String GLYPH_COMPOSER_FALLBACK = "glyph_settings_composer_fallback";
 
     public static final String[] APPS_TO_IGNORE = {
         "android",

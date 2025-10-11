@@ -93,4 +93,10 @@
     <string name="glyph_settings_flip_ringer_mode_vibrate">Vibrate</string>
     <string name="glyph_settings_flip_ringer_mode_silent">Silent</string>
     <string name="glyph_settings_flip_ringer_mode_normal">Ring</string>
+
+    <!-- Glyph Composer -->
+    <string name="glyph_settings_composer_enable_title">Enable Call glyph zone</string>
+    <string name="glyph_settings_composer_enable_summary">Sync Glyphs with custom ringtone patterns</string>
+    <string name="glyph_settings_composer_fallback_title">Fallback to animations</string>
+    <string name="glyph_settings_composer_fallback_summary">Use standard animations when no pattern is found</string>
 </resources>

@@ -64,6 +64,19 @@
                  android:targetClass="co.aospa.glyph.Settings.CallSettingsActivity"/>
         </com.android.settingslib.PrimarySwitchPreference>
 
+        <SwitchPreferenceCompat
+            android:key="glyph_settings_composer_enable"
+            android:title="@string/glyph_settings_composer_enable_title"
+            android:summary="@string/glyph_settings_composer_enable_summary"
+            android:defaultValue="true" />
+
+        <SwitchPreferenceCompat
+            android:key="glyph_settings_composer_fallback"
+            android:title="@string/glyph_settings_composer_fallback_title"
+            android:summary="@string/glyph_settings_composer_fallback_summary"
+            android:defaultValue="true"
+            android:dependency="glyph_settings_composer_enable" />
+
     <PreferenceCategory
         android:key="glyph_settings_notifs"
         android:title="@string/glyph_settings_notifs_title" />

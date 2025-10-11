@@ -58,7 +58,6 @@ public class CallReceiverService extends Service {
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
-
         thread = new HandlerThread("CallReceiverService");
         thread.start();
         Looper looper = thread.getLooper();
@@ -123,6 +122,12 @@ public class CallReceiverService extends Service {
     }
 
     private void playRingtoneWithGlyphSync() {
+        if (!SettingsManager.isGlyphComposerEnabled()) {
+            if (DEBUG) Log.d(TAG, "Glyph Composer disabled, using standard animation");
+            AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+            return;
+        }
+
         Uri ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
         
         if (ringtoneUri == null) {
@@ -149,8 +154,12 @@ public class CallReceiverService extends Service {
             }
         }
 
-        if (DEBUG) Log.d(TAG, "No Glyph pattern found, using standard animation");
-        AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+        if (SettingsManager.useComposerFallback()) {
+            if (DEBUG) Log.d(TAG, "No Glyph pattern found, using fallback animation");
+            AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+        } else {
+            if (DEBUG) Log.d(TAG, "No Glyph pattern found, fallback disabled, no animation");
+        }
     }
 
     private void playGlyphPatternOnly(GlyphPattern pattern) {

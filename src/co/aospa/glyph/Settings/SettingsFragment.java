@@ -65,6 +65,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private SeekBarPreference mShakeSensitivityPreference;
     private SwitchPreferenceCompat mMusicVisualizerPreference;
     private ListPreference mFlipRingerModePreference;
+    private SwitchPreferenceCompat mComposerEnablePreference;
+    private SwitchPreferenceCompat mComposerFallbackPreference;
 
     private ContentResolver mContentResolver;
     private SettingObserver mSettingObserver;
@@ -150,6 +152,14 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mFlipRingerModePreference.setEnabled(glyphEnabled && mFlipPreference.isChecked());
         mFlipRingerModePreference.setOnPreferenceChangeListener(this);
 
+        mComposerEnablePreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_COMPOSER_ENABLE);
+        mComposerEnablePreference.setEnabled(glyphEnabled);
+        mComposerEnablePreference.setOnPreferenceChangeListener(this);
+
+        mComposerFallbackPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_COMPOSER_FALLBACK);
+        mComposerFallbackPreference.setEnabled(glyphEnabled && mComposerEnablePreference.isChecked());
+        mComposerFallbackPreference.setOnPreferenceChangeListener(this);
+
         mHandler.post(() -> ServiceUtils.checkGlyphService());
     }
 
@@ -195,6 +205,14 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             mFlipRingerModePreference.setEnabled(flipEnabled && SettingsManager.isGlyphEnabled());
         }
 
+        if (preferenceKey.equals(Constants.GLYPH_COMPOSER_ENABLE)) {
+            boolean enabled = (Boolean) newValue;
+            SettingsManager.setGlyphComposerEnabled(enabled);
+            if (mComposerFallbackPreference != null) {
+                mComposerFallbackPreference.setEnabled(enabled);
+            }
+        }
+
         mHandler.post(() -> ServiceUtils.checkGlyphService());
 
         return true;
@@ -220,6 +238,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mShakeSensitivityPreference.setEnabled(isChecked && mShakeTorchPreference.isChecked());
         mMusicVisualizerPreference.setEnabled(isChecked);
         mFlipRingerModePreference.setEnabled(isChecked && mFlipPreference.isChecked());
+        mComposerEnablePreference.setEnabled(isChecked);
+        mComposerFallbackPreference.setEnabled(isChecked && mComposerEnablePreference.isChecked());
 
         mHandler.post(() -> ServiceUtils.checkGlyphService());
     }
