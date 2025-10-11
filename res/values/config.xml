@@ -30,4 +30,7 @@
     <integer-array name="glyph_settings_brightness_levels" translatable="false">
     </integer-array>
 
+    <!-- Nothing Phone (1) has 5 zones -->
+    <!-- Nothing Phone (2) has 33 zones -->
+    <integer name="glyph_settings_led_count">33</integer>
 </resources>

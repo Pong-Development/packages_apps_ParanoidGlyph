@@ -492,4 +492,104 @@ public final class AnimationManager {
 
         FileUtils.writeSingleLed(led, brightness);
     }
+
+    public static void singleLedBlink(Context context, int zone, int brightness, int durationMs) {
+        if (zone < 0 || zone >= ResourceUtils.getInteger("glyph_settings_led_count")) {
+            if (DEBUG) Log.e(TAG, "Invalid LED zone: " + zone);
+            return;
+        }
+        
+        if (DEBUG) Log.d(TAG, "Blinking zone " + zone + " at brightness " + brightness + " for " + durationMs + "ms");
+        
+        acquireWakeLock(context);
+        
+        submit(() -> {
+            try {
+                updateLedSingle(zone, brightness);
+                
+                Thread.sleep(durationMs);
+                
+                if (!StatusManager.isEssentialLedActive() || 
+                    zone != ResourceUtils.getInteger("glyph_settings_notifs_essential_led")) {
+                    updateLedSingle(zone, 0);
+                }
+            } catch (InterruptedException e) {
+                if (DEBUG) Log.e(TAG, "Interrupted while blinking LED zone " + zone, e);
+            } finally {
+                releaseWakeLock();
+            }
+        });
+    }
+
+    public static void playGlyphFrame(Context context, int[] zones, int brightness, int durationMs) {
+        if (zones == null || zones.length == 0) {
+            if (DEBUG) Log.e(TAG, "Invalid zones array");
+            return;
+        }
+        
+        if (DEBUG) Log.d(TAG, "Playing frame with " + zones.length + " zones at brightness " + brightness + " for " + durationMs + "ms");
+        
+        acquireWakeLock(context);
+        
+        submit(() -> {
+            try {
+                for (int zone : zones) {
+                    if (zone >= 0 && zone < ResourceUtils.getInteger("glyph_settings_led_count")) {
+                        updateLedSingle(zone, brightness);
+                    }
+                }
+                
+                Thread.sleep(durationMs);
+                
+                int essentialLed = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
+                for (int zone : zones) {
+                    if (zone >= 0 && zone < ResourceUtils.getInteger("glyph_settings_led_count")) {
+                        if (!StatusManager.isEssentialLedActive() || zone != essentialLed) {
+                            updateLedSingle(zone, 0);
+                        }
+                    }
+                }
+            } catch (InterruptedException e) {
+                if (DEBUG) Log.e(TAG, "Interrupted while playing Glyph frame", e);
+            } finally {
+                releaseWakeLock();
+            }
+        });
+    }
+
+    public static void stopAll() {
+        if (DEBUG) Log.d(TAG, "Stopping all LED animations");
+        
+        if (StatusManager.isCallLedEnabled()) {
+            stopCall();
+        }
+        
+        int ledCount = ResourceUtils.getInteger("glyph_settings_led_count");
+        int essentialLed = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
+        
+        for (int i = 0; i < ledCount; i++) {
+            if (!StatusManager.isEssentialLedActive() || i != essentialLed) {
+                updateLedSingle(i, 0);
+            }
+        }
+        
+        StatusManager.setAnimationActive(false);
+        StatusManager.setCallLedActive(false);
+        
+        if (DEBUG) Log.d(TAG, "All LED animations stopped");
+    }
+
+    public static boolean canPlayGlyphComposer() {
+        if (StatusManager.isAllLedActive()) {
+            if (DEBUG) Log.d(TAG, "Cannot play Glyph Composer: All LEDs active");
+            return false;
+        }
+        
+        if (StatusManager.isCallLedActive()) {
+            if (DEBUG) Log.d(TAG, "Cannot play Glyph Composer: Call animation active");
+            return false;
+        }
+        
+        return true;
+    }
 }

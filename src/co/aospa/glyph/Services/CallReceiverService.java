@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -29,6 +31,9 @@ import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import co.aospa.glyph.Composer.GlyphComposerParser;
+import co.aospa.glyph.Composer.GlyphPattern;
+import co.aospa.glyph.Composer.GlyphSyncPlayer;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
 
@@ -38,6 +43,7 @@ public class CallReceiverService extends Service {
     private static final boolean DEBUG = true;
 
     private AudioManager mAudioManager;
+    private GlyphSyncPlayer mGlyphSyncPlayer;
 
     private HandlerThread thread;
     private Handler mThreadHandler;
@@ -45,7 +51,7 @@ public class CallReceiverService extends Service {
     private Runnable playCall = new Runnable() {
         @Override
         public void run() {
-            AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+            playRingtoneWithGlyphSync();
         }
     };
 
@@ -53,7 +59,6 @@ public class CallReceiverService extends Service {
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
 
-        // Add a handler thread
         thread = new HandlerThread("CallReceiverService");
         thread.start();
         Looper looper = thread.getLooper();
@@ -62,6 +67,11 @@ public class CallReceiverService extends Service {
         mAudioManager = getSystemService(AudioManager.class);
         mAudioManager.addOnModeChangedListener(cmd -> mThreadHandler.post(cmd), mAudioManagerOnModeChangedListener);
         mAudioManagerOnModeChangedListener.onModeChanged(mAudioManager.getMode());
+
+        mGlyphSyncPlayer = new GlyphSyncPlayer(this);
+        mGlyphSyncPlayer.setOnCompletionListener(() -> {
+            if (DEBUG) Log.d(TAG, "Ringtone playback completed");
+        });
 
         IntentFilter callReceiver = new IntentFilter();
         callReceiver.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
@@ -80,6 +90,12 @@ public class CallReceiverService extends Service {
         this.unregisterReceiver(mCallReceiver);
         mAudioManager.removeOnModeChangedListener(mAudioManagerOnModeChangedListener);
         disableCallAnimation();
+        
+        if (mGlyphSyncPlayer != null) {
+            mGlyphSyncPlayer.stop();
+            mGlyphSyncPlayer = null;
+        }
+        
         thread.quit();
         super.onDestroy();
     }
@@ -98,7 +114,119 @@ public class CallReceiverService extends Service {
         if (DEBUG) Log.d(TAG, "disableCallAnimation");
         if (mThreadHandler.hasCallbacks(playCall))
             mThreadHandler.removeCallbacks(playCall);
+        
+        if (mGlyphSyncPlayer != null && mGlyphSyncPlayer.isPlaying()) {
+            mGlyphSyncPlayer.stop();
+        }
+        
         AnimationManager.stopCall();
+    }
+
+    private void playRingtoneWithGlyphSync() {
+        Uri ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE);
+        
+        if (ringtoneUri == null) {
+            if (DEBUG) Log.w(TAG, "No ringtone URI, falling back to standard animation");
+            AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+            return;
+        }
+
+        if (DEBUG) Log.d(TAG, "Ringtone URI: " + ringtoneUri);
+
+        String audioPath = getRealPathFromUri(ringtoneUri);
+        
+        if (audioPath != null) {
+            String glyphPatternPath = GlyphComposerParser.getGlyphPatternPath(audioPath);
+            
+            if (glyphPatternPath != null) {
+                GlyphPattern pattern = GlyphComposerParser.parseFromFile(glyphPatternPath);
+                
+                if (pattern != null && GlyphComposerParser.isValid(pattern)) {
+                    if (DEBUG) Log.d(TAG, "Playing ringtone with Glyph Composer sync");
+                    playGlyphPatternOnly(pattern);
+                    return;
+                }
+            }
+        }
+
+        if (DEBUG) Log.d(TAG, "No Glyph pattern found, using standard animation");
+        AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+    }
+
+    private void playGlyphPatternOnly(GlyphPattern pattern) {
+        if (pattern == null || pattern.getFrames() == null) {
+            return;
+        }
+
+        new Handler(Looper.getMainLooper()).post(() -> {
+            scheduleGlyphFrames(pattern, 0, System.currentTimeMillis());
+        });
+    }
+
+    private void scheduleGlyphFrames(GlyphPattern pattern, int frameIndex, long startTime) {
+        if (frameIndex >= pattern.getFrames().size()) {
+            if (DEBUG) Log.d(TAG, "All Glyph frames completed");
+            return;
+        }
+
+        GlyphPattern.GlyphFrame frame = pattern.getFrames().get(frameIndex);
+        long currentTime = System.currentTimeMillis() - startTime;
+        long delay = frame.getTimestamp() - currentTime;
+
+        if (delay < 0) delay = 0;
+
+        mThreadHandler.postDelayed(() -> {
+            activateGlyphFrame(frame);
+            scheduleGlyphFrames(pattern, frameIndex + 1, startTime);
+        }, delay);
+    }
+
+    private void activateGlyphFrame(GlyphPattern.GlyphFrame frame) {
+        if (frame == null || frame.getZones() == null) {
+            return;
+        }
+
+        if (!AnimationManager.canPlayGlyphComposer()) {
+            if (DEBUG) Log.d(TAG, "Cannot play frame, other animation active");
+            return;
+        }
+
+        int brightness = scaleBrightness(frame.getBrightness());
+
+        AnimationManager.playGlyphFrame(this, frame.getZones(), brightness, frame.getDuration());
+    }
+
+    private int scaleBrightness(int patternBrightness) {
+        int userBrightness = SettingsManager.getGlyphBrightness();
+        return (patternBrightness * userBrightness) / 100;
+    }
+
+    private String getRealPathFromUri(Uri uri) {
+        if (uri == null) return null;
+
+        if ("file".equals(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        if ("content".equals(uri.getScheme())) {
+            android.database.Cursor cursor = null;
+            try {
+                String[] projection = {android.provider.MediaStore.Audio.Media.DATA};
+                cursor = getContentResolver().query(uri, projection, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    int columnIndex = cursor.getColumnIndexOrThrow(android.provider.MediaStore.Audio.Media.DATA);
+                    return cursor.getString(columnIndex);
+                }
+            } catch (Exception e) {
+                if (DEBUG) Log.e(TAG, "Error getting path from URI", e);
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+        }
+
+        return null;
     }
 
     private final BroadcastReceiver mCallReceiver = new BroadcastReceiver() {
