@@ -180,5 +180,12 @@
             android:theme="@android:style/Theme.DeviceDefault.Dialog"
             android:exported="false" />
 
+        <activity
+            android:name=".Settings.GlyphPatternCreatorActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:label="Pattern Creator"
+            android:theme="@style/Theme.SubSettingsBase.Expressive" />
+
     </application>
 </manifest>

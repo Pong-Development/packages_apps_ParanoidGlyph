@@ -78,6 +78,11 @@
             android:dependency="glyph_settings_composer_enable" />
 
         <Preference
+            android:key="glyph_settings_composer_create"
+            android:title="@string/glyph_settings_composer_create_title"
+            android:summary="@string/glyph_settings_composer_create_summary" />
+
+        <Preference
             android:key="glyph_settings_composer_preview"
             android:title="@string/glyph_settings_composer_preview_title"
             android:summary="@string/glyph_settings_composer_preview_summary" />

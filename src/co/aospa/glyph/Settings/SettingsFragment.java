@@ -266,6 +266,12 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             startActivity(intent);
             return true;
         }
+
+        if ("glyph_settings_composer_create".equals(preference.getKey())) {
+            Intent intent = new Intent(getActivity(), GlyphPatternCreatorActivity.class);
+            startActivity(intent);
+            return true;
+        }
         
         return super.onPreferenceTreeClick(preference);
     }
