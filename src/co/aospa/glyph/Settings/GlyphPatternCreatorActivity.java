@@ -120,6 +120,62 @@ public class GlyphPatternCreatorActivity extends Activity {
         statusText.setTextSize(12);
         statusText.setPadding(0, 0, 0, 20);
         
+        TextView templatesLabel = new TextView(this);
+        templatesLabel.setText("Quick Templates (15s):");
+        templatesLabel.setTextSize(16);
+        templatesLabel.setTypeface(null, android.graphics.Typeface.BOLD);
+        templatesLabel.setPadding(0, 10, 0, 5);
+        
+        TextView templatesDesc = new TextView(this);
+        templatesDesc.setText("Load a pre-made pattern, then customize if needed");
+        templatesDesc.setTextSize(11);
+        templatesDesc.setTextColor(0xFF999999);
+        templatesDesc.setPadding(0, 0, 0, 10);
+        
+        LinearLayout templatesLayout = new LinearLayout(this);
+        templatesLayout.setOrientation(LinearLayout.HORIZONTAL);
+        
+        Button waveButton = new Button(this);
+        waveButton.setText("Wave");
+        waveButton.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        waveButton.setOnClickListener(v -> loadTemplate("wave"));
+        
+        Button pulseButton = new Button(this);
+        pulseButton.setText("Pulse");
+        pulseButton.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        pulseButton.setOnClickListener(v -> loadTemplate("pulse"));
+        
+        Button blinkButton = new Button(this);
+        blinkButton.setText("Blink");
+        blinkButton.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        blinkButton.setOnClickListener(v -> loadTemplate("blink"));
+        
+        templatesLayout.addView(waveButton);
+        templatesLayout.addView(pulseButton);
+        templatesLayout.addView(blinkButton);
+        
+        LinearLayout templatesLayout2 = new LinearLayout(this);
+        templatesLayout2.setOrientation(LinearLayout.HORIZONTAL);
+        
+        Button breatheButton = new Button(this);
+        breatheButton.setText("Breathe");
+        breatheButton.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        breatheButton.setOnClickListener(v -> loadTemplate("breathe"));
+        
+        Button randomButton = new Button(this);
+        randomButton.setText("Random");
+        randomButton.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        randomButton.setOnClickListener(v -> loadTemplate("random"));
+        
+        Button allButton = new Button(this);
+        allButton.setText("All On");
+        allButton.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        allButton.setOnClickListener(v -> loadTemplate("allon"));
+        
+        templatesLayout2.addView(breatheButton);
+        templatesLayout2.addView(randomButton);
+        templatesLayout2.addView(allButton);
+        
         TextView ledLabel = new TextView(this);
         ledLabel.setText("Select LED Zones:");
         ledLabel.setTextSize(16);
@@ -238,6 +294,10 @@ public class GlyphPatternCreatorActivity extends Activity {
         
         mainLayout.addView(title);
         mainLayout.addView(statusText);
+        mainLayout.addView(templatesLabel);
+        mainLayout.addView(templatesDesc);
+        mainLayout.addView(templatesLayout);
+        mainLayout.addView(templatesLayout2);
         mainLayout.addView(ledLabel);
         mainLayout.addView(ledGrid);
         mainLayout.addView(clearButton);
@@ -292,6 +352,158 @@ public class GlyphPatternCreatorActivity extends Activity {
                 ((CheckBox) child).setChecked(false);
             }
         }
+        for (int i = 0; i < LED_COUNT; i++) {
+            selectedZones[i] = false;
+        }
+        updateStatus();
+    }
+    
+    private void loadTemplate(String type) {
+        frames.clear();
+        framesList.removeAllViews();
+        clearLedSelection();
+        
+        switch (type) {
+            case "wave":
+                generateWaveTemplate();
+                break;
+            case "pulse":
+                generatePulseTemplate();
+                break;
+            case "blink":
+                generateBlinkTemplate();
+                break;
+            case "breathe":
+                generateBreatheTemplate();
+                break;
+            case "random":
+                generateRandomTemplate();
+                break;
+            case "allon":
+                generateAllOnTemplate();
+                break;
+        }
+        
+        refreshFramesList();
+        updateStatus();
+        previewButton.setEnabled(true);
+        saveButton.setEnabled(true);
+        
+        Toast.makeText(this, "Template loaded: " + type.toUpperCase() + " (15s, " + frames.size() + " frames)", Toast.LENGTH_LONG).show();
+    }
+    
+    private void generateWaveTemplate() {
+        int frameCount = 30;
+        int ledsPerFrame = 4;
+        
+        for (int i = 0; i < frameCount; i++) {
+            long timestamp = i * 500;
+            
+            int startZone = (i * ledsPerFrame) % LED_COUNT;
+            int[] zones = new int[ledsPerFrame];
+            for (int j = 0; j < ledsPerFrame; j++) {
+                zones[j] = (startZone + j) % LED_COUNT;
+            }
+            
+            frames.add(new FrameData(timestamp, zones, 4095, 400));
+        }
+    }
+    
+    private void generatePulseTemplate() {
+        int[] allZones = new int[LED_COUNT];
+        for (int i = 0; i < LED_COUNT; i++) {
+            allZones[i] = i;
+        }
+        
+        for (int pulse = 0; pulse < 10; pulse++) {
+            long baseTime = pulse * 1500;
+            
+            for (int step = 0; step < 5; step++) {
+                long timestamp = baseTime + (step * 60);
+                int brightness = 800 + (step * 650);
+                frames.add(new FrameData(timestamp, allZones.clone(), brightness, 60));
+            }
+
+            frames.add(new FrameData(baseTime + 300, allZones.clone(), 4095, 400));
+            
+            for (int step = 0; step < 5; step++) {
+                long timestamp = baseTime + 700 + (step * 60);
+                int brightness = 4095 - (step * 650);
+                frames.add(new FrameData(timestamp, allZones.clone(), brightness, 60));
+            }
+        }
+    }
+    
+    private void generateBlinkTemplate() {
+        int[] zones = {0, 5, 10, 15, 20, 25, 30};
+
+        for (int i = 0; i < 30; i++) {
+            long timestamp = i * 500;
+            
+            int[] currentZones;
+            if (i % 2 == 0) {
+                currentZones = new int[]{0, 2, 4, 6, 8, 10};
+            } else {
+                currentZones = new int[]{1, 3, 5, 7, 9, 11};
+            }
+            
+            frames.add(new FrameData(timestamp, currentZones, 4095, 250));
+        }
+    }
+    
+    private void generateBreatheTemplate() {
+        int[] allZones = new int[LED_COUNT];
+        for (int i = 0; i < LED_COUNT; i++) {
+            allZones[i] = i;
+        }
+
+        for (int cycle = 0; cycle < 5; cycle++) {
+            long baseTime = cycle * 3000;
+            
+            // Inhale (10 steps, 1.5s)
+            for (int step = 0; step < 10; step++) {
+                long timestamp = baseTime + (step * 150);
+                int brightness = 500 + (step * 360);
+                frames.add(new FrameData(timestamp, allZones.clone(), brightness, 150));
+            }
+            
+            for (int step = 0; step < 10; step++) {
+                long timestamp = baseTime + 1500 + (step * 150);
+                int brightness = 4095 - (step * 360);
+                frames.add(new FrameData(timestamp, allZones.clone(), brightness, 150));
+            }
+        }
+    }
+    
+    private void generateRandomTemplate() {
+        java.util.Random random = new java.util.Random();
+        
+        for (int i = 0; i < 50; i++) {
+            long timestamp = i * 300;
+            
+            int zoneCount = 3 + random.nextInt(6);
+            int[] zones = new int[zoneCount];
+            for (int j = 0; j < zoneCount; j++) {
+                zones[j] = random.nextInt(LED_COUNT);
+            }
+            
+            int brightness = 2000 + random.nextInt(2096);
+            
+            frames.add(new FrameData(timestamp, zones, brightness, 250));
+        }
+    }
+    
+    private void generateAllOnTemplate() {
+        int[] allZones = new int[LED_COUNT];
+        for (int i = 0; i < LED_COUNT; i++) {
+            allZones[i] = i;
+        }
+        
+        frames.add(new FrameData(0, allZones.clone(), 4095, 5000));
+        
+        frames.add(new FrameData(5000, allZones.clone(), 3000, 5000));
+        
+        frames.add(new FrameData(10000, allZones.clone(), 4095, 5000));
     }
     
     private void addFrame() {
@@ -316,7 +528,7 @@ public class GlyphPatternCreatorActivity extends Activity {
         for (FrameData frame : frames) {
             timestamp += frame.duration;
         }
-        
+
         FrameData frame = new FrameData(timestamp, zonesArray, currentBrightness, currentDuration);
         frames.add(frame);
         
@@ -433,7 +645,7 @@ public class GlyphPatternCreatorActivity extends Activity {
         if (previewHandler != null) {
             previewHandler.removeCallbacksAndMessages(null);
         }
-        
+
         AnimationManager.stopAll();
         
         onPreviewComplete();
@@ -453,7 +665,7 @@ public class GlyphPatternCreatorActivity extends Activity {
             Toast.makeText(this, "No frames to save", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Save Pattern");
         
