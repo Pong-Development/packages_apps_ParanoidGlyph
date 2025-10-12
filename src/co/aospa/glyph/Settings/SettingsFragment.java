@@ -261,6 +261,12 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             }
         }
 
+        if ("glyph_settings_composer_apply".equals(preference.getKey())) {
+            Intent intent = new Intent(getActivity(), GlyphPatternSelectorActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
         if ("glyph_settings_composer_preview".equals(preference.getKey())) {
             Intent intent = new Intent(getActivity(), GlyphPatternPreviewActivity.class);
             startActivity(intent);

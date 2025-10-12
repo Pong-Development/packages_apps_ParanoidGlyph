@@ -103,4 +103,6 @@
     <string name="glyph_settings_composer_preview_summary">Preview composer and fallback animations</string>
     <string name="glyph_settings_composer_create_title">Create pattern</string>
     <string name="glyph_settings_composer_create_summary">Design custom Glyph patterns</string>
+    <string name="glyph_settings_composer_apply_title">Apply pattern to ringtone</string>
+    <string name="glyph_settings_composer_apply_summary">Select and apply saved patterns easily</string>
 </resources>
