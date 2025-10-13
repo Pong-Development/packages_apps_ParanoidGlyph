@@ -174,12 +174,48 @@ public class GlyphPatternSelectorActivity extends Activity {
         String patternPath = GlyphComposerParser.getGlyphPatternPath(audioPath);
         if (patternPath != null) {
             currentPatternFile = new File(patternPath);
-            currentPatternText.setText("✓ " + currentPatternFile.getName());
+            String appliedPatternInfo = findOriginalPatternName(currentPatternFile);
+            currentPatternText.setText("✓ Applied: " + appliedPatternInfo);
             currentPatternText.setTextColor(0xFF00FF00);
         } else {
             currentPatternText.setText("None (using fallback animation)");
             currentPatternText.setTextColor(0xFFFF9800);
         }
+    }
+
+    private String findOriginalPatternName(File appliedPattern) {
+        File savedPatternDir = new File(Environment.getExternalStorageDirectory(), "Ringtones/SavedPattern");
+        
+        if (!savedPatternDir.exists()) {
+            return appliedPattern.getName();
+        }
+        
+        File[] savedPatterns = savedPatternDir.listFiles((dir, name) -> name.endsWith(".glyphring"));
+        if (savedPatterns == null) {
+            return appliedPattern.getName();
+        }
+        
+        try {
+            GlyphPattern appliedParsed = GlyphComposerParser.parseFromFile(appliedPattern.getAbsolutePath());
+            if (appliedParsed == null) return appliedPattern.getName();
+            
+            for (File savedPattern : savedPatterns) {
+                GlyphPattern savedParsed = GlyphComposerParser.parseFromFile(savedPattern.getAbsolutePath());
+                if (savedParsed != null && patternsMatch(appliedParsed, savedParsed)) {
+                    return savedPattern.getName();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error comparing patterns", e);
+        }
+        
+        return appliedPattern.getName();
+    }
+    
+    private boolean patternsMatch(GlyphPattern p1, GlyphPattern p2) {
+        if (p1.getFrames().size() != p2.getFrames().size()) return false;
+        if (p1.getDuration() != p2.getDuration()) return false;
+        return true;
     }
     
     private void scanPatterns() {
