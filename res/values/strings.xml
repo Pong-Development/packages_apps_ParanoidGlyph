@@ -84,6 +84,7 @@
     <string name="glyph_settings_flip_ringer_mode_summary">Choose ringer mode when device is flipped</string>
     
     <!-- Ringer Mode Options -->
+    <string name="glyph_settings_flip_ringer_mode_follow_system">Follow system</string>
     <string name="glyph_settings_flip_ringer_mode_vibrate">Vibrate</string>
     <string name="glyph_settings_flip_ringer_mode_silent">Silent</string>
     <string name="glyph_settings_flip_ringer_mode_normal">Ring</string>

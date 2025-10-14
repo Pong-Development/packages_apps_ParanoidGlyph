@@ -76,10 +76,19 @@ public class FlipToGlyphService extends Service {
             AnimationManager.playCsv(mContext, "flip");
             ringerMode = mAudioManager.getRingerModeInternal();
             int preferredMode = SettingsManager.getFlipRingerMode();
-            if (DEBUG) Log.d(TAG, "Setting ringer mode to: " + preferredMode);
-            mAudioManager.setRingerModeInternal(preferredMode);
+            if (DEBUG) Log.d(TAG, "Preferred ringer mode: " + preferredMode);
+            
+            if (preferredMode != -1) {
+                if (DEBUG) Log.d(TAG, "Setting ringer mode to: " + preferredMode);
+                mAudioManager.setRingerModeInternal(preferredMode);
+            } else {
+                if (DEBUG) Log.d(TAG, "Following system ringer mode: " + ringerMode);
+            }
         } else {
-            mAudioManager.setRingerModeInternal(ringerMode);
+            int preferredMode = SettingsManager.getFlipRingerMode();
+            if (preferredMode != -1) {
+                mAudioManager.setRingerModeInternal(ringerMode);
+            }
         }
         isFlipped = flipped;
     }
