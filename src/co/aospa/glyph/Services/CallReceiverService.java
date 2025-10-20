@@ -47,6 +47,9 @@ public class CallReceiverService extends Service {
 
     private HandlerThread thread;
     private Handler mThreadHandler;
+    
+    private boolean isComposerPatternPlaying = false;
+    private long composerPatternStartTime = 0;
 
     private Runnable playCall = new Runnable() {
         @Override
@@ -58,6 +61,7 @@ public class CallReceiverService extends Service {
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
+
         thread = new HandlerThread("CallReceiverService");
         thread.start();
         Looper looper = thread.getLooper();
@@ -67,6 +71,7 @@ public class CallReceiverService extends Service {
         mAudioManager.addOnModeChangedListener(cmd -> mThreadHandler.post(cmd), mAudioManagerOnModeChangedListener);
         mAudioManagerOnModeChangedListener.onModeChanged(mAudioManager.getMode());
 
+        // Initialize Glyph Sync Player
         mGlyphSyncPlayer = new GlyphSyncPlayer(this);
         mGlyphSyncPlayer.setOnCompletionListener(() -> {
             if (DEBUG) Log.d(TAG, "Ringtone playback completed");
@@ -114,8 +119,10 @@ public class CallReceiverService extends Service {
         if (mThreadHandler.hasCallbacks(playCall))
             mThreadHandler.removeCallbacks(playCall);
         
-        if (mGlyphSyncPlayer != null && mGlyphSyncPlayer.isPlaying()) {
-            mGlyphSyncPlayer.stop();
+        if (isComposerPatternPlaying) {
+            isComposerPatternPlaying = false;
+            mThreadHandler.removeCallbacksAndMessages(null);
+            if (DEBUG) Log.d(TAG, "Stopped composer pattern playback");
         }
         
         AnimationManager.stopCall();
@@ -167,14 +174,23 @@ public class CallReceiverService extends Service {
             return;
         }
 
+        isComposerPatternPlaying = true;
+        composerPatternStartTime = System.currentTimeMillis();
+        
         new Handler(Looper.getMainLooper()).post(() -> {
-            scheduleGlyphFrames(pattern, 0, System.currentTimeMillis());
+            scheduleGlyphFrames(pattern, 0, composerPatternStartTime);
         });
     }
 
     private void scheduleGlyphFrames(GlyphPattern pattern, int frameIndex, long startTime) {
+        if (!isComposerPatternPlaying) {
+            if (DEBUG) Log.d(TAG, "Composer pattern stopped by user action");
+            return;
+        }
+        
         if (frameIndex >= pattern.getFrames().size()) {
             if (DEBUG) Log.d(TAG, "All Glyph frames completed");
+            isComposerPatternPlaying = false;
             return;
         }
 
@@ -185,6 +201,7 @@ public class CallReceiverService extends Service {
         if (delay < 0) delay = 0;
 
         mThreadHandler.postDelayed(() -> {
+            if (!isComposerPatternPlaying) return;
             activateGlyphFrame(frame);
             scheduleGlyphFrames(pattern, frameIndex + 1, startTime);
         }, delay);
@@ -201,7 +218,6 @@ public class CallReceiverService extends Service {
         }
 
         int brightness = scaleBrightness(frame.getBrightness());
-
         AnimationManager.playGlyphFrame(this, frame.getZones(), brightness, frame.getDuration());
     }
 
