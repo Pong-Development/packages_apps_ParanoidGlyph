@@ -1,7 +1,12 @@
 # Setting up Paranoid Glyph
-To build Paranoid Glyph you have to build the package in your device tree.
+
+
+To build Paranoid Glyph you have to build the respective package in your device tree.
 ```bash
     # Paranoid Glyph
-    PRODUCT_PACKAGES += \
-        ParanoidGlyph
+    PRODUCT_SOONG_NAMESPACES += packages/apps/ParanoidGlyph
+    PRODUCT_PACKAGES += \ 
+        ParanoidGlyphPhone1 # Phone 1
+        ParanoidGlyphPhone2 # Phone 2
+        ParanoidGlyphPhone3a # Phone (3a) and (3a) Pro
 ```
