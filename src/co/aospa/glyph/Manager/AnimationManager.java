@@ -376,7 +376,6 @@ public final class AnimationManager {
 
     public static void playEssential() {
         if (DEBUG) Log.d(TAG, "Playing Essential Animation");
-        int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
         if (!StatusManager.isEssentialLedActive()) {
             submit(() -> {
                 if (!check("essential", true))
@@ -387,10 +386,22 @@ public final class AnimationManager {
                 try {
                     if (checkInterruption("essential")) throw new InterruptedException();
                     int[] steps = {12, 24, 36, 48, 60};
-                    for (int i : steps) {
-                        if (checkInterruption("essential")) throw new InterruptedException();
-                        updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * i);
-                        Thread.sleep(16, 666000);
+                    if (Constants.getDevice().equals("phone3a")) {
+                        int[] essentialPattern = new int[11];
+                        for (int i : steps) {
+                            if (checkInterruption("essential")) throw new InterruptedException();
+                            int patternBrightness = Constants.MAX_PATTERN_BRIGHTNESS / 100 * i;
+                            Arrays.fill(essentialPattern, patternBrightness);
+                            updateLedFrame(ResourceUtils.buildPatternArray(new int[20], essentialPattern, new int[5]));
+                            Thread.sleep(16, 666000);
+                        }
+                    } else {
+                        int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
+                        for (int i : steps) {
+                            if (checkInterruption("essential")) throw new InterruptedException();
+                            updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * i);
+                            Thread.sleep(16, 666000);
+                        }
                     }
                 } catch (InterruptedException e) {}
                 StatusManager.setAnimationActive(false);
@@ -398,7 +409,15 @@ public final class AnimationManager {
                 if (DEBUG) Log.d(TAG, "Done playing animation | name: essential");
             });
         } else {
-            updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60);
+            if (Constants.getDevice().equals("phone3a")) {
+                int[] essentialPattern = new int[11];
+                int patternBrightness = Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60;
+                Arrays.fill(essentialPattern, patternBrightness);
+                updateLedFrame(ResourceUtils.buildPatternArray(new int[20], essentialPattern, new int[5]));
+            } else {
+                int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
+                updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60);
+            }
             return;
         }
     }
@@ -504,16 +523,19 @@ public final class AnimationManager {
         //if (DEBUG) Log.d(TAG, "Updating pattern: " + pattern);
         float maxPatternBrightness = (float) Constants.MAX_PATTERN_BRIGHTNESS;
         float currentBrightness = (float) Constants.getBrightness();
-        int essentialLed = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
 
         if (StatusManager.isEssentialLedActive()) {
-            if (pattern.length == 5) { // Phone (1) pattern
+            if (pattern.length == 5 && !Constants.getDevice().equals("phone3a")) { // Phone (1) pattern
                 if (pattern[1] < (maxPatternBrightness / 100 * 60)) {
                     pattern[1] = maxPatternBrightness / 100 * 60;
-                }
+                } 
             } else if (pattern.length == 33) { // Phone (2) pattern
                 if (pattern[2] < (maxPatternBrightness / 100 * 60)) {
                     pattern[2] = maxPatternBrightness / 100 * 60;
+                }
+            } else if (pattern.length == 36) { // Phone (3a) / Phone (3a) Pro pattern
+                    if (pattern[21] < (maxPatternBrightness / 100 * 60)) {
+                    Arrays.fill(pattern, 20, 31, maxPatternBrightness / 100 * 60);
                 }
             }
         }
