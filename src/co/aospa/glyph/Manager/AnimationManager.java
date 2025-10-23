@@ -130,7 +130,11 @@ public final class AnimationManager {
         } catch (Exception e) {
             if (DEBUG) Log.d(TAG, "Exception while playing animation | name: " + name + " | exception: " + e);
         } finally {
-            updateLedFrame(new float[5]);
+            if (Constants.getDevice().equals("phone3a")) {
+                updateLedFrame(new float[36]);
+            } else {
+                updateLedFrame(new float[5]);
+            }
             StatusManager.setAnimationActive(false);
             if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
             releaseWakeLock();
@@ -361,7 +365,11 @@ public final class AnimationManager {
     public static void stopCall() {
         if (DEBUG) Log.d(TAG, "Disabling Call Animation");
         StatusManager.setCallLedEnabled(false);
-        updateLedFrame(new float[5]);
+        if (Constants.getDevice().equals("phone3a")) {
+            updateLedFrame(new float[36]);
+        } else {
+            updateLedFrame(new float[5]);
+        }
         StatusManager.setCallLedActive(false);
         if (DEBUG) Log.d(TAG, "Done playing Call Animation");
     }
@@ -399,8 +407,12 @@ public final class AnimationManager {
         if (DEBUG) Log.d(TAG, "Disabling Essential Animation");
         StatusManager.setEssentialLedActive(false);
         if (!StatusManager.isAnimationActive() && !StatusManager.isAllLedActive()) {
-            int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
-            updateLedSingle(led, 0);
+            if (Constants.getDevice().equals("phone3a")) {
+                updateLedFrame(new int[36]);
+            } else {
+                int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
+                updateLedSingle(led, 0);
+            }
         }
     }
 
