@@ -61,6 +61,7 @@ public final class Constants {
     public static final String GLYPH_COMPOSER_ENABLE = "glyph_settings_composer_enable";
     public static final String GLYPH_COMPOSER_FALLBACK = "glyph_settings_composer_fallback";
     public static final String GLYPH_COMPOSER_PREVIEW = "glyph_settings_composer_preview";
+    public static final String GLYPH_SCHEDULE = "glyph_settings_schedule";
 
     public static final String[] APPS_TO_IGNORE = {
         "android",

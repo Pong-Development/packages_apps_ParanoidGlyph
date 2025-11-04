@@ -124,7 +124,8 @@ public class ShakeDetectorService extends Service implements SensorEventListener
             return;
         }
 
-        if (!isShakeEnabled() || !SettingsManager.isGlyphEnabled()) {
+        // Allow shake even during schedule (for torch)
+        if (!isShakeEnabled() || !SettingsManager.isGlyphEnabledIgnoreSchedule()) {
             return;
         }
 
@@ -160,6 +161,11 @@ public class ShakeDetectorService extends Service implements SensorEventListener
 
     private void onShakeDetected() {
         if (DEBUG) Log.d(TAG, "Shake gesture triggered, toggling torch");
+        
+        if (!SettingsManager.isGlyphEnabledIgnoreSchedule()) {
+            if (DEBUG) Log.d(TAG, "Glyph completely disabled, ignoring shake");
+            return;
+        }
         
         performHapticFeedback();
         

@@ -29,6 +29,7 @@ import android.util.Log;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
+import co.aospa.glyph.Manager.ShakeManager;
 import co.aospa.glyph.Manager.StatusManager;
 import co.aospa.glyph.Services.AutoBrightnessService;
 import co.aospa.glyph.Services.CallReceiverService;
@@ -58,7 +59,7 @@ public final class ServiceUtils {
                 }
             }
         }
-    return false;
+        return false;
     }
 
     private static void startCallReceiverService() {
@@ -158,13 +159,18 @@ public final class ServiceUtils {
     }
 
     public static void checkGlyphService() {
-        if (SettingsManager.isGlyphEnabled()) {
-            if (SettingsManager.getGlyphBrightness() != Constants.getBrightness()) {
-                Constants.setBrightness(SettingsManager.getGlyphBrightness());
-                startThirdPartyService();
-                if (StatusManager.isEssentialLedActive())
-                    AnimationManager.playEssential();
-            }
+        if (SettingsManager.getGlyphBrightness() != Constants.getBrightness()) {
+            Constants.setBrightness(SettingsManager.getGlyphBrightness());
+            startThirdPartyService();
+            if (StatusManager.isEssentialLedActive())
+                AnimationManager.playEssential();
+        }
+        
+        boolean glyphEnabled = SettingsManager.isGlyphEnabled();
+        
+        boolean glyphBaseEnabled = SettingsManager.isGlyphEnabledIgnoreSchedule();
+        
+        if (glyphEnabled) {
             if (SettingsManager.isGlyphChargingEnabled()) {
                 startChargingService();
             } else {
@@ -208,6 +214,17 @@ public final class ServiceUtils {
             stopMusicVisualizerService();
             stopVolumeLevelService();
             stopAutoBrightnessService();
+        }
+        
+        if (glyphBaseEnabled && ShakeManager.isShakeEnabled(context)) {
+            ShakeManager.startShakeService(context);
+        } else {
+            ShakeManager.stopShakeService(context);
+        }
+        
+        if (glyphBaseEnabled) {
+            startThirdPartyService();
+        } else {
             stopThirdPartyService();
         }
     }

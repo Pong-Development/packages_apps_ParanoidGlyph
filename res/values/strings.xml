@@ -106,4 +106,24 @@
     <string name="glyph_settings_composer_create_summary">Design custom Glyph patterns</string>
     <string name="glyph_settings_composer_apply_title">Apply pattern to ringtone</string>
     <string name="glyph_settings_composer_apply_summary">Select and apply saved patterns easily</string>
+
+    <!-- Glyph Schedule Settings -->
+    <string name="glyph_settings_schedule_title">Schedule Glyph</string>
+    <string name="glyph_settings_schedule_summary">Automatically disable Glyph during specified hours</string>
+    <string name="glyph_settings_schedule_enable_title">Enable Schedule</string>
+    <string name="glyph_settings_schedule_enable_summary">Automatically disable Glyph features during scheduled hours</string>
+    <string name="glyph_settings_schedule_start_time_title">Start Time</string>
+    <string name="glyph_settings_schedule_start_time_summary">Set the time when Glyph features will be disabled</string>
+    <string name="glyph_settings_schedule_end_time_title">End Time</string>
+    <string name="glyph_settings_schedule_end_time_summary">Set the time when Glyph features will be re-enabled</string>
+    <string name="glyph_settings_schedule_info_summary">Schedule will disable Glyph features except torch. Torch tile and shake-to-torch will continue to work during scheduled hours.</string>
+    <string name="glyph_settings_schedule_status_title">Current Status</string>
+    <string name="glyph_settings_schedule_status_summary">Shows whether the schedule is currently active</string>
+    <string name="glyph_settings_schedule_active">Schedule active — Glyph disabled (Torch still works)</string>
+    <string name="glyph_settings_schedule_inactive">Schedule inactive — Glyph enabled</string>
+    <string name="glyph_settings_schedule_disabled">Schedule disabled</string>
+    <string name="glyph_accessibility_quick_settings_disabled">Disabled</string>
+    <string name="glyph_settings_active_days_title">Active Days</string>
+    <string name="glyph_settings_active_days_summary">Every day</string>
+    <string name="glyph_settings_active_days_dialog_title">Select Days</string>
 </resources>

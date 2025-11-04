@@ -43,6 +43,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.Manager.GlyphScheduleManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Manager.ShakeManager;
 import co.aospa.glyph.Utils.ResourceUtils;
@@ -70,6 +71,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
     private ContentResolver mContentResolver;
     private SettingObserver mSettingObserver;
+    private Preference mSchedulePreference;
 
     private Handler mHandler = new Handler();
 
@@ -160,6 +162,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mComposerFallbackPreference.setEnabled(glyphEnabled && mComposerEnablePreference.isChecked());
         mComposerFallbackPreference.setOnPreferenceChangeListener(this);
 
+        mSchedulePreference = (Preference) findPreference(Constants.GLYPH_SCHEDULE);
+        updateScheduleSummary();
+
         mHandler.post(() -> ServiceUtils.checkGlyphService());
     }
 
@@ -246,7 +251,18 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mComposerEnablePreference.setEnabled(isChecked);
         mComposerFallbackPreference.setEnabled(isChecked && mComposerEnablePreference.isChecked());
 
-        mHandler.post(() -> ServiceUtils.checkGlyphService());
+        mHandler.post(() -> {
+            ServiceUtils.checkGlyphService();
+            updateTorchTile();
+        });
+    }
+    
+    private void updateTorchTile() {
+        try {
+            Intent intent = new Intent("co.aospa.glyph.UPDATE_TORCH_TILE");
+            requireContext().sendBroadcast(intent);
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -291,6 +307,19 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     public void onDestroy() {
         mSettingObserver.unregister(mContentResolver);
         super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateScheduleSummary();
+    }
+
+    private void updateScheduleSummary() {
+        if (mSchedulePreference != null) {
+            String summary = GlyphScheduleManager.getScheduleSummary(requireContext());
+            mSchedulePreference.setSummary(summary);
+        }
     }
 
     private class SettingObserver extends ContentObserver {

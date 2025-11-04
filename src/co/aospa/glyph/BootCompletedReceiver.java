@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.Manager.GlyphScheduleManager;
 import co.aospa.glyph.Manager.ShakeManager;
 import co.aospa.glyph.Utils.ServiceUtils;
 
@@ -36,9 +37,14 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         if (DEBUG) Log.d(TAG, "Received boot completed intent");
         Constants.CONTEXT = context.getApplicationContext();
+        
+        if (GlyphScheduleManager.isScheduleEnabled(context)) {
+            GlyphScheduleManager.setupScheduleAlarms(context);
+            if (DEBUG) Log.d(TAG, "Schedule alarms restored on boot");
+        }
+        
         ServiceUtils.checkGlyphService();
         
-        // Start shake service if enabled
         if (ShakeManager.isShakeEnabled(context)) {
             ShakeManager.startShakeService(context);
             if (DEBUG) Log.d(TAG, "Shake service started on boot");

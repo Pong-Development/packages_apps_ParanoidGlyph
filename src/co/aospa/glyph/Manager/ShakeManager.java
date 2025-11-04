@@ -40,7 +40,8 @@ public class ShakeManager {
             return;
         }
         
-        if (isShakeEnabled(context) && SettingsManager.isGlyphEnabled()) {
+        // IMPORTANT: Use isGlyphEnabledIgnoreSchedule() so shake-to-torch works during schedule
+        if (isShakeEnabled(context) && SettingsManager.isGlyphEnabledIgnoreSchedule()) {
             try {
                 Intent serviceIntent = new Intent(context, ShakeDetectorService.class);
                 context.startService(serviceIntent);
