@@ -48,8 +48,24 @@ public final class SettingsManager {
     }
 
     public static boolean isGlyphEnabled() {
-        return (Settings.Secure.getInt(context.getContentResolver(),Constants.GLYPH_ENABLE, 1) != 0 
-            || PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Constants.GLYPH_ENABLE, false));
+        boolean baseEnabled = (Settings.Secure.getInt(context.getContentResolver(),
+                Constants.GLYPH_ENABLE, 1) != 0 
+            || PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(Constants.GLYPH_ENABLE, false));
+        
+        if (GlyphScheduleManager.isScheduleEnabled(context) && 
+            GlyphScheduleManager.isScheduleCurrentlyActive(context)) {
+            return false;
+        }
+        
+        return baseEnabled;
+    }
+
+    public static boolean isGlyphEnabledIgnoreSchedule() {
+        return (Settings.Secure.getInt(context.getContentResolver(),
+                Constants.GLYPH_ENABLE, 1) != 0 
+            || PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(Constants.GLYPH_ENABLE, false));
     }
 
     public static boolean isGlyphFlipEnabled() {

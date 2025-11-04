@@ -108,6 +108,15 @@
         android:key="glyph_settings_misc"
         android:title="@string/glyph_settings_misc_title" />
 
+        <Preference
+            android:key="glyph_settings_schedule"
+            android:title="@string/glyph_settings_schedule_title"
+            android:summary="@string/glyph_settings_schedule_summary">
+            <intent android:action="android.intent.action.MAIN"
+                android:targetPackage="co.aospa.glyph"
+                android:targetClass="co.aospa.glyph.Settings.ScheduleSettingsActivity"/>
+        </Preference>
+
         <SwitchPreferenceCompat
             android:key="glyph_settings_music_visualizer_toggle"
             android:defaultValue="false"

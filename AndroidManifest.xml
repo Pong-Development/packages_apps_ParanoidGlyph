@@ -43,6 +43,16 @@
             </intent-filter>
         </receiver>
 
+        <!-- Schedule Receiver -->
+        <receiver
+            android:name=".Manager.GlyphScheduleManager$ScheduleReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="co.aospa.glyph.ACTION_SCHEDULE_START" />
+                <action android:name="co.aospa.glyph.ACTION_SCHEDULE_END" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".Services.AutoBrightnessService">
         </service>
@@ -158,6 +168,26 @@
 
         <activity
             android:name=".Settings.NotifsSettingsActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:theme="@style/Theme.SubSettingsBase.Expressive">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".Settings.ScheduleSettingsActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:theme="@style/Theme.SubSettingsBase.Expressive">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name=".Settings.ScheduleSettingsActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
             android:theme="@style/Theme.SubSettingsBase.Expressive">
