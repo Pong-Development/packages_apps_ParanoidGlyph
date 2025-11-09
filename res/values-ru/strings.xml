@@ -106,5 +106,25 @@
     <string name="glyph_settings_composer_create_summary">Создайте собственные шаблоны подсветки Glyph</string>
     <string name="glyph_settings_composer_apply_title">Применить шаблон к мелодии</string>
     <string name="glyph_settings_composer_apply_summary">Быстро выбирайте и применяйте сохранённые шаблоны</string>
+    
+    <!-- Glyph Schedule Settings -->
+    <string name="glyph_settings_schedule_title">Расписание Glyph</string>
+    <string name="glyph_settings_schedule_summary">Автоматически отключать Glyph в указанные часы</string>
+    <string name="glyph_settings_schedule_enable_title">Включить расписание</string>
+    <string name="glyph_settings_schedule_enable_summary">Автоматически отключать функции Glyph в заданные часы</string>
+    <string name="glyph_settings_schedule_start_time_title">Время начала</string>
+    <string name="glyph_settings_schedule_start_time_summary">Установить время, когда функции Glyph будут отключены</string>
+    <string name="glyph_settings_schedule_end_time_title">Время окончания</string>
+    <string name="glyph_settings_schedule_end_time_summary">Установить время, когда функции Glyph будут снова включены</string>
+    <string name="glyph_settings_schedule_info_summary">Расписание отключает функции Glyph, кроме фонарика. Плитка фонарика и жест «встряхивание для включения фонарика» будут работать в течение запланированных часов</string>
+    <string name="glyph_settings_schedule_status_title">Текущий статус</string>
+    <string name="glyph_settings_schedule_status_summary">Показывает, активно ли расписание в данный момент</string>
+    <string name="glyph_settings_schedule_active">Расписание активно — Glyph отключён (фонарик работает)</string>
+    <string name="glyph_settings_schedule_inactive">Расписание неактивно — Glyph включён</string>
+    <string name="glyph_settings_schedule_disabled">Расписание отключено</string>
+    <string name="glyph_accessibility_quick_settings_disabled">Отключено</string>
+    <string name="glyph_settings_active_days_title">Активные дни</string>
+    <string name="glyph_settings_active_days_summary">Каждый день</string>
+    <string name="glyph_settings_active_days_dialog_title">Выбор дней</string>
 </resources>
 
