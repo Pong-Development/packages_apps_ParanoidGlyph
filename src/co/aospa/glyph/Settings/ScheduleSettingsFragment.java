@@ -18,6 +18,7 @@ package co.aospa.glyph.Settings;
 
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.widget.CompoundButton;
 
 import androidx.preference.MultiSelectListPreference;
@@ -108,6 +109,8 @@ public class ScheduleSettingsFragment extends SettingsBasePreferenceFragment
             minute = GlyphScheduleManager.getScheduleEndMinute(requireContext());
         }
 
+        boolean is24HourFormat = DateFormat.is24HourFormat(requireContext());
+
         TimePickerDialog dialog = new TimePickerDialog(
             requireContext(),
             (view, selectedHour, selectedMinute) -> {
@@ -122,7 +125,7 @@ public class ScheduleSettingsFragment extends SettingsBasePreferenceFragment
             },
             hour,
             minute,
-            true
+            is24HourFormat
         );
 
         dialog.setTitle(isStartTime ? "Select Start Time" : "Select End Time");
@@ -140,14 +143,14 @@ public class ScheduleSettingsFragment extends SettingsBasePreferenceFragment
             int hour = GlyphScheduleManager.getScheduleStartHour(requireContext());
             int minute = GlyphScheduleManager.getScheduleStartMinute(requireContext());
             mStartTimePreference.setSummary(
-                GlyphScheduleManager.formatTime(hour, minute));
+                GlyphScheduleManager.formatTime(requireContext(), hour, minute));
         }
 
         if (mEndTimePreference != null) {
             int hour = GlyphScheduleManager.getScheduleEndHour(requireContext());
             int minute = GlyphScheduleManager.getScheduleEndMinute(requireContext());
             mEndTimePreference.setSummary(
-                GlyphScheduleManager.formatTime(hour, minute));
+                GlyphScheduleManager.formatTime(requireContext(), hour, minute));
         }
 
         if (mStatusPreference != null) {
