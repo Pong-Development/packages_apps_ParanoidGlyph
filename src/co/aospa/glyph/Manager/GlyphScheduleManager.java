@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
@@ -334,7 +335,23 @@ public final class GlyphScheduleManager {
         }
     }
 
-    public static String formatTime(int hour, int minute) {
+    /**
+     * Format time based on system 12/24 hour preference
+     */
+    public static String formatTime(Context context, int hour, int minute) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        
+        // Use system preference for 12/24 hour format
+        java.text.DateFormat timeFormat = DateFormat.getTimeFormat(context);
+        return timeFormat.format(calendar.getTime());
+    }
+
+    /**
+     * Format time with explicit 24-hour format (for backwards compatibility)
+     */
+    public static String formatTime24Hour(int hour, int minute) {
         return String.format("%02d:%02d", hour, minute);
     }
 
@@ -389,7 +406,7 @@ public final class GlyphScheduleManager {
         int startMinute = getScheduleStartMinute(context);
         int endHour = getScheduleEndHour(context);
         int endMinute = getScheduleEndMinute(context);
-        return formatTime(startHour, startMinute) + " - " + formatTime(endHour, endMinute);
+        return formatTime(context, startHour, startMinute) + " - " + formatTime(context, endHour, endMinute);
     }
 
     public static String getScheduleSummary(Context context) {
