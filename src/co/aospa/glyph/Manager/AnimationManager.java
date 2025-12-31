@@ -93,7 +93,8 @@ public final class AnimationManager {
     private static boolean checkInterruption(String name) {
         if (StatusManager.isAllLedActive()
                 || (name != "call" && StatusManager.isCallLedEnabled())
-                || (name == "call" && !StatusManager.isCallLedEnabled())) {
+                || (name == "call" && !StatusManager.isCallLedEnabled())
+                || (name == "progress" && StatusManager.isVolumeAnimationActive())) {
             return true;
         }
         return false;
@@ -591,5 +592,97 @@ public final class AnimationManager {
         }
         
         return true;
+    }
+
+    public static void playProgress(Context context, int progressPercent, int progressType, boolean wait) {
+        if (!check("progress", wait))
+            return;
+
+        acquireWakeLock(context);
+
+        StatusManager.setAnimationActive(true);
+        StatusManager.setProgressAnimationActive(true);
+        StatusManager.setProgressType(progressType);
+
+        int[] progressArray = StatusManager.getProgressArray();
+        if (progressArray == null) {
+            if (DEBUG) Log.d(TAG, "Progress array is null, cannot play animation");
+            return;
+        }
+
+        int amount = (int) Math.round((progressPercent / 100D) * progressArray.length);
+        int last = StatusManager.getProgressLedLast();
+        int next = amount - 1;
+
+        try {
+            if (last <= next) {
+                for (int i = last; i <= next; i++) {
+                    if (checkInterruption("progress")) throw new InterruptedException();
+                    StatusManager.setProgressLedLast(i);
+                    progressArray[i] = Constants.MAX_PATTERN_BRIGHTNESS;
+                    updateLedFrame(progressArray);
+                    Thread.sleep(16, 666000);
+                }
+            } else if (last > next) {
+                for (int i = last; i > next; i--) {
+                    if (checkInterruption("progress")) throw new InterruptedException();
+                    StatusManager.setProgressLedLast(i);
+                    progressArray[i] = 0;
+                    updateLedFrame(progressArray);
+                    Thread.sleep(16, 666000);
+                }
+            }
+        } catch (InterruptedException e) {
+            if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: progress");
+            if (!StatusManager.isAllLedActive()) {
+                StatusManager.setProgressLedLast(0);
+                progressArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
+                updateLedFrame(progressArray);
+            }
+        } finally {
+            StatusManager.setAnimationActive(false);
+            StatusManager.setProgressArray(progressArray);
+            if (DEBUG) Log.d(TAG, "Done playing animation | name: progress");
+            releaseWakeLock();
+        }
+    }
+
+    public static void dismissProgress(Context context) {
+        int[] emptyArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
+        int[] progressArray = StatusManager.getProgressArray();
+
+        if (Arrays.equals(emptyArray, progressArray))
+            return;
+
+        if (!check("Dismiss progress", false))
+            return;
+
+        acquireWakeLock(context);
+
+        StatusManager.setAnimationActive(true);
+
+        try {
+            if (checkInterruption("Dismiss progress")) throw new InterruptedException();
+            for (int i = progressArray.length - 1; i >= 0; i--) {
+                if (progressArray[i] != 0) {
+                    if (checkInterruption("Dismiss progress")) throw new InterruptedException();
+                    StatusManager.setProgressLedLast(i);
+                    progressArray[i] = 0;
+                    updateLedFrame(progressArray);
+                    Thread.sleep(16, 666000);
+                }
+            }
+        } catch (InterruptedException e) {
+            if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss progress");
+            if (!StatusManager.isAllLedActive())
+                updateLedFrame(new int[progressArray.length]);
+        } finally {
+            StatusManager.setProgressLedLast(0);
+            StatusManager.setProgressAnimationActive(false);
+            StatusManager.setProgressType(0);
+            StatusManager.setAnimationActive(false);
+            if (DEBUG) Log.d(TAG, "Done playing animation | name: Dismiss progress");
+            releaseWakeLock();
+        }
     }
 }
