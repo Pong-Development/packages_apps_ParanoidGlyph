@@ -19,8 +19,11 @@
 package co.aospa.glyph.Settings;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -63,12 +66,23 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private SwitchPreferenceCompat mVolumeLevelPreference;
     private SwitchPreferenceCompat mMusicVisualizerPreference;
     private ListPreference mFlipRingerModePreference;
+    private SwitchPreferenceCompat mProgressPreference;
+    private SwitchPreferenceCompat mProgressMusicPreference;
 
     private ContentResolver mContentResolver;
     private SettingObserver mSettingObserver;
     private Preference mSchedulePreference;
 
     private Handler mHandler = new Handler();
+
+    private BroadcastReceiver mScheduleUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("co.aospa.glyph.UPDATE_MAIN_SWITCH".equals(intent.getAction())) {
+                updateMainSwitchState();
+            }
+        }
+    };
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -78,7 +92,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mSettingObserver = new SettingObserver();
         mSettingObserver.register(mContentResolver);
 
-        boolean glyphEnabled = SettingsManager.isGlyphEnabled();
+        boolean glyphEnabled = SettingsManager.isGlyphEnabledIgnoreSchedule();
 
         mSwitchBar = (MainSwitchPreference) findPreference(Constants.GLYPH_ENABLE);
         mSwitchBar.addOnSwitchChangeListener(this);
@@ -148,6 +162,17 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mSchedulePreference = (Preference) findPreference(Constants.GLYPH_SCHEDULE);
         updateScheduleSummary();
 
+        mProgressPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_ENABLE);
+        mProgressPreference.setEnabled(glyphEnabled);
+        mProgressPreference.setOnPreferenceChangeListener(this);
+
+        mProgressMusicPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_MUSIC_ENABLE);
+        mProgressMusicPreference.setEnabled(glyphEnabled && mProgressPreference.isChecked());
+        mProgressMusicPreference.setOnPreferenceChangeListener(this);
+
+        IntentFilter filter = new IntentFilter("co.aospa.glyph.UPDATE_MAIN_SWITCH");
+        requireContext().registerReceiver(mScheduleUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+
         mHandler.post(() -> ServiceUtils.checkGlyphService());
     }
 
@@ -177,6 +202,27 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             boolean flipEnabled = (Boolean) newValue;
             mFlipRingerModePreference.setEnabled(flipEnabled && SettingsManager.isGlyphEnabled());
         }
+        if (preferenceKey.equals(Constants.GLYPH_PROGRESS_ENABLE)) {
+            boolean enabled = (Boolean) newValue;
+            mProgressMusicPreference.setEnabled(enabled && SettingsManager.isGlyphEnabled());
+            
+            if (enabled) {
+                ServiceUtils.startProgressService();
+                mHandler.postDelayed(() -> {
+                    ServiceUtils.checkGlyphService();
+                }, 250);
+            } else {
+                ServiceUtils.checkGlyphService();
+            }
+            return true;
+        }
+
+        if (preferenceKey.equals(Constants.GLYPH_PROGRESS_MUSIC_ENABLE)) {
+            mHandler.postDelayed(() -> {
+                ServiceUtils.checkGlyphService();
+            }, 100);
+            return true;
+        }
 
         mHandler.post(() -> ServiceUtils.checkGlyphService());
 
@@ -187,7 +233,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         SettingsManager.enableGlyph(isChecked);
 
-        mSwitchBar.setChecked(isChecked);
+        mSwitchBar.setChecked(SettingsManager.isGlyphEnabledIgnoreSchedule());
 
         mFlipPreference.setEnabled(isChecked);
         mAutoBrightnessPreference.setEnabled(isChecked);
@@ -203,10 +249,13 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mVolumeLevelPreference.setEnabled(isChecked);
         mMusicVisualizerPreference.setEnabled(isChecked);
         mFlipRingerModePreference.setEnabled(isChecked && mFlipPreference.isChecked());
+        mProgressPreference.setEnabled(isChecked);
+        mProgressMusicPreference.setEnabled(isChecked && mProgressPreference.isChecked());
 
         mHandler.post(() -> {
             ServiceUtils.checkGlyphService();
             updateTorchTile();
+            updateMainSwitchState();
         });
     }
     
@@ -240,6 +289,11 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     @Override
     public void onDestroy() {
         mSettingObserver.unregister(mContentResolver);
+        try {
+            requireContext().unregisterReceiver(mScheduleUpdateReceiver);
+        } catch (Exception e) {
+            // Receiver not registered
+        }
         super.onDestroy();
     }
 
@@ -247,12 +301,28 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     public void onResume() {
         super.onResume();
         updateScheduleSummary();
+        updateMainSwitchState();
     }
 
     private void updateScheduleSummary() {
         if (mSchedulePreference != null) {
             String summary = GlyphScheduleManager.getScheduleSummary(requireContext());
             mSchedulePreference.setSummary(summary);
+        }
+    }
+
+    private void updateMainSwitchState() {
+        if (mSwitchBar != null) {
+            boolean baseEnabled = SettingsManager.isGlyphEnabledIgnoreSchedule();
+            boolean effectiveEnabled = SettingsManager.isGlyphEnabled();
+            
+            mSwitchBar.setChecked(baseEnabled);
+            
+            if (baseEnabled && !effectiveEnabled) {
+                mSwitchBar.setSummary("Currently disabled by schedule");
+            } else {
+                mSwitchBar.setSummary("");
+            }
         }
     }
 
@@ -278,7 +348,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
             if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_ENABLE))) {
-                mSwitchBar.setChecked(SettingsManager.isGlyphEnabled());
+                mSwitchBar.setChecked(SettingsManager.isGlyphEnabledIgnoreSchedule());
             }
             if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_CALL_ENABLE))) {
                 mCallPreference.setChecked(SettingsManager.isGlyphCallEnabled());
