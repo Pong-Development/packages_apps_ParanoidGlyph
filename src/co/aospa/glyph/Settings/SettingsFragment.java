@@ -279,8 +279,6 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         SettingsManager.enableGlyph(isChecked);
 
-        mSwitchBar.setChecked(SettingsManager.isGlyphEnabledIgnoreSchedule());
-
         mFlipPreference.setEnabled(isChecked);
         mAutoBrightnessPreference.setEnabled(isChecked);
         mBrightnessPreference.setEnabled(isChecked && !mAutoBrightnessPreference.isChecked());
