@@ -306,8 +306,6 @@ public class ProgressService extends Service {
         mThreadHandler.post(() -> {
             AnimationManager.playProgress(mContext, progress, progressType, false);
         });
-
-        mThreadHandler.postDelayed(dismissProgress, 3000);
     }
 
     private void dismissProgressIfNeeded() {
