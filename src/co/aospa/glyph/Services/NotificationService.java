@@ -37,6 +37,7 @@ import com.android.internal.util.ArrayUtils;
 
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
+import co.aospa.glyph.Manager.EssentialLedManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Manager.StatusManager;
 
@@ -141,7 +142,7 @@ public class NotificationService extends NotificationListenerService
                         && (packageImportance >= NotificationManager.IMPORTANCE_DEFAULT || packageImportance == -1)
                         && (interruptionFilter <= NotificationManager.INTERRUPTION_FILTER_ALL || packageCanBypassDnd)
                         && mNotificationManager.isNotificationPolicyAccessGranted()) {
-            AnimationManager.playEssential();
+            AnimationManager.playEssentialForApp(mContext, packageName);
         }
     }
 
@@ -237,6 +238,7 @@ public class NotificationService extends NotificationListenerService
     private void onNotificationUpdated() {
         if (DEBUG) Log.d(TAG, "onNotificationUpdated");
         boolean playEssential = false;
+        String essentialPackageName = null;
         if (SettingsManager.isGlyphNotifsEnabled()) {
             if (!mNotificationManager.isNotificationPolicyAccessGranted()) return;
             StatusBarNotification[] activeNotifications = getActiveNotifications();
@@ -264,11 +266,13 @@ public class NotificationService extends NotificationListenerService
                                 && (interruptionFilter <= NotificationManager.INTERRUPTION_FILTER_ALL || packageCanBypassDnd)) {
                     if (DEBUG) Log.d(TAG, "onNotificationUpdated: found essential notification | package:" + packageName);
                     playEssential = true;
+                    essentialPackageName = packageName;
+                    break;
                 }
             }
         }
-        if (playEssential) {
-            AnimationManager.playEssential();
+        if (playEssential && essentialPackageName != null) {
+            AnimationManager.playEssentialForApp(mContext, essentialPackageName);
         } else {
             AnimationManager.stopEssential();
         }

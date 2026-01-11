@@ -222,5 +222,15 @@
             android:label="Apply Pattern"
             android:theme="@style/Theme.SubSettingsBase.Expressive" />
 
+        <activity
+            android:name=".Settings.EssentialSettingsActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:theme="@style/Theme.SubSettingsBase.Expressive">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
     </application>
 </manifest>

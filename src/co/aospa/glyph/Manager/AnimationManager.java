@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.Manager.EssentialLedManager;
 import co.aospa.glyph.Utils.FileUtils;
 import co.aospa.glyph.Utils.ResourceUtils;
 
@@ -382,12 +383,51 @@ public final class AnimationManager {
         }
     }
 
+    public static void playEssentialForApp(Context context, String packageName) {
+        if (DEBUG) Log.d(TAG, "Playing Essential Animation for app: " + packageName);
+        
+        int ledZone = EssentialLedManager.getEffectiveLedZone(context, packageName);
+        
+        if (!StatusManager.isEssentialLedActive()) {
+            submit(() -> {
+                if (!check("essential", true))
+                    return;
+
+                StatusManager.setAnimationActive(true);
+
+                try {
+                    if (checkInterruption("essential")) throw new InterruptedException();
+                    int[] steps = {12, 24, 36, 48, 60};
+                    for (int i : steps) {
+                        if (checkInterruption("essential")) throw new InterruptedException();
+                        updateLedSingle(ledZone, Constants.MAX_PATTERN_BRIGHTNESS / 100 * i);
+                        Thread.sleep(16, 666000);
+                    }
+                } catch (InterruptedException e) {}
+                StatusManager.setAnimationActive(false);
+                StatusManager.setEssentialLedActive(true);
+                StatusManager.setEssentialLedZone(ledZone);
+                if (DEBUG) Log.d(TAG, "Done playing animation | name: essential | zone: " + ledZone);
+            });
+        } else {
+            int currentZone = StatusManager.getEssentialLedZone();
+            if (currentZone != ledZone) {
+                updateLedSingle(currentZone, 0);
+                updateLedSingle(ledZone, Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60);
+                StatusManager.setEssentialLedZone(ledZone);
+            } else {
+                updateLedSingle(ledZone, Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60);
+            }
+            return;
+        }
+    }
+
     public static void stopEssential() {
         if (DEBUG) Log.d(TAG, "Disabling Essential Animation");
         StatusManager.setEssentialLedActive(false);
         if (!StatusManager.isAnimationActive() && !StatusManager.isAllLedActive()) {
-            int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
-            updateLedSingle(led, 0);
+            int ledZone = StatusManager.getEssentialLedZone();
+            updateLedSingle(ledZone, 0);
         }
     }
 

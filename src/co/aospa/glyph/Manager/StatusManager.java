@@ -37,6 +37,7 @@ public final class StatusManager {
     private static int volumeLedLast = 0;
     private static int[] volumeArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
     private static int[] progressArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
+    private static int essentialLedZone = -1;
 
     private static boolean callLedEnabled = false;
 
@@ -163,5 +164,16 @@ public final class StatusManager {
         } else {
             return true;
         }
+    }
+
+    public static int getEssentialLedZone() {
+        if (essentialLedZone == -1) {
+            essentialLedZone = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
+        }
+        return essentialLedZone;
+    }
+
+    public static void setEssentialLedZone(int zone) {
+        essentialLedZone = zone;
     }
 }
