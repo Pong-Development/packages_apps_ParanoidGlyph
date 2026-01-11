@@ -267,7 +267,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-    if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey())) {
+    if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey()) 
+    || Constants.GLYPH_PROGRESS_ENABLE.equals(preference.getKey())) {
             if (!ServiceUtils.isNotificationServiceEnabled()) {
                 new AlertDialog.Builder(requireContext())
                     .setTitle(R.string.glyph_settings_notifs_permission_dialog_title)
