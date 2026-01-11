@@ -316,8 +316,11 @@ public final class AnimationManager {
             }
         } catch (InterruptedException e) {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss volume");
-            if (!StatusManager.isAllLedActive())
+            if (Constants.getDevice().equals("phone3a")) {
+                updateLedFrame(new int[36]);
+            } else {
                 updateLedFrame(new int[volumeArray.length]);
+            }
         } finally {
             StatusManager.setVolumeLedLast(0);
             StatusManager.setVolumeAnimationActive(false);
@@ -660,8 +663,13 @@ public final class AnimationManager {
             }
         } catch (InterruptedException e) {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss progress");
-            if (!StatusManager.isAllLedActive())
-                updateLedFrame(new int[progressArray.length]);
+            if (!StatusManager.isAllLedActive()) {
+                if (Constants.getDevice().equals("phone3a")) {
+                    updateLedFrame(new int[36]);
+                } else {
+                    updateLedFrame(new int[progressArray.length]);
+                }
+            }
         } finally {
             StatusManager.setProgressLedLast(0);
             StatusManager.setProgressAnimationActive(false);
