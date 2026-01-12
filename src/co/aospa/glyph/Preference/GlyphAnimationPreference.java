@@ -48,7 +48,7 @@ public class GlyphAnimationPreference extends Preference {
 
     private String animationName;
     private boolean animationTerminated;
-    private boolean animationPaused = true;
+    private volatile boolean animationPaused = true;
     private boolean animationReversed = false;
     private int animationTimeBetween = 0;
     private String[] animationSlugs;
@@ -180,7 +180,9 @@ public class GlyphAnimationPreference extends Preference {
         @Override
         public void run() {
             while (!animationTerminated) {
-                while (animationPaused) {}
+                while (animationPaused) {
+                    Thread.onSpinWait();
+                }
                 String playMode = (animationReversed) ? "reverse" : "forwards";
                 if (DEBUG) Log.d(TAG, "Displaying animation | name: " + animationName + " mode: " + playMode);
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(
