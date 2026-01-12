@@ -40,7 +40,6 @@ import com.android.internal.util.ArrayUtils;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
-import co.aospa.glyph.Manager.StatusManager;
 
 public class NotificationService extends NotificationListenerService
         implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -133,7 +132,7 @@ public class NotificationService extends NotificationListenerService
                 packageImportance = packageChannel.getImportance();
                 packageCanBypassDnd = packageChannel.canBypassDnd();
             }
-        } catch (PackageManager.NameNotFoundException e) {}
+        } catch (PackageManager.NameNotFoundException ignored) {}
         
         if (DEBUG) Log.d(TAG, "onNotificationPosted: package:" + packageName + " | channel id: " + packageChannelID + " | importance: " + packageImportance + " | can bypass dnd: " + packageCanBypassDnd);
         

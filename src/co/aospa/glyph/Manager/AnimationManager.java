@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -92,13 +93,10 @@ public final class AnimationManager {
     }
 
     private static boolean checkInterruption(String name) {
-        if (StatusManager.isAllLedActive()
-                || (name != "call" && StatusManager.isCallLedEnabled())
-                || (name == "call" && !StatusManager.isCallLedEnabled())
-                || (name == "progress" && StatusManager.isVolumeAnimationActive())) {
-            return true;
-        }
-        return false;
+        return StatusManager.isAllLedActive()
+                || (!Objects.equals(name, "call") && StatusManager.isCallLedEnabled())
+                || (Objects.equals(name, "call") && !StatusManager.isCallLedEnabled())
+                || (Objects.equals(name, "progress") && StatusManager.isVolumeAnimationActive());
     }
 
     public static void playCsv(Context context, String name) {
@@ -127,7 +125,6 @@ public final class AnimationManager {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 ResourceUtils.getAnimation(name)))) {
-            String line;
             Iterator<String> it = ResourceUtils.iterateCsvLines(reader, reverse);
             while (it.hasNext()) {
                 if (checkInterruption("csv")) throw new InterruptedException();
@@ -418,7 +415,7 @@ public final class AnimationManager {
                             Thread.sleep(16, 666000);
                         }
                     }
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException ignored) {}
                 StatusManager.setAnimationActive(false);
                 StatusManager.setEssentialLedActive(true);
                 if (DEBUG) Log.d(TAG, "Done playing animation | name: essential");
@@ -433,7 +430,6 @@ public final class AnimationManager {
                 int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
                 updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60);
             }
-            return;
         }
     }
 
