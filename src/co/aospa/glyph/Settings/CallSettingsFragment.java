@@ -24,6 +24,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.internal.util.ArrayUtils;
 import com.android.settingslib.widget.MainSwitchPreference;
@@ -46,6 +47,7 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
     private MainSwitchPreference mSwitchBar;
 
     private ListPreference mListPreference;
+    private SwitchPreferenceCompat mReverseCallAnimationSwitch;
 
     private GlyphAnimationPreference mGlyphAnimationPreference;
 
@@ -70,6 +72,9 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
             mListPreference.setValue(ResourceUtils.getString("glyph_settings_call_animations_default"));
         }
 
+        mReverseCallAnimationSwitch = findPreference(Constants.GLYPH_CALL_REVERSE_ANIMATION_ENABLE);
+        mReverseCallAnimationSwitch.setOnPreferenceChangeListener(this);
+
         mGlyphAnimationPreference = (GlyphAnimationPreference) findPreference(Constants.GLYPH_CALL_SUB_PREVIEW);
     }
 
@@ -77,7 +82,7 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
     public void onViewCreated (View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mGlyphAnimationPreference.updateAnimation(SettingsManager.isGlyphCallEnabled(),
-                SettingsManager.getGlyphCallAnimation());
+                SettingsManager.getGlyphCallAnimation(), mReverseCallAnimationSwitch.isChecked());
     }
 
     @Override
@@ -87,6 +92,10 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
         if (preferenceKey.equals(Constants.GLYPH_CALL_SUB_ANIMATIONS)) {
             mGlyphAnimationPreference.updateAnimation(SettingsManager.isGlyphCallEnabled(),
                 newValue.toString());
+        }
+
+        if (preferenceKey.equals(Constants.GLYPH_CALL_REVERSE_ANIMATION_ENABLE)) {
+            mGlyphAnimationPreference.updateAnimation(SettingsManager.isGlyphCallEnabled(), 1500, (Boolean) newValue);
         }
 
         //mHandler.post(() -> ServiceUtils.checkGlyphService());

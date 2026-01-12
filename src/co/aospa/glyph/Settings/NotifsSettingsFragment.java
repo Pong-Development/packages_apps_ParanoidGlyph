@@ -61,6 +61,7 @@ public class NotifsSettingsFragment extends SettingsBasePreferenceFragment imple
 
     private ListPreference mListPreference;
     private MultiSelectListPreference mMultiSelectListPreference;
+    private SwitchPreferenceCompat mReverseNotifAnimationSwitch;
 
     private GlyphAnimationPreference mGlyphAnimationPreference;
 
@@ -88,6 +89,9 @@ public class NotifsSettingsFragment extends SettingsBasePreferenceFragment imple
         }
 
         mGlyphAnimationPreference = (GlyphAnimationPreference) findPreference(Constants.GLYPH_NOTIFS_SUB_PREVIEW);
+
+        mReverseNotifAnimationSwitch = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_NOTIFS_REVERSE_ANIMATION_ENABLE);
+        mReverseNotifAnimationSwitch.setOnPreferenceChangeListener(this);
 
         mPackageManager = getActivity().getPackageManager();
         List<ApplicationInfo> mApps = mPackageManager.getInstalledApplications(PackageManager.GET_GIDS);
@@ -118,7 +122,7 @@ public class NotifsSettingsFragment extends SettingsBasePreferenceFragment imple
     public void onViewCreated (View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mGlyphAnimationPreference.updateAnimation(SettingsManager.isGlyphNotifsEnabled(),
-                SettingsManager.getGlyphNotifsAnimation(), 1500);
+                SettingsManager.getGlyphNotifsAnimation(), 1500, mReverseNotifAnimationSwitch.isChecked());
     }
 
     @Override
@@ -128,6 +132,10 @@ public class NotifsSettingsFragment extends SettingsBasePreferenceFragment imple
         if (preferenceKey.equals(Constants.GLYPH_NOTIFS_SUB_ANIMATIONS)) {
             mGlyphAnimationPreference.updateAnimation(SettingsManager.isGlyphNotifsEnabled(),
                 newValue.toString(), 1500);
+        }
+
+        if (preferenceKey.equals(Constants.GLYPH_NOTIFS_REVERSE_ANIMATION_ENABLE)) {
+            mGlyphAnimationPreference.updateAnimation(SettingsManager.isGlyphNotifsEnabled(), 1500, (Boolean) newValue);
         }
 
         if (preferenceKey.equals(Constants.GLYPH_NOTIFS_SUB_ESSENTIAL)) {

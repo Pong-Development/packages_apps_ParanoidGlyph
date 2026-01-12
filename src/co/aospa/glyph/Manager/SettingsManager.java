@@ -130,6 +130,13 @@ public final class SettingsManager {
                         ResourceUtils.getString("glyph_settings_call_animations_default"));
     }
 
+    public static boolean isGlyphCallAnimationReversed() {
+        Context ctx = getContext();
+         return PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(Constants.GLYPH_CALL_REVERSE_ANIMATION_ENABLE,
+                        false);
+    }
+
     public static boolean isGlyphMusicVisualizerEnabled() {
         Context ctx = getContext();
         return PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -159,6 +166,13 @@ public final class SettingsManager {
         return PreferenceManager.getDefaultSharedPreferences(ctx)
                 .getString(Constants.GLYPH_NOTIFS_SUB_ANIMATIONS,
                         ResourceUtils.getString("glyph_settings_notifs_animations_default"));
+    }
+
+    public static boolean isGlyphNotifsAnimationReversed() {
+        Context ctx = getContext();
+        return PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(Constants.GLYPH_NOTIFS_REVERSE_ANIMATION_ENABLE,
+                        false);
     }
 
     public static boolean isGlyphNotifsAppEnabled(String app) {

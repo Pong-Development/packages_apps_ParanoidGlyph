@@ -43,6 +43,7 @@ public final class Constants {
     public static final String GLYPH_CHARGING_POWERSHARE_ENABLE = "glyph_settings_charging_powershare";
     public static final String GLYPH_CALL_CATEGORY = "glyph_settings_call";
     public static final String GLYPH_CALL_ENABLE = "glyph_settings_call_toggle";
+    public static final String GLYPH_CALL_REVERSE_ANIMATION_ENABLE = "glyph_settings_call_sub_animations_reverse_toggle";
     public static final String GLYPH_CALL_SUB_PREVIEW = "glyph_settings_call_sub_preview";
     public static final String GLYPH_CALL_SUB_ANIMATIONS = "glyph_settings_call_sub_animations";
     public static final String GLYPH_CALL_SUB_ENABLE = "glyph_settings_call_sub_toggle";
@@ -53,6 +54,7 @@ public final class Constants {
     public static final String GLYPH_NOTIFS_SUB_ESSENTIAL = "glyph_settings_notifs_sub_essential";
     public static final String GLYPH_NOTIFS_SUB_CATEGORY = "glyph_settings_notifs_sub";
     public static final String GLYPH_NOTIFS_SUB_ENABLE = "glyph_settings_notifs_sub_toggle";
+    public static final String GLYPH_NOTIFS_REVERSE_ANIMATION_ENABLE = "glyph_settings_notifs_sub_animations_reverse_toggle";
     public static final String GLYPH_VOLUME_LEVEL_ENABLE = "glyph_settings_volume_level_toggle";
     public static final String GLYPH_AUTO_BRIGHTNESS_ENABLE = "glyph_settings_auto_brightness_toggle";
     public static final String GLYPH_FLIP_RINGER_MODE = "glyph_settings_flip_ringer_mode";

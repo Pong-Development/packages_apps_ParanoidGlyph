@@ -144,7 +144,11 @@ public class NotificationService extends NotificationListenerService
                         && (packageImportance >= NotificationManager.IMPORTANCE_DEFAULT || packageImportance == -1)
                         && (interruptionFilter <= NotificationManager.INTERRUPTION_FILTER_ALL || packageCanBypassDnd)) {
             mThreadHandler.post(() -> {
-                AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
+                if (SettingsManager.isGlyphNotifsAnimationReversed()) {
+                    AnimationManager.playCsvReverse(mContext, SettingsManager.getGlyphNotifsAnimation());
+                } else {
+                    AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
+                }
             });
         }
         

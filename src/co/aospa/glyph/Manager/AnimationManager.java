@@ -25,6 +25,7 @@ import com.android.internal.util.ArrayUtils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -101,10 +102,22 @@ public final class AnimationManager {
     }
 
     public static void playCsv(Context context, String name) {
-        playCsv(context, name, false);
+        playCsv(context, name, false, false);
     }
 
     public static void playCsv(Context context, String name, boolean wait) {
+        playCsv(context, name, wait, false);
+    }
+
+    public static void playCsvReverse(Context context, String name) {
+        playCsv(context, name, false, true);
+    }
+
+    public static void playCsvReverse(Context context, String name, boolean wait) {
+        playCsv(context, name, wait, true);
+    }
+
+    public static void playCsv(Context context, String name, boolean wait, boolean reverse) {
         if (!check(name, wait))
                 return;
 
@@ -115,15 +128,14 @@ public final class AnimationManager {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 ResourceUtils.getAnimation(name)))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            Iterator<String> it = ResourceUtils.iterateCsvLines(reader, reverse);
+            while (it.hasNext()) {
                 if (checkInterruption("csv")) throw new InterruptedException();
-                line = line.replace(" ", "");
-                line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
-                String[] pattern = line.split(",");
+                String[] pattern = it.next().split(",");
                 if (ArrayUtils.contains(Constants.getSupportedAnimationPatternLengths(), pattern.length)) {
                     updateLedFrame(pattern);
                 } else {
-                    if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + name + " | line: " + line);
+                    if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + name + " | line: " + it.next());
                     throw new InterruptedException();
                 }
                 Thread.sleep(16, 666000);
@@ -341,16 +353,15 @@ public final class AnimationManager {
         while (StatusManager.isCallLedEnabled()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceUtils.getCallAnimation(name)))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
+                Iterator<String> it = ResourceUtils.iterateCsvLines(reader,
+                        SettingsManager.isGlyphCallAnimationReversed());
+                while (it.hasNext()) {
                     if (checkInterruption("call")) throw new InterruptedException();
-                    line = line.replace(" ", "");
-                    line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
-                    String[] pattern = line.split(",");
+                    String[] pattern = it.next().split(",");
                     if (ArrayUtils.contains(Constants.getSupportedAnimationPatternLengths(), pattern.length)) {
                         updateLedFrame(pattern);
                     } else {
-                        if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + name + " | line: " + line);
+                        if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + name + " | line: " + it.next());
                         throw new InterruptedException();
                     }
                     Thread.sleep(16, 666000);

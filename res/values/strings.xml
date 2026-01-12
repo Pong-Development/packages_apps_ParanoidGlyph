@@ -58,6 +58,9 @@
     <string name="glyph_settings_notifs_sub_essential_title">Essential Notifications</string>
     <string name="glyph_settings_notifs_sub_essential_summary">Essential Glyph will be displayed until Essential notifications are read or dismissed</string>
 
+    <string name="glyph_settings_sub_animations_reverse_toggle_title">Reverse animation</string>
+    <string name="glyph_settings_sub_animations_reverse_toggle_summary">Play animation from end to beginning</string>
+
     <string name="glyph_settings_notifs_permission_dialog_title">Notification Access Required</string>
     <string name="glyph_settings_notifs_permission_dialog_message">To use the Glyph Interface for notifications, you must grant notification access permissions.</string>
 

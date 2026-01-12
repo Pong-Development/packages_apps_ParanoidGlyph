@@ -23,8 +23,13 @@ import android.util.Log;
 
 import com.android.internal.util.ArrayUtils;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
@@ -117,6 +122,18 @@ public final class ResourceUtils {
             pos += arr.length;
         }
         return result;
+    }
+
+    public static Iterator<String> iterateCsvLines(BufferedReader reader, boolean reverse) throws IOException {
+        List<String> lines = new ArrayList<>();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            line = line.replace(" ", "");
+            line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
+            lines.add(line);
+        }
+        if (reverse) Collections.reverse(lines);
+        return lines.iterator();
     }
 
     public static int[] reverseFrameArray(int[] array) {

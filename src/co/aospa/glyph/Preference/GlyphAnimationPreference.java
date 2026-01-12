@@ -33,6 +33,7 @@ import androidx.preference.PreferenceViewHolder;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
@@ -48,6 +49,7 @@ public class GlyphAnimationPreference extends Preference {
     private String animationName;
     private boolean animationTerminated;
     private boolean animationPaused = true;
+    private boolean animationReversed = false;
     private int animationTimeBetween = 0;
     private String[] animationSlugs;
     private ImageView[] animationImgs;
@@ -158,19 +160,34 @@ public class GlyphAnimationPreference extends Preference {
         animationThread.interrupt();
     }
 
+    public void updateAnimation(boolean play, String name, boolean reverse) {
+        updateAnimation(play, name, 0, reverse);
+    }
+
+    public void updateAnimation(boolean play, int time, boolean reverse) {
+        updateAnimation(play, animationName, time, reverse);
+    }
+
+    public void updateAnimation(boolean play, String name, int time, boolean reverse) {
+        animationTimeBetween = time;
+        animationName = name;
+        animationPaused = !play;
+        animationReversed = reverse;
+        animationThread.interrupt();
+    }
+
     Thread animationThread = new Thread() {
         @Override
         public void run() {
             while (!animationTerminated) {
                 while (animationPaused) {}
-                if (DEBUG) Log.d(TAG, "Displaying animation | name: " + animationName);
+                String playMode = (animationReversed) ? "reverse" : "forwards";
+                if (DEBUG) Log.d(TAG, "Displaying animation | name: " + animationName + " mode: " + playMode);
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                         ResourceUtils.getAnimation(animationName)))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        line = line.replace(" ", "");
-                        line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
-                        String[] split = line.split(",");
+                    Iterator<String> it = ResourceUtils.iterateCsvLines(reader, animationReversed);
+                    while (it.hasNext()) {
+                        String[] split = it.next().split(",");
                         if (Constants.getDevice().equals("phone1") && split.length == 5) { // Phone (1) pattern on Phone (1)
                             mActivity.runOnUiThread(() -> {
                                 for (int i = 0; i < animationSlugs.length; i++) {
@@ -212,7 +229,7 @@ public class GlyphAnimationPreference extends Preference {
                                     setGlyphsDrawable(animationImgs[2], Integer.parseInt(split[31]));
                             });
                         } else {
-                            if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + animationName + " | line: " + line);
+                            if (DEBUG) Log.d(TAG, "Animation line length mismatch | name: " + animationName + " | line: " + it.next());
                             updateAnimation(false);
                         }
                         Thread.sleep(16, 666000);
