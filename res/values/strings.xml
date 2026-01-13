@@ -29,7 +29,9 @@
     <string name="glyph_settings_title">Glyph interface</string>
     <string name="glyph_settings_summary">Options for Glyph lights</string>
 
-    <string name="glyph_settings_flip_toggle_title">Flip to Glyph</string>
+    <string name="glyph_settings_flip_title">Flip to Glyph</string>
+
+    <string name="glyph_settings_flip_toggle_title">@string/glyph_settings_flip_title</string>
     <string name="glyph_settings_flip_toggle_summary">Show Glyphs if phone is faced down</string>
 
     <string name="glyph_settings_flip_animation_toggle_title">Play animation</string>
@@ -86,8 +88,8 @@
 
     
     <!-- Flip to Glyph Ringer Mode -->
-    <string name="glyph_settings_flip_ringer_mode_title">Flip ringer mode</string>
-    <string name="glyph_settings_flip_ringer_mode_summary">Choose ringer mode when device is flipped</string>
+    <string name="glyph_settings_flip_ringer_mode_title">Ringer mode</string>
+    <string name="glyph_settings_flip_ringer_mode_summary">Choose ringer mode for when device is flipped</string>
     
     <!-- Ringer Mode Options -->
     <string name="glyph_settings_flip_ringer_mode_follow_system">Follow system</string>

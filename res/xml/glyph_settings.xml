@@ -26,6 +26,19 @@
         android:title="@string/glyph_settings_enable" />
 
     <SwitchPreferenceCompat
+        android:key="glyph_settings_auto_brightness_toggle"
+        android:defaultValue="true"
+        android:title="@string/glyph_settings_auto_brightness_toggle_title"
+        android:summary="@string/glyph_settings_auto_brightness_toggle_summary" />
+
+    <SeekBarPreference
+        android:key="glyph_settings_brightness"
+        android:title="@string/glyph_settings_brightness" />
+
+    <PreferenceCategory
+        android:title="@string/glyph_settings_flip_title"/>
+
+    <SwitchPreferenceCompat
         android:key="glyph_settings_flip_toggle"
         android:defaultValue="true"
         android:title="@string/glyph_settings_flip_toggle_title"
@@ -47,15 +60,6 @@
         android:defaultValue="1"
         android:dependency="glyph_settings_flip_toggle" />
 
-    <SwitchPreferenceCompat
-        android:key="glyph_settings_auto_brightness_toggle"
-        android:defaultValue="true"
-        android:title="@string/glyph_settings_auto_brightness_toggle_title"
-        android:summary="@string/glyph_settings_auto_brightness_toggle_summary" />
-
-    <SeekBarPreference
-        android:key="glyph_settings_brightness"
-        android:title="@string/glyph_settings_brightness" />
 
     <PreferenceCategory
         android:key="glyph_settings_call"
