@@ -28,9 +28,12 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 
+import java.io.IOException;
+
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Sensors.FlipToGlyphSensor;
+import co.aospa.glyph.Utils.ResourceUtils;
 
 public class FlipToGlyphService extends Service {
 
@@ -85,10 +88,23 @@ public class FlipToGlyphService extends Service {
     private void onFlip(boolean flipped) {
         if (flipped == isFlipped) return;
         if (DEBUG) Log.d(TAG, "Flipped: " + flipped);
-        if (flipped) {
-            mThreadHandler.post(() -> {
-                AnimationManager.playCsv(mContext, "flip");
-            });
+            boolean hasFlipCsv = false;
+            try {
+                ResourceUtils.getAnimation("flip");
+                hasFlipCsv = true;
+            } catch (IOException ignored) {
+            } finally {
+                boolean finalHasFlipCsv = hasFlipCsv;
+                mThreadHandler.post(() -> {
+                    if (finalHasFlipCsv) {
+                        AnimationManager.playCsv(mContext, "flip");
+                    } else {
+                        AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
+                        AnimationManager.playCsvReverse(mContext, SettingsManager.getGlyphNotifsAnimation());
+                    }
+                });
+            }
+
             ringerMode = mAudioManager.getRingerModeInternal();
             int preferredMode = SettingsManager.getFlipRingerMode();
             if (DEBUG) Log.d(TAG, "Preferred ringer mode: " + preferredMode);
