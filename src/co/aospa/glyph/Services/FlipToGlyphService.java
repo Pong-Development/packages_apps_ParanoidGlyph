@@ -88,6 +88,7 @@ public class FlipToGlyphService extends Service {
     private void onFlip(boolean flipped) {
         if (flipped == isFlipped) return;
         if (DEBUG) Log.d(TAG, "Flipped: " + flipped);
+        if (flipped && SettingsManager.isGlyphFlipAnimationEnabled()) {
             boolean hasFlipCsv = false;
             try {
                 ResourceUtils.getAnimation("flip");

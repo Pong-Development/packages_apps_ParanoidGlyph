@@ -32,6 +32,9 @@
     <string name="glyph_settings_flip_toggle_title">Flip to Glyph</string>
     <string name="glyph_settings_flip_toggle_summary">Show Glyphs if phone is faced down</string>
 
+    <string name="glyph_settings_flip_animation_toggle_title">Play animation</string>
+    <string name="glyph_settings_flip_animation_toggle_summary">Show animation once flip is detected</string>
+
     <string name="glyph_settings_auto_brightness_toggle_title">Auto Brightness</string>
     <string name="glyph_settings_auto_brightness_toggle_summary">Glyph brightness will automatically adjust to your environment</string>
 
