@@ -219,7 +219,7 @@ public final class ServiceUtils {
             } else {
                 stopAutoBrightnessService();
             }
-            if (SettingsManager.isGlyphProgressEnabled()) {
+            if (SettingsManager.isGlyphProgressEnabled() && !SettingsManager.isGlyphMusicVisualizerEnabled()) {
                 startProgressService();
             } else {
                 stopProgressService();
