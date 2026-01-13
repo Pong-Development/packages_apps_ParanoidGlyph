@@ -302,8 +302,10 @@ public final class AnimationManager {
         int[] emptyArray = new int[ResourceUtils.getInteger("glyph_settings_volume_levels_num")];
         int[] volumeArray = StatusManager.getVolumeArray();
 
-        if (Arrays.equals(emptyArray, volumeArray))
+        if (Arrays.equals(emptyArray, volumeArray)) {
+            StatusManager.setVolumeAnimationActive(false);
             return;
+        }
 
         if (!check("Dismiss volume", false))
             return;
