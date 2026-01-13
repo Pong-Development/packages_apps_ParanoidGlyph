@@ -30,6 +30,7 @@ public final class StatusManager {
     private static boolean callLedActive = false;
     private static boolean essentialLedActive = false;
     private static boolean progressAnimationActive = false;
+    private static boolean batterySavingActive = false;
     private static int progressType = 0;
     private static int progressLedLast = 0;
     private static int chargingLedLast = 0;
@@ -54,6 +55,14 @@ public final class StatusManager {
 
     public static void setChargingAnimationActive(boolean status) {
         chargingAnimationActive = status;
+    }
+
+    public static boolean isBatterySavingActive() {
+        return batterySavingActive;
+    }
+
+    public static void setBatterySavingActive(boolean status) {
+        batterySavingActive = status;
     }
 
     public static boolean isVolumeAnimationActive() {

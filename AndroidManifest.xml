@@ -71,6 +71,10 @@
         </service>
 
         <service
+            android:name=".Services.BatterySaverService">
+        </service>
+
+        <service
             android:name=".Services.PowershareService">
         </service>
 

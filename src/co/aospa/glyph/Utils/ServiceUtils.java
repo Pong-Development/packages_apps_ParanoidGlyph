@@ -31,6 +31,7 @@ import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Manager.StatusManager;
 import co.aospa.glyph.Services.AutoBrightnessService;
+import co.aospa.glyph.Services.BatterySaverService;
 import co.aospa.glyph.Services.CallReceiverService;
 import co.aospa.glyph.Services.ChargingService;
 import co.aospa.glyph.Services.FlipToGlyphService;
@@ -74,6 +75,18 @@ public final class ServiceUtils {
     private static void startCallReceiverService() {
         if (DEBUG) Log.d(TAG, "Starting Glyph call receiver service");
         getContext().startServiceAsUser(new Intent(getContext(), CallReceiverService.class),
+                UserHandle.CURRENT);
+    }
+
+    private static void startBatterySaverService(){
+        if (DEBUG) Log.d(TAG, "Starting Glyph battery saver service");
+        getContext().startServiceAsUser(new Intent(getContext(), BatterySaverService.class),
+                UserHandle.CURRENT);
+    }
+
+    private static void stopBatterySaverService(){
+        if (DEBUG) Log.d(TAG, "Starting Glyph battery saver service");
+        getContext().stopServiceAsUser(new Intent(getContext(), BatterySaverService.class),
                 UserHandle.CURRENT);
     }
 
@@ -190,8 +203,16 @@ public final class ServiceUtils {
         boolean glyphEnabled = SettingsManager.isGlyphEnabled();
         
         boolean glyphBaseEnabled = SettingsManager.isGlyphEnabledIgnoreSchedule();
-        
-        if (glyphEnabled) {
+
+        if (glyphBaseEnabled) {
+            if (SettingsManager.isGlyphBatterySaverEnabled()) {
+                startBatterySaverService();
+            } else {
+                stopBatterySaverService();
+            }
+        }
+
+        if (glyphEnabled && !StatusManager.isBatterySavingActive()) {
             if (SettingsManager.isGlyphChargingEnabled()) {
                 startChargingService();
             } else {
@@ -234,6 +255,7 @@ public final class ServiceUtils {
             } else {
                 stopProgressService();
             }
+
         } else {
             stopChargingService();
             if (Constants.isPowershareSupported()) {

@@ -28,6 +28,7 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.SwitchPreference;
 import android.provider.Settings;
 
 import androidx.preference.Preference;
@@ -44,6 +45,7 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
+import co.aospa.glyph.Manager.StatusManager;
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.GlyphScheduleManager;
@@ -55,6 +57,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         OnCheckedChangeListener {
 
     private MainSwitchPreference mSwitchBar;
+
+    private SwitchPreferenceCompat mBatterySaverPreference;
 
     private SwitchPreferenceCompat mFlipPreference;
     private SwitchPreferenceCompat mAutoBrightnessPreference;
@@ -97,6 +101,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mSwitchBar = (MainSwitchPreference) findPreference(Constants.GLYPH_ENABLE);
         mSwitchBar.addOnSwitchChangeListener(this);
         mSwitchBar.setChecked(glyphEnabled);
+
+        mBatterySaverPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_BATTERY_SAVER_ENABLE);
+        mBatterySaverPreference.setOnPreferenceChangeListener(this);
 
         mFlipPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_FLIP_ENABLE);
         mFlipPreference.setEnabled(glyphEnabled);
@@ -314,13 +321,17 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         if (mSwitchBar != null) {
             boolean baseEnabled = SettingsManager.isGlyphEnabledIgnoreSchedule();
             boolean effectiveEnabled = SettingsManager.isGlyphEnabled();
+            boolean batterySavingActive = StatusManager.isBatterySavingActive();
             
             mSwitchBar.setChecked(baseEnabled);
             
             if (baseEnabled && !effectiveEnabled) {
                 mSwitchBar.setSummary("Currently disabled by schedule");
+            } else if (batterySavingActive) {
+                mSwitchBar.setSummary(
+                        ResourceUtils.getString("glyph_settings_summary_battery_saving"));
             } else {
-                mSwitchBar.setSummary("");
+                 mSwitchBar.setSummary("");
             }
         }
     }

@@ -105,6 +105,12 @@ public final class SettingsManager {
                 .getInt(Constants.GLYPH_BRIGHTNESS, d);
     }
 
+    public static boolean isGlyphBatterySaverEnabled() {
+        Context ctx = getContext();
+        return PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(Constants.GLYPH_BATTERY_SAVER_ENABLE, false) && isGlyphEnabled();
+    }
+
     public static boolean isGlyphChargingEnabled() {
         Context ctx = getContext();
         return PreferenceManager.getDefaultSharedPreferences(ctx)

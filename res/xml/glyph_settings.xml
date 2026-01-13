@@ -35,6 +35,12 @@
         android:key="glyph_settings_brightness"
         android:title="@string/glyph_settings_brightness" />
 
+    <SwitchPreferenceCompat
+        android:key="glyph_settings_battery_saver_toggle"
+        android:defaultValue="true"
+        android:title="@string/glyph_settings_battery_saver_toggle_title"
+        android:summary="@string/glyph_settings_battery_saver_toggle_summary" />
+
     <PreferenceCategory
         android:title="@string/glyph_settings_flip_title"/>
 
