@@ -122,16 +122,17 @@ public class ProgressService extends Service {
         }
 
         startProgressMonitoring();
-
-        if (SettingsManager.isGlyphProgressMusicEnabled()) {
-            if (DEBUG) Log.d(TAG, "Starting music progress monitoring");
-            startMusicProgressMonitoring();
-        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (DEBUG) Log.d(TAG, "Starting service");
+        if (SettingsManager.isGlyphProgressMusicEnabled()) {
+            if (DEBUG) Log.d(TAG, "Starting music progress monitoring");
+            startMusicProgressMonitoring();
+        } else {
+            stopMusicProgressMonitoring();
+        }
         return START_STICKY;
     }
 
@@ -145,7 +146,8 @@ public class ProgressService extends Service {
         }
         stopProgressMonitoring();
         stopMusicProgressMonitoring();
-        thread.quit();
+        mThreadHandler.post(dismissProgress);
+        thread.quitSafely();
         super.onDestroy();
     }
 
@@ -230,6 +232,9 @@ public class ProgressService extends Service {
     private void stopMusicProgressMonitoring() {
         if (mMusicProgressChecker != null) {
             mThreadHandler.removeCallbacks(mMusicProgressChecker);
+            if (StatusManager.getProgressType() == 2) {
+                mThreadHandler.post(dismissProgress);
+            }
         }
     }
 
