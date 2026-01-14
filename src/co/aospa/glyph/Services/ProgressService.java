@@ -68,6 +68,7 @@ public class ProgressService extends Service {
         @Override
         public void run() {
             AnimationManager.dismissProgress(mContext);
+            StatusManager.setProgressAnimationActive(false);
         }
     };
 
@@ -305,6 +306,7 @@ public class ProgressService extends Service {
 
         mThreadHandler.post(() -> {
             AnimationManager.playProgress(mContext, progress, progressType, false);
+            StatusManager.setProgressAnimationActive(true);
         });
     }
 
