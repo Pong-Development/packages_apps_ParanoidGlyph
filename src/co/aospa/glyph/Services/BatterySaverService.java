@@ -10,6 +10,7 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import co.aospa.glyph.Manager.StatusManager;
+import co.aospa.glyph.Utils.ServiceUtils;
 
 public class BatterySaverService extends Service {
 
@@ -19,9 +20,7 @@ public class BatterySaverService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (PowerManager.ACTION_POWER_SAVE_MODE_CHANGED.equals(intent.getAction())) {
-                StatusManager.setBatterySavingActive(pm.isPowerSaveMode());
-                Log.d("GlyphBatterySaver", "Battery saver: " + pm.isPowerSaveMode());
-                updateMainSwitch();
+                updateStatus();
             }
         }
     };
@@ -32,14 +31,25 @@ public class BatterySaverService extends Service {
         sendBroadcast(intent);
     }
 
+    private void updateStatus() {
+        Log.d("GlyphBatterySaver", "Battery saver: " + pm.isPowerSaveMode());
+        StatusManager.setBatterySavingActive(pm.isPowerSaveMode());
+        updateMainSwitch();
+        ServiceUtils.checkGlyphService();
+    }
+
     @Override
     public void onCreate() {
         pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
         registerReceiver(powerSaveReceiver,
                 new IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED));
-        Log.d("GlyphBatterySaver", "Battery saver: " + pm.isPowerSaveMode());
-        StatusManager.setBatterySavingActive(pm.isPowerSaveMode());
-        updateMainSwitch();
+        updateStatus();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        updateStatus();
+        return START_STICKY;
     }
 
     @Override
@@ -48,9 +58,9 @@ public class BatterySaverService extends Service {
         StatusManager.setBatterySavingActive(false);
         Log.d("GlyphBatterySaver", "Battery saver stopping");
         updateMainSwitch();
+        ServiceUtils.checkGlyphService();
         super.onDestroy();
     }
-
 
     @Override
     public IBinder onBind(Intent intent) {
