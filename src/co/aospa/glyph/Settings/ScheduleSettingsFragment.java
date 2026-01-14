@@ -32,6 +32,7 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 
 import co.aospa.glyph.Manager.GlyphScheduleManager;
 import co.aospa.glyph.R;
+import co.aospa.glyph.Utils.ServiceUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -90,6 +91,9 @@ public class ScheduleSettingsFragment extends SettingsBasePreferenceFragment
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         GlyphScheduleManager.setScheduleEnabled(requireContext(), isChecked);
         updatePreferences();
+        if (!isChecked) {
+            ServiceUtils.checkGlyphService();
+        }
     }
 
     private void showTimePickerDialog(boolean isStartTime) {
