@@ -110,10 +110,6 @@ public class GlyphAnimationPreference extends Preference {
             parent.removeView(mRootView);
         }
         layout.addView(mRootView);
-
-        if (layout != null && SystemProperties.get("ro.boot.pbid", "Base").equals("Pro")) {
-            layout.setBackgroundResource(R.drawable.bg_device_background_pro);
-        }
     }
 
     @Override
