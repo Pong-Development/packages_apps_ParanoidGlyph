@@ -193,6 +193,15 @@ public final class ServiceUtils {
     }
 
     public static void checkGlyphService() {
+
+        boolean glyphEnabled = SettingsManager.isGlyphEnabled();
+        boolean glyphBaseEnabled = SettingsManager.isGlyphEnabledIgnoreSchedule();
+
+        if (StatusManager.isBatterySavingActive()) {
+            stopGlyphServices();
+            return;
+        }
+
         if (SettingsManager.getGlyphBrightness() != Constants.getBrightness()) {
             Constants.setBrightness(SettingsManager.getGlyphBrightness());
             startThirdPartyService();
@@ -200,19 +209,15 @@ public final class ServiceUtils {
                 AnimationManager.playEssential();
         }
         
-        boolean glyphEnabled = SettingsManager.isGlyphEnabled();
-        
-        boolean glyphBaseEnabled = SettingsManager.isGlyphEnabledIgnoreSchedule();
-
         if (glyphBaseEnabled) {
-            if (SettingsManager.isGlyphBatterySaverEnabled()) {
-                startBatterySaverService();
-            } else {
-                stopBatterySaverService();
-            }
+            startThirdPartyService();
+            startBatterySaverService();
+        } else {
+            stopThirdPartyService();
+            stopBatterySaverService();
         }
 
-        if (glyphEnabled && !StatusManager.isBatterySavingActive()) {
+        if (glyphEnabled) {
             if (SettingsManager.isGlyphChargingEnabled()) {
                 startChargingService();
             } else {
@@ -255,24 +260,21 @@ public final class ServiceUtils {
             } else {
                 stopProgressService();
             }
+        } else {
+            stopGlyphServices();
+        }
+    }
 
-        } else {
-            stopChargingService();
-            if (Constants.isPowershareSupported()) {
-                stopPowershareService();
-            }
-            stopCallReceiverService();
-            stopFlipToGlyphService();
-            stopMusicVisualizerService();
-            stopVolumeLevelService();
-            stopAutoBrightnessService();
-            stopProgressService();
+    public static void stopGlyphServices(){
+        stopChargingService();
+        if (Constants.isPowershareSupported()) {
+            stopPowershareService();
         }
-        
-        if (glyphBaseEnabled) {
-            startThirdPartyService();
-        } else {
-            stopThirdPartyService();
-        }
+        stopCallReceiverService();
+        stopFlipToGlyphService();
+        stopMusicVisualizerService();
+        stopVolumeLevelService();
+        stopAutoBrightnessService();
+        stopProgressService();
     }
 }

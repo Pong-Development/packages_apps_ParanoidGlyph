@@ -10,11 +10,16 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import co.aospa.glyph.Manager.StatusManager;
+import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Utils.ServiceUtils;
 
 public class BatterySaverService extends Service {
 
     PowerManager pm;
+
+    boolean trackBatterySaver = false;
+    boolean systemSaverOn = false;
+    boolean restrictionActive = false;
 
     private final BroadcastReceiver powerSaveReceiver = new BroadcastReceiver() {
         @Override
@@ -32,10 +37,11 @@ public class BatterySaverService extends Service {
     }
 
     private void updateStatus() {
-        Log.d("GlyphBatterySaver", "Battery saver: " + pm.isPowerSaveMode());
-        StatusManager.setBatterySavingActive(pm.isPowerSaveMode());
+        systemSaverOn = pm.isPowerSaveMode();
+        restrictionActive = trackBatterySaver && systemSaverOn;
+        Log.d("GlyphBatterySaver", "Battery saver: " + restrictionActive);
+        StatusManager.setBatterySavingActive(restrictionActive);
         updateMainSwitch();
-        ServiceUtils.checkGlyphService();
     }
 
     @Override
@@ -48,6 +54,9 @@ public class BatterySaverService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if ("co.aospa.glyph.UPDATE_BATTERY_SAVER".equals(intent.getAction())){
+            trackBatterySaver = intent.getBooleanExtra("status", false);
+        }
         updateStatus();
         return START_STICKY;
     }
@@ -58,7 +67,6 @@ public class BatterySaverService extends Service {
         StatusManager.setBatterySavingActive(false);
         Log.d("GlyphBatterySaver", "Battery saver stopping");
         updateMainSwitch();
-        ServiceUtils.checkGlyphService();
         super.onDestroy();
     }
 

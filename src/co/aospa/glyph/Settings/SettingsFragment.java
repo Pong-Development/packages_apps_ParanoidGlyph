@@ -50,6 +50,7 @@ import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.GlyphScheduleManager;
 import co.aospa.glyph.Manager.SettingsManager;
+import co.aospa.glyph.Services.BatterySaverService;
 import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
 
@@ -231,6 +232,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             return true;
         }
 
+        if (preferenceKey.equals(Constants.GLYPH_BATTERY_SAVER_ENABLE)) {
+            updateBatterySaver((Boolean) newValue);
+        }
+
         mHandler.post(() -> ServiceUtils.checkGlyphService());
 
         return true;
@@ -268,6 +273,16 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         try {
             Intent intent = new Intent("co.aospa.glyph.UPDATE_TORCH_TILE");
             requireContext().sendBroadcast(intent);
+        } catch (Exception e) {
+        }
+    }
+
+    private void updateBatterySaver(boolean state) {
+        try {
+            Intent intent = new Intent(requireContext(), BatterySaverService.class);
+            intent.setAction("co.aospa.glyph.UPDATE_BATTERY_SAVER");
+            intent.putExtra("status", state);
+            requireContext().startService(intent);
         } catch (Exception e) {
         }
     }
