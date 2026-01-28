@@ -16,6 +16,7 @@
 
 package co.aospa.glyph.Settings;
 
+import android.app.Activity;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.SettingsManager;
@@ -60,12 +62,14 @@ public class NotifsSettingsFragment extends SettingsBasePreferenceFragment imple
     private PackageManager mPackageManager;
 
     private ListPreference mListPreference;
+    private Preference mLivePreviewPreference;
     private MultiSelectListPreference mMultiSelectListPreference;
     private SwitchPreferenceCompat mReverseNotifAnimationSwitch;
 
     private GlyphAnimationPreference mGlyphAnimationPreference;
 
     private Handler mHandler = new Handler();
+    private Thread livePreviewThread;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -87,6 +91,8 @@ public class NotifsSettingsFragment extends SettingsBasePreferenceFragment imple
         if (!ArrayUtils.contains(ResourceUtils.getNotificationAnimations(), mListPreference.getValue())) {
             mListPreference.setValue(ResourceUtils.getString("glyph_settings_notifs_animations_default"));
         }
+
+        mLivePreviewPreference = (Preference) findPreference(Constants.GLYPH_NOTIFS_SUB_LIVE_PREVIEW);
 
         mGlyphAnimationPreference = (GlyphAnimationPreference) findPreference(Constants.GLYPH_NOTIFS_SUB_PREVIEW);
 
@@ -147,6 +153,36 @@ public class NotifsSettingsFragment extends SettingsBasePreferenceFragment imple
         return true;
     }
 
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (Constants.GLYPH_NOTIFS_SUB_LIVE_PREVIEW.equals(preference.getKey())) {
+            mLivePreviewPreference.setEnabled(false);
+            mLivePreviewPreference.setSummary(R.string.glyph_settings_animations_live_preview_summary_playing);
+            livePreviewThread = new Thread(() -> {
+                Activity activity = getActivity();
+                try {
+                    Thread.sleep(1200);
+                } catch (InterruptedException e) {
+                    resetLivePreview();
+                    return;
+                }
+                AnimationManager.playCsv(
+                        requireContext(),
+                        SettingsManager.getGlyphNotifsAnimation(),
+                        false,
+                        mReverseNotifAnimationSwitch.isChecked()
+                );
+
+                if (activity != null) {
+                    activity.runOnUiThread(this::resetLivePreview);
+                }
+            });
+            livePreviewThread.start();
+        }
+        return true;
+    }
+
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         SettingsManager.setGlyphNotifsEnabled(isChecked);
@@ -154,5 +190,30 @@ public class NotifsSettingsFragment extends SettingsBasePreferenceFragment imple
         mGlyphAnimationPreference.updateAnimation(isChecked,
                 SettingsManager.getGlyphNotifsAnimation(), 1500);
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        resetLivePreview();
+    }
+
+    private void resetLivePreview() {
+        mLivePreviewPreference.setEnabled(true);
+        mLivePreviewPreference.setSummary(
+                R.string.glyph_settings_animations_live_preview_summary
+        );
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (livePreviewThread != null && livePreviewThread.isAlive()) {
+            livePreviewThread.interrupt();
+            livePreviewThread = null;
+        }
+    }
+
 
 }

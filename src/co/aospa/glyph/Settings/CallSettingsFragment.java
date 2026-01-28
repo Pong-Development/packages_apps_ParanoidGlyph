@@ -16,6 +16,7 @@
 
 package co.aospa.glyph.Settings;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
+import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.SettingsManager;
@@ -47,15 +49,18 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
     private MainSwitchPreference mSwitchBar;
 
     private ListPreference mListPreference;
+    private Preference mLivePreviewPreference;
     private SwitchPreferenceCompat mReverseCallAnimationSwitch;
 
     private GlyphAnimationPreference mGlyphAnimationPreference;
 
     private Handler mHandler = new Handler();
 
+    private Thread livePreviewThread;
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        addPreferencesFromResource(R.xml.glyph_call_settings);
+        addPreferencesFromResource(R.xml.glyph_call_settings);;
 
         mScreen = this.getPreferenceScreen();
         getActivity().setTitle(R.string.glyph_settings_call_toggle_title);
@@ -71,6 +76,8 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
         if (!ArrayUtils.contains(ResourceUtils.getCallAnimations(), mListPreference.getValue())) {
             mListPreference.setValue(ResourceUtils.getString("glyph_settings_call_animations_default"));
         }
+
+        mLivePreviewPreference = (Preference) findPreference(Constants.GLYPH_CALL_SUB_LIVE_PREVIEW);
 
         mReverseCallAnimationSwitch = findPreference(Constants.GLYPH_CALL_REVERSE_ANIMATION_ENABLE);
         mReverseCallAnimationSwitch.setOnPreferenceChangeListener(this);
@@ -104,11 +111,63 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
     }
 
     @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (Constants.GLYPH_CALL_SUB_LIVE_PREVIEW.equals(preference.getKey())) {
+            mLivePreviewPreference.setEnabled(false);
+            mLivePreviewPreference.setSummary(R.string.glyph_settings_animations_live_preview_summary_playing);
+            livePreviewThread = new Thread(() -> {
+                Activity activity = getActivity();
+                try {
+                    Thread.sleep(1200);
+                } catch (InterruptedException e) {
+                    resetLivePreview();
+                    return;
+                }
+                AnimationManager.playCsv(
+                        requireContext(),
+                        SettingsManager.getGlyphCallAnimation(),
+                        false,
+                        mReverseCallAnimationSwitch.isChecked()
+                );
+
+                if (activity != null) {
+                    activity.runOnUiThread(this::resetLivePreview);
+                }
+            });
+        livePreviewThread.start();
+        }
+        return true;
+    }
+
+    @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         SettingsManager.setGlyphCallEnabled(isChecked);
         ServiceUtils.checkGlyphService();
         mGlyphAnimationPreference.updateAnimation(isChecked,
                 SettingsManager.getGlyphCallAnimation());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        resetLivePreview();
+    }
+
+    private void resetLivePreview() {
+        mLivePreviewPreference.setEnabled(true);
+        mLivePreviewPreference.setSummary(
+                R.string.glyph_settings_animations_live_preview_summary
+        );
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (livePreviewThread != null && livePreviewThread.isAlive()) {
+            livePreviewThread.interrupt();
+            livePreviewThread = null;
+        }
     }
 
 }

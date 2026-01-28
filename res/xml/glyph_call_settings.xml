@@ -33,6 +33,11 @@
             android:layout="@layout/preference"
             android:summary="%s" />
 
+        <Preference
+            android:key="glyph_settings_call_sub_animations_live_preview"
+            android:title="@string/glyph_settings_animations_live_preview_title"
+            android:summary="@string/glyph_settings_animations_live_preview_summary" />
+
         <SwitchPreferenceCompat
             android:key="glyph_settings_call_sub_animations_reverse_toggle"
             android:title="@string/glyph_settings_sub_animations_reverse_toggle_title"

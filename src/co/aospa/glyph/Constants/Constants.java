@@ -48,11 +48,13 @@ public final class Constants {
     public static final String GLYPH_CALL_REVERSE_ANIMATION_ENABLE = "glyph_settings_call_sub_animations_reverse_toggle";
     public static final String GLYPH_CALL_SUB_PREVIEW = "glyph_settings_call_sub_preview";
     public static final String GLYPH_CALL_SUB_ANIMATIONS = "glyph_settings_call_sub_animations";
+    public static final String GLYPH_CALL_SUB_LIVE_PREVIEW = "glyph_settings_call_sub_animations_live_preview";
     public static final String GLYPH_CALL_SUB_ENABLE = "glyph_settings_call_sub_toggle";
     public static final String GLYPH_MUSIC_VISUALIZER_ENABLE = "glyph_settings_music_visualizer_toggle";
     public static final String GLYPH_NOTIFS_ENABLE = "glyph_settings_notifs_toggle";
     public static final String GLYPH_NOTIFS_SUB_PREVIEW = "glyph_settings_notifs_sub_preview";
     public static final String GLYPH_NOTIFS_SUB_ANIMATIONS = "glyph_settings_notifs_sub_animations";
+    public static final String GLYPH_NOTIFS_SUB_LIVE_PREVIEW = "glyph_settings_notifs_sub_animations_live_preview";
     public static final String GLYPH_NOTIFS_SUB_ESSENTIAL = "glyph_settings_notifs_sub_essential";
     public static final String GLYPH_NOTIFS_SUB_CATEGORY = "glyph_settings_notifs_sub";
     public static final String GLYPH_NOTIFS_SUB_ENABLE = "glyph_settings_notifs_sub_toggle";

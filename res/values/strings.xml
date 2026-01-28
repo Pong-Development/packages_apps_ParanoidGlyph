@@ -53,6 +53,10 @@
     <string name="glyph_settings_charging_powershare_title">Reverse wireless charging</string>
     <string name="glyph_settings_charging_powershare_summary">Show an animation when reverse wireless charging is detected</string>
 
+    <string name="glyph_settings_animations_live_preview_summary_playing">Now Playing...</string>
+    <string name="glyph_settings_animations_live_preview_title">Live Preview</string>
+    <string name="glyph_settings_animations_live_preview_summary">Preview selected animation on Glyphs</string>
+
     <string name="glyph_settings_call_title">Calls</string>
     <string name="glyph_settings_call_toggle_title">Call animation</string>
     <string name="glyph_settings_call_toggle_summary">Flash LEDs on incoming calls</string>
