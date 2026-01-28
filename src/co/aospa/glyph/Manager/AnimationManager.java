@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -448,54 +449,46 @@ public final class AnimationManager {
         }
     }
 
-    public static void playMusic(String name) {
+    public static void playMusic(Set<String> snapshot) {
         float maxPatternBrightness = (float) Constants.MAX_PATTERN_BRIGHTNESS;
 
         float[] pattern;
 
         if (Constants.getDevice().equals("phone3a")) {
+
             float[] zone1 = new float[20]; // largest (left 2)
             float[] zone2 = new float[11]; // medium (right 1)
             float[] zone3 = new float[5]; // smallest (left)
 
-            switch (name) {
-                case "low":
-                    Arrays.fill(zone1, maxPatternBrightness);
-                    break;
-                case "mid":
-                    Arrays.fill(zone2, maxPatternBrightness);
-                    break;
-                case "high":
-                    Arrays.fill(zone3, maxPatternBrightness);
-                    break;
-                default:
-                    if (DEBUG) Log.d(TAG, "Name doesn't match any zone, returning | name: " + name);
-                    return;
+            if (snapshot.contains("low") || snapshot.contains("mid_low")) {
+                Arrays.fill(zone1, maxPatternBrightness);
             }
+            if (snapshot.contains("mid") || snapshot.contains("mid_high")) {
+                Arrays.fill(zone2, maxPatternBrightness);
+            }
+            if (snapshot.contains("high")) {
+                Arrays.fill(zone3, maxPatternBrightness);
+            }
+
             pattern = ResourceUtils.buildPatternArray(zone1, zone2, zone3); // pattern = float[zone1.length + zone2.length + zone3.length] fill with zone values
 
         } else {
             pattern = new float[5];
 
-            switch (name) {
-                case "low":
-                    pattern[4] = maxPatternBrightness;
-                    break;
-                case "mid_low":
-                    pattern[3] = maxPatternBrightness;
-                    break;
-                case "mid":
-                    pattern[2] = maxPatternBrightness;
-                    break;
-                case "mid_high":
-                    pattern[0] = maxPatternBrightness;
-                    break;
-                case "high":
-                    pattern[1] = maxPatternBrightness;
-                    break;
-                default:
-                    if (DEBUG) Log.d(TAG, "Name doesn't match any zone, returning | name: " + name);
-                    return;
+            if (snapshot.contains("low")) {
+                pattern[4] = maxPatternBrightness;
+            }
+            if (snapshot.contains("mid_low")) {
+                pattern[3] = maxPatternBrightness;
+            }
+            if (snapshot.contains("mid")) {
+                pattern[2] = maxPatternBrightness;
+            }
+            if (snapshot.contains("mid_high")) {
+                pattern[0] = maxPatternBrightness;
+            }
+            if (snapshot.contains("high")) {
+                pattern[1] = maxPatternBrightness;
             }
         }
 
@@ -505,15 +498,16 @@ public final class AnimationManager {
                 Thread.sleep(106);
             }
         } catch (Exception e) {
-            if (DEBUG) Log.d(TAG, "Exception while playing animation | name: music: " + name + " | exception: " + e);
+            if (DEBUG)
+                Log.d(TAG, "Exception while playing animation | name: music: " + snapshot + " | exception: " + e);
         } finally {
             if (StatusManager.isGlyphIdle()) {
-                if (Constants.getDevice().equals("phone3a")) { 
+                if (Constants.getDevice().equals("phone3a")) {
                     updateLedFrame(new float[36]);
                 } else {
                     updateLedFrame(new float[5]);
                 }
-                if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
+                if (DEBUG) Log.d(TAG, "Done playing animation | name: music " + snapshot);
             }
         }
     }
