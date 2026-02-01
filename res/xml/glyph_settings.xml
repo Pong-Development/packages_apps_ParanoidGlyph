@@ -37,7 +37,7 @@
 
     <SwitchPreferenceCompat
         android:key="glyph_settings_battery_saver_toggle"
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:title="@string/glyph_settings_battery_saver_toggle_title"
         android:summary="@string/glyph_settings_battery_saver_toggle_summary" />
 
