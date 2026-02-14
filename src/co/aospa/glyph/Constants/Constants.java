@@ -66,6 +66,10 @@ public final class Constants {
     public static final String GLYPH_PROGRESS_ENABLE = "glyph_settings_progress_toggle";
     public static final String GLYPH_PROGRESS_MUSIC_ENABLE = "glyph_settings_progress_music_toggle";
 
+    public static final String ACTION_TORCH_ENABLE = "torch_enable";
+    public static final String ACTION_TORCH_DISABLE = "torch_disable";
+
+
     public static final String[] APPS_TO_IGNORE = {
         "android",
         "com.android.traceur",

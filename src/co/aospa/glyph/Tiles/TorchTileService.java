@@ -26,10 +26,13 @@ import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.util.Log;
 
+import java.util.concurrent.Executors;
+
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Manager.StatusManager;
+import co.aospa.glyph.Services.TorchService;
 import co.aospa.glyph.Utils.FileUtils;
 import co.aospa.glyph.Utils.ResourceUtils;
 
@@ -96,8 +99,19 @@ public class TorchTileService extends TileService {
         if (!SettingsManager.isGlyphEnabledIgnoreSchedule()) {
             return;
         }
-        setEnabled(!getEnabled());
-        updateState();
+        boolean newState = !getEnabled();
+        setEnabled(newState);
+
+        getQsTile().setState(
+                newState ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
+
+        getQsTile().setSubtitle(
+                newState ?
+                        getString(R.string.glyph_accessibility_quick_settings_on) :
+                        getString(R.string.glyph_accessibility_quick_settings_off)
+        );
+
+        getQsTile().updateTile();
     }
 
     private boolean getEnabled() {
@@ -105,12 +119,16 @@ public class TorchTileService extends TileService {
     }
 
     private void setEnabled(boolean enabled) {
-        StatusManager.setAllLedsActive(enabled);
-        FileUtils.writeAllLed(enabled ? Constants.getMaxBrightness() : 0);
-        if (StatusManager.isEssentialLedActive() && !enabled)
-            FileUtils.writeSingleLed(
-                ResourceUtils.getInteger("glyph_settings_notifs_essential_led"),
-                Constants.getMaxBrightness() / 100 * 7);
+        Intent i = new Intent(this, TorchService.class);
+        String action;
+        if (enabled) {
+            action = Constants.ACTION_TORCH_ENABLE;
+        } else {
+            action = Constants.ACTION_TORCH_DISABLE;
+        }
+        i.setAction(action);
+        Executors.newSingleThreadExecutor().execute(() ->
+                startService(i));
     }
 
     public static void requestTileUpdate(Context context) {

@@ -39,6 +39,7 @@ import co.aospa.glyph.Services.MusicVisualizerService;
 import co.aospa.glyph.Services.PowershareService;
 import co.aospa.glyph.Services.ProgressService;
 import co.aospa.glyph.Services.ThirdPartyService;
+import co.aospa.glyph.Services.TorchService;
 import co.aospa.glyph.Services.VolumeLevelService;
 
 public final class ServiceUtils {
@@ -192,6 +193,18 @@ public final class ServiceUtils {
                 UserHandle.CURRENT);
     }
 
+    public static void startTorchService() {
+        if (DEBUG) Log.d(TAG, "Starting Torch service");
+        context.startServiceAsUser(new Intent(context, TorchService.class),
+                UserHandle.CURRENT);
+    }
+
+    public static void stopTorchService() {
+        if (DEBUG) Log.d(TAG, "Stopping Torch service");
+        context.stopServiceAsUser(new Intent(context, TorchService.class),
+                UserHandle.CURRENT);
+    }
+
     public static void checkGlyphService() {
 
         boolean glyphEnabled = SettingsManager.isGlyphEnabled();
@@ -212,9 +225,11 @@ public final class ServiceUtils {
         if (glyphBaseEnabled) {
             startThirdPartyService();
             startBatterySaverService();
+            startTorchService();
         } else {
             stopThirdPartyService();
             stopBatterySaverService();
+            stopTorchService();
         }
 
         if (glyphEnabled) {
