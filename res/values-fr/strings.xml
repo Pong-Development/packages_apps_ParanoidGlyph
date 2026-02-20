@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2013-2016 The CyanogenMod Project
+                   2017 The LineageOS Project
+                   2020-2024 Paranoid Android
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="glyph_settings_app_name">Interface Glyph</string>
+    <string name="glyph_settings_enable">Lumières Glyph</string>
+    <string name="glyph_settings_title">Interface Glyph</string>
+    <string name="glyph_settings_summary">Paramètres des lumières Glyph</string>
+    <string name="glyph_settings_summary_battery_saving">Désactivé par l\'économiseur de batterie</string>
+    <string name="glyph_settings_flip_title">Flip to Glyph</string>
+    <string name="glyph_settings_flip_toggle_title">@string/glyph_settings_flip_title</string>
+    <string name="glyph_settings_flip_toggle_summary">Affiche les Glyphs si le téléphone est retourné</string>
+    <string name="glyph_settings_flip_animation_toggle_title">Jouer l\'animation</string>
+    <string name="glyph_settings_flip_animation_toggle_summary">Affiche l\'animation une fois que le téléphone est retourné</string>
+    <string name="glyph_settings_auto_brightness_toggle_title">Luminosité automatique</string>
+    <string name="glyph_settings_auto_brightness_toggle_summary">La luminosité des Glyphs s\'ajustera automatiquement à votre environnement</string>
+    <string name="glyph_settings_brightness">Luminosité</string>
+    <string name="glyph_settings_battery_saver_toggle_title">Suivre l\'économiseur de batterie</string>
+    <string name="glyph_settings_battery_saver_toggle_summary">Désactiver l\'interface Glyph lorsque l\'économiseur de batterie est activé</string>
+    <string name="glyph_settings_charging_title">En charge</string>
+    <string name="glyph_settings_charging_level_title">Niveau de batterie</string>
+    <string name="glyph_settings_charging_level_summary">Afficher le niveau de batterie lors du branchement</string>
+    <string name="glyph_settings_charging_powershare_title">Recharge sans fil inverse</string>
+    <string name="glyph_settings_charging_powershare_summary">Afficher une animation lorsque la recharge sans fil inverse est détectée</string>
+    <string name="glyph_settings_animations_live_preview_summary_playing">En cours de lecture...</string>
+    <string name="glyph_settings_animations_live_preview_title">Aperçu en direct</string>
+    <string name="glyph_settings_animations_live_preview_summary">Aperçu de l\'animation sélectionnée sur les Glyphs</string>
+    <string name="glyph_settings_call_title">Appels</string>
+    <string name="glyph_settings_call_toggle_title">Animation d\'appel</string>
+    <string name="glyph_settings_call_toggle_summary">Clignotement des LED lors des appels entrants</string>
+    <string name="glyph_settings_call_sub_toggle_title">Activer l\'animation d\'appel</string>
+    <string name="glyph_settings_call_sub_animations_title">Motif</string>
+    <string name="glyph_settings_notifs_title">Notifications</string>
+    <string name="glyph_settings_notifs_toggle_title">Animation de notification</string>
+    <string name="glyph_settings_notifs_toggle_summary">Clignotement des LED lors de nouvelles notifications</string>
+    <string name="glyph_settings_notifs_sub_title">Applis à autoriser</string>
+    <string name="glyph_settings_notifs_sub_toggle_title">Activer l\'animation de notification</string>
+    <string name="glyph_settings_notifs_sub_animations_title">Motif</string>
+    <string name="glyph_settings_notifs_sub_essential_title">Notifications Essential</string>
+    <string name="glyph_settings_notifs_sub_essential_summary">Glyph Essential sera affiché jusqu\'à ce que les notifications Essential soient lues ou rejetées</string>
+    <string name="glyph_settings_sub_animations_reverse_toggle_title">Animation inversée</string>
+    <string name="glyph_settings_sub_animations_reverse_toggle_summary">Jouer l\'animation de la fin vers le début</string>
+    <string name="glyph_settings_notifs_permission_dialog_title">Accès aux notifications requis</string>
+    <string name="glyph_settings_notifs_permission_dialog_message">Pour utiliser l\'interface Glyph pour les notifications, vous devez accorder les permissions d\'accès aux notifications.</string>
+    <string name="glyph_settings_volume_title">Volume</string>
+    <string name="glyph_settings_volume_level_toggle_title">Indicateur de volume</string>
+    <string name="glyph_settings_volume_level_toggle_summary">Afficher le niveau de volume lors du réglage</string>
+    <string name="glyph_settings_misc_title">Divers</string>
+    <string name="glyph_settings_music_visualizer_toggle_title">Visualiseur de musique</string>
+    <string name="glyph_settings_music_visualizer_toggle_summary">Cela fera réagir les voyants Glyph au lecteur audio sur l\'appareil.\nToutes les autres fonctions Glyph seront désactivées lors de son utilisation.</string>
+    <string name="glyph_accessibility_quick_settings">Glyph</string>
+    <string name="glyph_accessibility_quick_settings_torch">Torche Glyph</string>
+    <string name="glyph_accessibility_quick_settings_music_visualizer">Visualiseur de musique Glyph</string>
+    <string name="glyph_accessibility_quick_settings_off">Désactivé</string>
+    <string name="glyph_accessibility_quick_settings_on">Activé</string>
+    <string name="glyph_accessibility_quick_settings_unavailable">Indisponible</string>
+    <string name="glyph_settings_flip_ringer_mode_title">Mode sonnerie</string>
+    <string name="glyph_settings_flip_ringer_mode_summary">Choisir le mode sonnerie lorsque l\'appareil est retourné</string>
+    <string name="glyph_settings_flip_ringer_mode_follow_system">Suivre le système</string>
+    <string name="glyph_settings_flip_ringer_mode_vibrate">Vibrer</string>
+    <string name="glyph_settings_flip_ringer_mode_silent">Silencieux</string>
+    <string name="glyph_settings_flip_ringer_mode_normal">Sonnerie</string>
+    <string name="glyph_settings_schedule_title">Planificateur Glyph</string>
+    <string name="glyph_settings_schedule_summary">Désactiver automatiquement Glyph pendant les heures spécifiées</string>
+    <string name="glyph_settings_schedule_enable_title">Activer la planification</string>
+    <string name="glyph_settings_schedule_enable_summary">Désactiver automatiquement les fonctionnalités Glyph pendant les heures planifiées</string>
+    <string name="glyph_settings_schedule_start_time_title">Heure de début</string>
+    <string name="glyph_settings_schedule_start_time_summary">Définir l\'heure à laquelle les fonctionnalités Glyph seront désactivées</string>
+    <string name="glyph_settings_schedule_end_time_title">Heure de fin</string>
+    <string name="glyph_settings_schedule_end_time_summary">Définir l\'heure à laquelle les fonctionnalités Glyph seront réactivées</string>
+    <string name="glyph_settings_schedule_info_summary">Le planificateur désactivera les fonctionnalités Glyph sauf la lampe-torche. La tuile lampe-torche continuera de fonctionner pendant les heures planifiées.</string>
+    <string name="glyph_settings_schedule_status_title">État actuel</string>
+    <string name="glyph_settings_schedule_status_summary">Affiche si le planificateur est actuellement actif</string>
+    <string name="glyph_settings_schedule_active">Planificateur actif — Glyph désactivé (Torch still works)</string>
+    <string name="glyph_settings_schedule_inactive">Planificateur inactif — Glyph activé</string>
+    <string name="glyph_settings_schedule_disabled">Planificateur désactivé</string>
+    <string name="glyph_settings_schedule_not_active_today">⏸ Pas actif aujourd\'hui</string>
+    <string name="glyph_accessibility_quick_settings_disabled">Désactiver</string>
+    <string name="glyph_settings_active_days_title">Jours actifs</string>
+    <string name="glyph_settings_active_days_summary">Tous les jours</string>
+    <string name="glyph_settings_active_days_dialog_title">Sélectionner les jours</string>
+    <string name="glyph_settings_active_days_every_day">Tous les jours</string>
+    <string name="glyph_settings_active_days_none">Aucun jour sélectionné</string>
+    <string name="glyph_settings_active_days_weekdays">En semaine</string>
+    <string name="glyph_settings_active_days_weekends">Le week-end</string>
+    <string name="glyph_settings_progress_title">Progession</string>
+    <string name="glyph_settings_progress_toggle_title">Progression Glyph</string>
+    <string name="glyph_settings_progress_toggle_summary">Afficher la barre de progression lorsque Glyph est actif</string>
+    <string name="glyph_settings_progress_music_toggle_title">Progression de la musique</string>
+    <string name="glyph_settings_progress_music_toggle_summary">Afficher la barre de progression lorsque la musique est en cours de lecture</string>
+</resources>
