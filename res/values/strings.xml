@@ -121,10 +121,15 @@
     <string name="glyph_settings_schedule_active">Schedule active — Glyph disabled (Torch still works)</string>
     <string name="glyph_settings_schedule_inactive">Schedule inactive — Glyph enabled</string>
     <string name="glyph_settings_schedule_disabled">Schedule disabled</string>
+    <string name="glyph_settings_schedule_not_active_today">⏸ Not active today</string>
     <string name="glyph_accessibility_quick_settings_disabled">Disabled</string>
     <string name="glyph_settings_active_days_title">Active Days</string>
     <string name="glyph_settings_active_days_summary">Every day</string>
     <string name="glyph_settings_active_days_dialog_title">Select Days</string>
+    <string name="glyph_settings_active_days_every_day">Every day</string>
+    <string name="glyph_settings_active_days_none">No days selected</string>
+    <string name="glyph_settings_active_days_weekdays">Weekdays (Mon-Fri)</string>
+    <string name="glyph_settings_active_days_weekends">Weekends (Sat-Sun)</string>
 
     <string name="glyph_settings_progress_title">Progress</string>
     <string name="glyph_settings_progress_toggle_title">Glyph progress</string>

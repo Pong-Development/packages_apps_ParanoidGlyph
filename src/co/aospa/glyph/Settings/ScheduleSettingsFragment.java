@@ -18,6 +18,7 @@ package co.aospa.glyph.Settings;
 
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import android.os.Bundle;
@@ -162,6 +163,8 @@ public class ScheduleSettingsFragment extends SettingsBasePreferenceFragment
 
 
     private void updatePreferences() {
+        Context context = requireContext();
+
         if (mDaysPreference != null) {
             Set<String> selectedDays = GlyphScheduleManager.getScheduleDays(requireContext());
             mDaysPreference.setSummary(GlyphScheduleManager.getScheduleDaysFormatted(requireContext()));
@@ -186,18 +189,18 @@ public class ScheduleSettingsFragment extends SettingsBasePreferenceFragment
             boolean scheduleActiveToday = GlyphScheduleManager.isScheduleActiveToday(requireContext());
             boolean scheduleActive = GlyphScheduleManager.isScheduleCurrentlyActive(requireContext());
             
-            String status;
+            int status;
             if (!scheduleEnabled) {
-                status = "Schedule disabled";
+                status = R.string.glyph_settings_schedule_disabled;
             } else if (!scheduleActiveToday) {
-                status = "⏸ Not active today";
+                status = R.string.glyph_settings_schedule_not_active_today;
             } else if (scheduleActive) {
-                status = "⏸ Schedule active - Glyph disabled (Torch still works)";
+                status = R.string.glyph_settings_schedule_active;
             } else {
-                status = "✓ Schedule inactive - Glyph enabled";
+                status = R.string.glyph_settings_schedule_inactive;
             }
             
-            mStatusPreference.setSummary(status);
+            mStatusPreference.setSummary(context.getString(status));
         }
     }
 

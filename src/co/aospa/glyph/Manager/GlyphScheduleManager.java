@@ -21,6 +21,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.SharedPreferences;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -28,8 +29,10 @@ import android.util.Log;
 import androidx.preference.PreferenceManager;
 
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.R;
 import co.aospa.glyph.Utils.ServiceUtils;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -357,44 +360,42 @@ public final class GlyphScheduleManager {
 
     public static String getScheduleDaysFormatted(Context context) {
         Set<String> days = getScheduleDays(context);
-        
-        if (days.size() == 7) {
-            return "Every day";
-        }
-        
+        Resources res = context.getResources();
+
         if (days.size() == 0) {
-            return "No days selected";
+            return res.getString(R.string.glyph_settings_active_days_none);
         }
-        
-        Set<String> weekdays = new HashSet<>();
-        weekdays.add(String.valueOf(MONDAY));
-        weekdays.add(String.valueOf(TUESDAY));
-        weekdays.add(String.valueOf(WEDNESDAY));
-        weekdays.add(String.valueOf(THURSDAY));
-        weekdays.add(String.valueOf(FRIDAY));
+
+        if (days.size() == 7) {
+            return res.getString(R.string.glyph_settings_active_days_every_day);
+        }
+
+        Set<String> weekdays = new HashSet<>(Arrays.asList(
+            String.valueOf(MONDAY), String.valueOf(TUESDAY), String.valueOf(WEDNESDAY),
+            String.valueOf(THURSDAY), String.valueOf(FRIDAY)));
+
+        Set<String> weekends = new HashSet<>(Arrays.asList(String.valueOf(SUNDAY), String.valueOf(SATURDAY)));
         
         if (days.equals(weekdays)) {
-            return "Weekdays (Mon-Fri)";
+            return res.getString(R.string.glyph_settings_active_days_weekdays);
         }
-        
-        Set<String> weekends = new HashSet<>();
-        weekends.add(String.valueOf(SATURDAY));
-        weekends.add(String.valueOf(SUNDAY));
-        
+
         if (days.equals(weekends)) {
-            return "Weekends (Sat-Sun)";
+            return res.getString(R.string.glyph_settings_active_days_weekends);
         }
-        
+
+        String[] dayNames = res.getStringArray(R.array.day_of_week_names);
+        String[] dayValues = res.getStringArray(R.array.day_of_week_values);
         StringBuilder result = new StringBuilder();
-        String[] dayNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-        int[] dayOrder = {SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY};
         
-        for (int i = 0; i < dayOrder.length; i++) {
-            if (days.contains(String.valueOf(dayOrder[i]))) {
+        for (int i = 0; i < dayValues.length; i++) {
+            if (days.contains(dayValues[i])) {
                 if (result.length() > 0) {
                     result.append(", ");
                 }
-                result.append(dayNames[i]);
+
+                String name = dayNames[i];
+                result.append(name.length() > 3 ? name.substring(0, 3) : name);
             }
         }
         
@@ -410,8 +411,10 @@ public final class GlyphScheduleManager {
     }
 
     public static String getScheduleSummary(Context context) {
+        Resources res = context.getResources();
+
         if (!isScheduleEnabled(context)) {
-            return "Schedule disabled";
+            return res.getString(R.string.glyph_settings_schedule_disabled);
         }
         
         String days = getScheduleDaysFormatted(context);
