@@ -34,7 +34,9 @@ import co.aospa.glyph.Utils.ServiceUtils;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public final class GlyphScheduleManager {
@@ -386,16 +388,29 @@ public final class GlyphScheduleManager {
 
         String[] dayNames = res.getStringArray(R.array.day_of_week_names);
         String[] dayValues = res.getStringArray(R.array.day_of_week_values);
+
+        Map<String, String> dayMap = new HashMap<>();
+        for (int i = 0; i < dayValues.length; i++) {
+            dayMap.put(dayValues[i], dayNames[i]);
+        }
+
         StringBuilder result = new StringBuilder();
+        Calendar cal = Calendar.getInstance();
+        int firstDay = cal.getFirstDayOfWeek();
         
         for (int i = 0; i < dayValues.length; i++) {
-            if (days.contains(dayValues[i])) {
+            int currentDayValue = (firstDay + i - 1) % 7 + 1; 
+            String currentDayStr = String.valueOf(currentDayValue);
+
+            if (days.contains(currentDayStr)) {
                 if (result.length() > 0) {
                     result.append(", ");
                 }
 
-                String name = dayNames[i];
-                result.append(name.length() > 3 ? name.substring(0, 3) : name);
+                String name = dayMap.get(currentDayStr);
+                if (name != null) {
+                    result.append(name.length() > 3 ? name.substring(0, 3) : name);
+                }
             }
         }
         
