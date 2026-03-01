@@ -134,15 +134,19 @@ public final class ServiceUtils {
     }
 
     private static void startPowershareService() {
-        if (DEBUG) Log.d(TAG, "Starting Glyph powershare service");
-        getContext().startServiceAsUser(new Intent(getContext(), PowershareService.class),
-                UserHandle.CURRENT);
+        if (Constants.isPowershareSupported()) {
+            if (DEBUG) Log.d(TAG, "Starting Glyph powershare service");
+            getContext().startServiceAsUser(new Intent(getContext(), PowershareService.class),
+                    UserHandle.CURRENT);
+        }
     }
 
     private static void stopPowershareService() {
-        if (DEBUG) Log.d(TAG, "Stopping Glyph powershare service");
-        getContext().stopServiceAsUser(new Intent(getContext(), PowershareService.class),
-                UserHandle.CURRENT);
+        if (Constants.isPowershareSupported()) {
+            if (DEBUG) Log.d(TAG, "Stopping Glyph powershare service");
+            getContext().stopServiceAsUser(new Intent(getContext(), PowershareService.class),
+                    UserHandle.CURRENT);
+        }
     }
 
     public static void startVolumeLevelService() {
@@ -238,12 +242,10 @@ public final class ServiceUtils {
             } else {
                 stopChargingService();
             }
-            if (Constants.isPowershareSupported()) {
-                if (SettingsManager.isGlyphPowershareEnabled()) {
-                    startPowershareService();
-                } else {
-                    stopPowershareService();
-                }
+            if (SettingsManager.isGlyphPowershareEnabled()) {
+                startPowershareService();
+            } else {
+                stopPowershareService();
             }
             if (SettingsManager.isGlyphCallEnabled()) {
                 startCallReceiverService();
@@ -282,9 +284,7 @@ public final class ServiceUtils {
 
     public static void stopGlyphServices(){
         stopChargingService();
-        if (Constants.isPowershareSupported()) {
-            stopPowershareService();
-        }
+        stopPowershareService();
         stopCallReceiverService();
         stopFlipToGlyphService();
         stopMusicVisualizerService();
