@@ -460,10 +460,10 @@ public final class AnimationManager {
             float[] zone2 = new float[11]; // medium (right 1)
             float[] zone3 = new float[5]; // smallest (left)
 
-            if (snapshot.contains("low") || snapshot.contains("mid_low")) {
+            if (snapshot.contains("low")) {
                 Arrays.fill(zone1, maxPatternBrightness);
             }
-            if (snapshot.contains("mid") || snapshot.contains("mid_high")) {
+            if (snapshot.contains("mid")) {
                 Arrays.fill(zone2, maxPatternBrightness);
             }
             if (snapshot.contains("high")) {
