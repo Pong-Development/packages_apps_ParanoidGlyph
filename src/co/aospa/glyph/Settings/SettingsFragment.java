@@ -36,12 +36,12 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceManager;
-import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.settingslib.PrimarySwitchPreference;
 import com.android.settingslib.widget.MainSwitchPreference;
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
+import com.android.settingslib.widget.SliderPreference;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -63,7 +63,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
     private SwitchPreferenceCompat mFlipPreference;
     private SwitchPreferenceCompat mAutoBrightnessPreference;
-    private SeekBarPreference mBrightnessPreference;
+    private SliderPreference mBrightnessPreference;
     private PrimarySwitchPreference mNotifsPreference;
     private PrimarySwitchPreference mCallPreference;
     private SwitchPreferenceCompat mChargingLevelPreference;
@@ -118,7 +118,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             getPreferenceScreen().removePreference(mAutoBrightnessPreference);
         }
 
-        mBrightnessPreference = (SeekBarPreference) findPreference(Constants.GLYPH_BRIGHTNESS);
+        mBrightnessPreference = (SliderPreference) findPreference(Constants.GLYPH_BRIGHTNESS);
         if (mAutoBrightnessPreference.isChecked()) {
             mBrightnessPreference.setEnabled(false);
         } else {
@@ -128,6 +128,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mBrightnessPreference.setMax(Constants.getBrightnessLevels().length);
         mBrightnessPreference.setValue(SettingsManager.getGlyphBrightnessSetting());
         mBrightnessPreference.setUpdatesContinuously(true);
+        mBrightnessPreference.setSliderIncrement(1);
+        mBrightnessPreference.setHapticFeedbackMode(SliderPreference.HAPTIC_FEEDBACK_MODE_ON_TICKS);
+        mBrightnessPreference.setTickVisible(true);
         mBrightnessPreference.setOnPreferenceChangeListener(this);
 
         mNotifsPreference = (PrimarySwitchPreference) findPreference(Constants.GLYPH_NOTIFS_ENABLE);
