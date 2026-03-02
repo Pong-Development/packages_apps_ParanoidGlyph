@@ -94,64 +94,6 @@ public final class ResourceUtils {
         return getResources().getIntArray(getIdentifier(id, "array"));
     }
 
-    public static float[] buildPatternArray(float[]... arrays) {
-        int totalLength = 0;
-        for (float[] arr : arrays) {
-            totalLength += arr.length;
-        }
-
-        float[] result = new float[totalLength];
-        int pos = 0;
-        for (float[] arr : arrays) {
-            System.arraycopy(arr, 0, result, pos, arr.length);
-            pos += arr.length;
-        }
-        return result;
-    }
-
-    public static int[] buildPatternArray(int[]... arrays) {
-        int totalLength = 0;
-        for (int[] arr : arrays) {
-            totalLength += arr.length;
-        }
-
-        int[] result = new int[totalLength];
-        int pos = 0;
-        for (int[] arr : arrays) {
-            System.arraycopy(arr, 0, result, pos, arr.length);
-            pos += arr.length;
-        }
-        return result;
-    }
-
-    public static Iterator<String> iterateCsvLines(BufferedReader reader, boolean reverse) throws IOException {
-        List<String> lines = new ArrayList<>();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            line = line.replace(" ", "");
-            line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
-            lines.add(line);
-        }
-        if (reverse) Collections.reverse(lines);
-        return lines.iterator();
-    }
-
-    public static int[] reverseFrameArray(int[] array) {
-        int[] copy = new int[array.length];
-        for (int i = 0; i < array.length; i++) {
-            copy[i] = array[array.length - 1 - i];
-        }
-        return copy;
-    }
-
-    public static float[] reverseFrameArray(float[] array) {
-        float[] copy = new float[array.length];
-        for (int i = 0; i < array.length; i++) {
-            copy[i] = array[array.length - 1 - i];
-        }
-        return copy;
-    }
-
     public static String[] getCallAnimations() {
         if (callAnimations == null) {
             try {

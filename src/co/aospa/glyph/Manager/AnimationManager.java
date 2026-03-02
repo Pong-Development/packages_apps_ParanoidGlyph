@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.Utils.AnimationUtils;
 import co.aospa.glyph.Utils.FileUtils;
 import co.aospa.glyph.Utils.ResourceUtils;
 
@@ -126,7 +127,7 @@ public final class AnimationManager {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 ResourceUtils.getAnimation(name)))) {
-            Iterator<String> it = ResourceUtils.iterateCsvLines(reader, reverse);
+            Iterator<String> it = AnimationUtils.iterateCsvLines(reader, reverse);
             while (it.hasNext()) {
                 if (checkInterruption("csv")) throw new InterruptedException();
                 String[] pattern = it.next().split(",");
@@ -171,9 +172,11 @@ public final class AnimationManager {
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = Constants.MAX_PATTERN_BRIGHTNESS;
                     if (Constants.getDevice().equals("phone3a")) {
-                        updateLedFrame(ResourceUtils.buildPatternArray(new int[20], ResourceUtils.reverseFrameArray(batteryArray), new int[5]));
+                       int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
+                        updateLedFrame(AnimationUtils.buildPatternArray(new int[zoneDefs[1]],
+                                AnimationUtils.reverseFrameArray(batteryArray), new int[zoneDefs[2]]));
                     } else {
-                    updateLedFrame(batteryArray);
+                        updateLedFrame(batteryArray);
                     }
                     Thread.sleep(16, 666000);
                 }
@@ -183,9 +186,11 @@ public final class AnimationManager {
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = 0;
                     if (Constants.getDevice().equals("phone3a")) {
-                        updateLedFrame(ResourceUtils.buildPatternArray(new int[20], ResourceUtils.reverseFrameArray(batteryArray), new int[5]));
+                        int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
+                        updateLedFrame(AnimationUtils.buildPatternArray(new int[zoneDefs[1]],
+                                AnimationUtils.reverseFrameArray(batteryArray), new int[zoneDefs[2]]));
                     } else {
-                    updateLedFrame(batteryArray);
+                        updateLedFrame(batteryArray);
                     }
                     Thread.sleep(16, 666000);
                 }
@@ -196,9 +201,11 @@ public final class AnimationManager {
                 StatusManager.setChargingLedLast(0);
                 batteryArray = new int[ResourceUtils.getInteger("glyph_settings_battery_levels_num")];
                 if (Constants.getDevice().equals("phone3a")) {
-                    updateLedFrame(ResourceUtils.buildPatternArray(new int[20], ResourceUtils.reverseFrameArray(batteryArray), new int[5]));
+                    int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
+                    updateLedFrame(AnimationUtils.buildPatternArray(new int[zoneDefs[1]],
+                            AnimationUtils.reverseFrameArray(batteryArray), new int[zoneDefs[2]]));;
                 } else {
-                updateLedFrame(batteryArray);
+                    updateLedFrame(batteryArray);
                 }
             }
         } finally {
@@ -228,7 +235,7 @@ public final class AnimationManager {
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = 0;
                     if (Constants.getDevice().equals("phone3a")) {
-                        updateLedFrame(ResourceUtils.buildPatternArray(new int[20], ResourceUtils.reverseFrameArray(batteryArray), new int[5]));
+                        updateLedFrame(AnimationUtils.buildPatternArray(new int[20], AnimationUtils.reverseFrameArray(batteryArray), new int[5]));
                     } else {
                     updateLedFrame(batteryArray);
                     }
@@ -353,7 +360,7 @@ public final class AnimationManager {
         while (StatusManager.isCallLedEnabled()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceUtils.getCallAnimation(name)))) {
-                Iterator<String> it = ResourceUtils.iterateCsvLines(reader,
+                Iterator<String> it = AnimationUtils.iterateCsvLines(reader,
                         SettingsManager.isGlyphCallAnimationReversed());
                 while (it.hasNext()) {
                     if (checkInterruption("call")) throw new InterruptedException();
@@ -407,7 +414,7 @@ public final class AnimationManager {
                             if (checkInterruption("essential")) throw new InterruptedException();
                             int patternBrightness = Constants.MAX_PATTERN_BRIGHTNESS / 100 * i;
                             Arrays.fill(essentialPattern, patternBrightness);
-                            updateLedFrame(ResourceUtils.buildPatternArray(new int[20], essentialPattern, new int[5]));
+                            updateLedFrame(AnimationUtils.buildPatternArray(new int[20], essentialPattern, new int[5]));
                             Thread.sleep(16, 666000);
                         }
                     } else {
@@ -428,7 +435,7 @@ public final class AnimationManager {
                 int[] essentialPattern = new int[11];
                 int patternBrightness = Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60;
                 Arrays.fill(essentialPattern, patternBrightness);
-                updateLedFrame(ResourceUtils.buildPatternArray(new int[20], essentialPattern, new int[5]));
+                updateLedFrame(AnimationUtils.buildPatternArray(new int[20], essentialPattern, new int[5]));
             } else {
                 int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
                 updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60);
@@ -470,7 +477,8 @@ public final class AnimationManager {
                 Arrays.fill(zone3, maxPatternBrightness);
             }
 
-            pattern = ResourceUtils.buildPatternArray(zone1, zone2, zone3); // pattern = float[zone1.length + zone2.length + zone3.length] fill with zone values
+            pattern = AnimationUtils.buildPatternArray(zone1, zone2, zone3);
+            // pattern = float[zone1.length + zone2.length + zone3.length] fill with zone values
 
         } else {
             pattern = new float[5];

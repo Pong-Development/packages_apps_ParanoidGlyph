@@ -37,6 +37,7 @@ import java.util.Iterator;
 
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.Utils.AnimationUtils;
 import co.aospa.glyph.Utils.ResourceUtils;
 
 public class GlyphAnimationPreference extends Preference {
@@ -183,7 +184,7 @@ public class GlyphAnimationPreference extends Preference {
                 if (DEBUG) Log.d(TAG, "Displaying animation | name: " + animationName + " mode: " + playMode);
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                         ResourceUtils.getAnimation(animationName)))) {
-                    Iterator<String> it = ResourceUtils.iterateCsvLines(reader, animationReversed);
+                    Iterator<String> it = AnimationUtils.iterateCsvLines(reader, animationReversed);
                     while (it.hasNext()) {
                         String[] split = it.next().split(",");
                         if (Constants.getDevice().equals("phone1") && split.length == 5) { // Phone (1) pattern on Phone (1)
