@@ -463,9 +463,11 @@ public final class AnimationManager {
 
         if (Constants.getDevice().equals("phone3a")) {
 
-            float[] zone1 = new float[20]; // largest (left 2)
-            float[] zone2 = new float[11]; // medium (right 1)
-            float[] zone3 = new float[5]; // smallest (left)
+            int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
+
+            float[] zone1 = new float[zoneDefs[1]]; // largest (left 1)
+            float[] zone2 = new float[zoneDefs[0]]; // medium (right)
+            float[] zone3 = new float[zoneDefs[2]]; // smallest (left 2)
 
             if (snapshot.contains("low")) {
                 Arrays.fill(zone1, maxPatternBrightness);
