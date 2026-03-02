@@ -31,6 +31,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Utils.AnimationUtils;
@@ -171,13 +173,7 @@ public final class AnimationManager {
                     if (checkInterruption("charging")) throw new InterruptedException();
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = Constants.MAX_PATTERN_BRIGHTNESS;
-                    if (Constants.getDevice().equals("phone3a")) {
-                       int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
-                        updateLedFrame(AnimationUtils.buildPatternArray(new int[zoneDefs[1]],
-                                AnimationUtils.reverseFrameArray(batteryArray), new int[zoneDefs[2]]));
-                    } else {
                         updateLedFrame(batteryArray);
-                    }
                     Thread.sleep(16, 666000);
                 }
             } else if (last > next) {
@@ -185,13 +181,7 @@ public final class AnimationManager {
                     if (checkInterruption("charging")) throw new InterruptedException();
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = 0;
-                    if (Constants.getDevice().equals("phone3a")) {
-                        int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
-                        updateLedFrame(AnimationUtils.buildPatternArray(new int[zoneDefs[1]],
-                                AnimationUtils.reverseFrameArray(batteryArray), new int[zoneDefs[2]]));
-                    } else {
-                        updateLedFrame(batteryArray);
-                    }
+                    updateLedFrame(batteryArray);
                     Thread.sleep(16, 666000);
                 }
             }
@@ -200,13 +190,7 @@ public final class AnimationManager {
             if (!StatusManager.isAllLedActive()) {
                 StatusManager.setChargingLedLast(0);
                 batteryArray = new int[ResourceUtils.getInteger("glyph_settings_battery_levels_num")];
-                if (Constants.getDevice().equals("phone3a")) {
-                    int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
-                    updateLedFrame(AnimationUtils.buildPatternArray(new int[zoneDefs[1]],
-                            AnimationUtils.reverseFrameArray(batteryArray), new int[zoneDefs[2]]));;
-                } else {
-                    updateLedFrame(batteryArray);
-                }
+                updateLedFrame(batteryArray);
             }
         } finally {
             StatusManager.setAnimationActive(false);
@@ -234,11 +218,7 @@ public final class AnimationManager {
                 if (batteryArray[i] != 0) {
                     StatusManager.setChargingLedLast(i);
                     batteryArray[i] = 0;
-                    if (Constants.getDevice().equals("phone3a")) {
-                        updateLedFrame(AnimationUtils.buildPatternArray(new int[20], AnimationUtils.reverseFrameArray(batteryArray), new int[5]));
-                    } else {
                     updateLedFrame(batteryArray);
-                    }
                     Thread.sleep(16, 666000);
                 }
             }
@@ -335,11 +315,7 @@ public final class AnimationManager {
             }
         } catch (InterruptedException e) {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss volume");
-            if (Constants.getDevice().equals("phone3a")) {
-                updateLedFrame(new int[36]);
-            } else {
-                updateLedFrame(new int[volumeArray.length]);
-            }
+            updateLedFrame(new int[volumeArray.length]);
         } finally {
             StatusManager.setVolumeLedLast(0);
             StatusManager.setVolumeAnimationActive(false);
@@ -414,7 +390,7 @@ public final class AnimationManager {
                             if (checkInterruption("essential")) throw new InterruptedException();
                             int patternBrightness = Constants.MAX_PATTERN_BRIGHTNESS / 100 * i;
                             Arrays.fill(essentialPattern, patternBrightness);
-                            updateLedFrame(AnimationUtils.buildPatternArray(new int[20], essentialPattern, new int[5]));
+                            updateLedFrame(essentialPattern);
                             Thread.sleep(16, 666000);
                         }
                     } else {
@@ -435,7 +411,7 @@ public final class AnimationManager {
                 int[] essentialPattern = new int[11];
                 int patternBrightness = Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60;
                 Arrays.fill(essentialPattern, patternBrightness);
-                updateLedFrame(AnimationUtils.buildPatternArray(new int[20], essentialPattern, new int[5]));
+                updateLedFrame(essentialPattern);
             } else {
                 int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
                 updateLedSingle(led, Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60);
@@ -560,6 +536,33 @@ public final class AnimationManager {
         for (int i = 0; i < pattern.length; i++) {
             pattern[i] = pattern[i] / maxPatternBrightness * currentBrightness;
         }
+
+        if (Constants.getDevice().equals("phone3a")) {
+            int[] supportedLengths = Constants.getSupportedAnimationPatternLengths();
+            int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
+
+            Set<Integer> matchedLengths = Stream.concat(Arrays.stream(zoneDefs).boxed(),
+                            Arrays.stream(supportedLengths).boxed())
+                    .collect(Collectors.toSet());
+
+            boolean containsSize = matchedLengths.contains(pattern.length);
+
+            if (containsSize) {
+                final int volumeSize = ResourceUtils.getInteger("glyph_settings_volume_levels_num");
+                final int batterySize = ResourceUtils.getInteger("glyph_settings_battery_levels_num");
+                if (pattern.length == batterySize) { // Same size as essential
+                    pattern = AnimationUtils.buildPatternArray(new float[zoneDefs[1]],
+                            AnimationUtils.reverseFrameArray(pattern), new float[zoneDefs[2]]);
+                } else if (pattern.length == volumeSize) { // also progress
+                    pattern = AnimationUtils.buildPatternArray(pattern, new float[zoneDefs[0]],
+                            new float[zoneDefs[2]]);
+                }
+            } else {
+                Log.w(TAG, "Unsupported pattern length: " + pattern.length);
+                return;
+            }
+        }
+
         FileUtils.writeFrameLed(pattern);
     }
 
@@ -677,11 +680,7 @@ public final class AnimationManager {
         } catch (InterruptedException e) {
             if (DEBUG) Log.d(TAG, "Exception while playing animation, interrupted | name: Dismiss progress");
             if (!StatusManager.isAllLedActive()) {
-                if (Constants.getDevice().equals("phone3a")) {
-                    updateLedFrame(new int[36]);
-                } else {
-                    updateLedFrame(new int[progressArray.length]);
-                }
+                updateLedFrame(new int[progressArray.length]);
             }
         } finally {
             StatusManager.setProgressLedLast(0);
