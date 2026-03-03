@@ -98,12 +98,14 @@ public final class ServiceUtils {
     }
 
     private static void startChargingService() {
+        if (Constants.getDevice().equals("phone2a")) return;
         if (DEBUG) Log.d(TAG, "Starting Glyph charging service");
         getContext().startServiceAsUser(new Intent(getContext(), ChargingService.class),
                 UserHandle.CURRENT);
     }
 
     private static void stopChargingService() {
+        if (Constants.getDevice().equals("phone2a")) return;
         if (DEBUG) Log.d(TAG, "Stopping Glyph charging service");
         getContext().stopServiceAsUser(new Intent(getContext(), ChargingService.class),
                 UserHandle.CURRENT);

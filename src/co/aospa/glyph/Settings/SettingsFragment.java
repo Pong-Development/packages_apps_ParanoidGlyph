@@ -66,6 +66,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private SliderPreference mBrightnessPreference;
     private PrimarySwitchPreference mNotifsPreference;
     private PrimarySwitchPreference mCallPreference;
+    private PreferenceCategory mChargingCategory;
     private SwitchPreferenceCompat mChargingLevelPreference;
     private SwitchPreferenceCompat mChargingPowersharePreference;
     private SwitchPreferenceCompat mVolumeLevelPreference;
@@ -145,9 +146,16 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mCallPreference.setSwitchEnabled(glyphEnabled);
         mCallPreference.setOnPreferenceChangeListener(this);
 
-        mChargingLevelPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_CHARGING_LEVEL_ENABLE);
-        mChargingLevelPreference.setEnabled(glyphEnabled);
-        mChargingLevelPreference.setOnPreferenceChangeListener(this);
+        mChargingCategory = (PreferenceCategory) findPreference(Constants.GLYPH_CHARGING_CATEGORY);
+        mChargingLevelPreference = (SwitchPreferenceCompat)
+                findPreference(Constants.GLYPH_CHARGING_LEVEL_ENABLE);
+
+        if (Constants.getDevice().equals("phone2a")) {
+            mChargingCategory.setVisible(false);
+        } else {
+            mChargingLevelPreference.setEnabled(glyphEnabled);
+            mChargingLevelPreference.setOnPreferenceChangeListener(this);
+        }
 
         mChargingPowersharePreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_CHARGING_POWERSHARE_ENABLE);
 
@@ -255,7 +263,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mNotifsPreference.setSwitchEnabled(isChecked);
         mCallPreference.setEnabled(isChecked);
         mCallPreference.setSwitchEnabled(isChecked);
-        mChargingLevelPreference.setEnabled(isChecked);
+        if (!Constants.getDevice().equals("phone2a")) {
+            mChargingLevelPreference.setEnabled(isChecked);
+        }
         if (Constants.isPowershareSupported()) {
             mChargingPowersharePreference.setEnabled(isChecked);
         }
