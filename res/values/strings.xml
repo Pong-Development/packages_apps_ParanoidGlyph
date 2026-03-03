@@ -30,6 +30,7 @@
     <string name="glyph_settings_summary">Options for Glyph lights</string>
 
     <string name="glyph_settings_summary_battery_saving">Disabled by Battery Saver</string>
+    <string name="glyph_settings_summary_schedule">Disabled by schedule</string>
 
     <string name="glyph_settings_flip_title">Flip to Glyph</string>
 

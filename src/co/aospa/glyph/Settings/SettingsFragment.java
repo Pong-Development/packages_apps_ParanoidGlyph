@@ -344,7 +344,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             mSwitchBar.setChecked(baseEnabled);
             
             if (baseEnabled && !effectiveEnabled) {
-                mSwitchBar.setSummary("Currently disabled by schedule");
+                mSwitchBar.setSummary(
+                        ResourceUtils.getString("glyph_settings_summary_schedule"));
             } else if (batterySavingActive) {
                 mSwitchBar.setSummary(
                         ResourceUtils.getString("glyph_settings_summary_battery_saving"));
