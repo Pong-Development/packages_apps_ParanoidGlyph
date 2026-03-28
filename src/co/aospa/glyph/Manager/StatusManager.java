@@ -136,7 +136,11 @@ public final class StatusManager {
     public static void setCallLedEnabled(boolean status) {
         callLedEnabled = status;
     }
-    
+
+    public static boolean isProgressAnimationActive() {
+        return progressAnimationActive;
+    }
+
     public static void setProgressAnimationActive(boolean status) {
         progressAnimationActive = status;
     }
@@ -164,10 +168,11 @@ public final class StatusManager {
     public static void setProgressArray(int[] progressArrayNext) {
         progressArray = progressArrayNext;
     }
-    
+
     public static boolean isGlyphIdle() {
         if (isAllLedActive() || isCallLedActive() || isAnimationActive() 
-            || isChargingAnimationActive() || isVolumeAnimationActive() || isCallLedEnabled()) {
+            || isChargingAnimationActive() || isVolumeAnimationActive() 
+            || isCallLedEnabled() || isProgressAnimationActive()) {
             return false;
         } else {
             return true;
