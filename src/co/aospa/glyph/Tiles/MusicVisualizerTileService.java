@@ -27,6 +27,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
@@ -86,7 +87,14 @@ public class MusicVisualizerTileService extends TileService {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPrefs.edit().putBoolean(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE, enabled).apply();
         ServiceUtils.checkGlyphService();
+        if (enabled && SettingsManager.Pulse.isPulseEnabled()) {
+            showToast(getString(R.string.glyph_music_visualizer_pulse_toast_message));
+        }
     }
+
+    private void showToast(String message) {
+    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+}
 
     @Override
     public void onDestroy() {

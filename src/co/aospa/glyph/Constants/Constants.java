@@ -69,6 +69,7 @@ public final class Constants {
     public static final String ACTION_TORCH_ENABLE = "torch_enable";
     public static final String ACTION_TORCH_DISABLE = "torch_disable";
 
+    public static final String PULSE_LOCKSCREEN_ENABLED_SETTING = "lockscreen_pulse_enabled";
 
     public static final String[] APPS_TO_IGNORE = {
         "android",

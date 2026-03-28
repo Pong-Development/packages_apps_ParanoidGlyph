@@ -247,7 +247,24 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             updateBatterySaver((Boolean) newValue);
         }
 
-        mHandler.post(() -> ServiceUtils.checkGlyphService());
+        if (preferenceKey.equals(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE)) {
+            if ((Boolean) newValue && SettingsManager.Pulse.isPulseEnabled()) {
+                new AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.glyph_settings_music_visualizer_warning_title)
+                    .setMessage(R.string.glyph_settings_music_visualizer_warning_message)
+                    .setPositiveButton(R.string.glyph_settings_music_visualizer_disable_pulse, (dialog, which) -> {
+                        mMusicVisualizerPreference.setOnPreferenceChangeListener(null);
+                        mMusicVisualizerPreference.setChecked(true);
+                        mMusicVisualizerPreference.setOnPreferenceChangeListener(this);
+                        mHandler.post(ServiceUtils::checkGlyphService);
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+                return false;
+            }
+        }
+
+        mHandler.post(ServiceUtils::checkGlyphService);
 
         return true;
     }

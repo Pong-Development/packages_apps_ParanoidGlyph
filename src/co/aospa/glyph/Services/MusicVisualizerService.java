@@ -16,26 +16,36 @@
 
 package co.aospa.glyph.Services;
 
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.media.AudioManager;
 import android.media.audiofx.Visualizer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.util.HashSet;
 
+import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
+import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Manager.StatusManager;
 
 public class MusicVisualizerService extends Service {
 
     private static final String TAG = "GlyphMusicVisualizerService";
     private static final boolean DEBUG = true;
+
+    private boolean PULSE_PREVIOUS_STATE = false;
+
+    private SettingObserver PulseSettingObserver;
 
     private AudioManager mAudioManager;
     private HandlerThread thread;
@@ -61,6 +71,13 @@ public class MusicVisualizerService extends Service {
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
+
+        if (SettingsManager.Pulse.isPulseEnabled()) {
+            PULSE_PREVIOUS_STATE = true;
+            SettingsManager.Pulse.setPulseVisualizer(false);
+        }
+        PulseSettingObserver = new SettingObserver();
+        PulseSettingObserver.register(getContentResolver());
 
         // Run visualizer on a handler thread
         thread = new HandlerThread("MusicVisualizerService");
@@ -126,6 +143,10 @@ public class MusicVisualizerService extends Service {
         if (DEBUG) Log.d(TAG, "Destroying service");
         mVisualizer.setEnabled(false);
         mVisualizer.release();
+        if (PULSE_PREVIOUS_STATE) {
+            SettingsManager.Pulse.setPulseVisualizer(true);
+        }
+        PulseSettingObserver.unregister(getContentResolver());
         thread.quit();
         super.onDestroy();
     }
@@ -133,6 +154,34 @@ public class MusicVisualizerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private class SettingObserver extends ContentObserver {
+        public SettingObserver() {
+            super(new Handler());
+        }
+
+        public void register(ContentResolver cr) {
+            cr.registerContentObserver(
+                Settings.Secure.getUriFor(Constants.PULSE_LOCKSCREEN_ENABLED_SETTING), 
+                false, 
+                this, 
+                ActivityManager.getCurrentUser()
+            );
+        }
+
+        public void unregister(ContentResolver cr) {
+            cr.unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            if (SettingsManager.Pulse.isPulseEnabled()) {
+                SettingsManager.setGlyphMusicVisualizer(false);
+                stopSelf();
+            }
+        }
     }
 
     private void processAudioFFT(byte[] audioBytes, int samplingRate) {

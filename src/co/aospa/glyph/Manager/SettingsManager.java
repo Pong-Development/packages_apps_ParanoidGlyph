@@ -16,7 +16,9 @@
 
 package co.aospa.glyph.Manager;
 
+import android.app.ActivityManager;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.media.AudioManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -155,6 +157,12 @@ public final class SettingsManager {
                 .getBoolean(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE, false) && isGlyphEnabled();
     }
 
+    public static void setGlyphMusicVisualizer(boolean state) {
+        Context ctx = getContext();
+        PreferenceManager.getDefaultSharedPreferences(ctx).edit()
+                .putBoolean(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE, state).apply();
+    }
+
     public static boolean isGlyphVolumeLevelEnabled() {
         Context ctx = getContext();
         return PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -223,5 +231,21 @@ public final class SettingsManager {
         Context ctx = getContext();
         return PreferenceManager.getDefaultSharedPreferences(ctx)
                 .getBoolean(Constants.GLYPH_PROGRESS_MUSIC_ENABLE, false) && isGlyphProgressEnabled();
+    }
+    public class Pulse {
+
+        public static void setPulseVisualizer(boolean state) {
+            Context ctx = getContext();
+            int currentUser = ActivityManager.getCurrentUser();
+            Settings.Secure.putIntForUser(ctx.getContentResolver(),
+                    Constants.PULSE_LOCKSCREEN_ENABLED_SETTING, state ? 1 : 0, currentUser);
+        }
+
+        public static boolean isPulseEnabled() {
+            Context ctx = getContext();
+            int currentUser = ActivityManager.getCurrentUser();
+            return Settings.Secure.getIntForUser(ctx.getContentResolver(),
+                    Constants.PULSE_LOCKSCREEN_ENABLED_SETTING, 0, currentUser) == 1;
+        }
     }
 }

@@ -87,6 +87,12 @@
     <string name="glyph_settings_music_visualizer_toggle_title">Music Visualizer</string>
     <string name="glyph_settings_music_visualizer_toggle_summary">DISCO LIGHTS!</string>
 
+    <string name="glyph_settings_music_visualizer_warning_title">Conflicting Service Detected</string>
+    <string name="glyph_settings_music_visualizer_warning_message">Due to Android limitations, only one process may capture audio for session 0 \(Global\). 
+          Your current ROM has Pulse built in and will stop working when Glyph music visualizer is enabled.
+     </string>
+     <string name="glyph_settings_music_visualizer_disable_pulse">Disable Pulse</string>
+
     <!-- QS tile -->
     <string name="glyph_accessibility_quick_settings">Glyph</string>
     <string name="glyph_accessibility_quick_settings_torch">Glyph torch</string>
@@ -95,6 +101,8 @@
     <string name="glyph_accessibility_quick_settings_off">Off</string>
     <string name="glyph_accessibility_quick_settings_on">On</string>
     <string name="glyph_accessibility_quick_settings_unavailable">Unavailable</string>
+
+    <string name="glyph_music_visualizer_pulse_toast_message">Pulse visualizer has been disabled to avoid conflicts.</string>
 
     
     <!-- Flip to Glyph Ringer Mode -->
