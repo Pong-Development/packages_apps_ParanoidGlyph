@@ -332,8 +332,15 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mSettingObserver.unregister(mContentResolver);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        mSettingObserver.register(mContentResolver);
         updateScheduleSummary();
         updateMainSwitchState();
     }
