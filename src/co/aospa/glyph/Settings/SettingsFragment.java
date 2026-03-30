@@ -69,9 +69,11 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private PreferenceCategory mChargingCategory;
     private SwitchPreferenceCompat mChargingLevelPreference;
     private SwitchPreferenceCompat mChargingPowersharePreference;
+    private PreferenceCategory mVolumeCategory;
     private SwitchPreferenceCompat mVolumeLevelPreference;
     private SwitchPreferenceCompat mMusicVisualizerPreference;
     private ListPreference mFlipRingerModePreference;
+    private PreferenceCategory mProgressCategory;
     private SwitchPreferenceCompat mProgressPreference;
     private SwitchPreferenceCompat mProgressMusicPreference;
 
@@ -166,9 +168,15 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
            mChargingPowersharePreference.setVisible(false);
         }
 
-        mVolumeLevelPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_VOLUME_LEVEL_ENABLE);
-        mVolumeLevelPreference.setEnabled(glyphEnabled);
-        mVolumeLevelPreference.setOnPreferenceChangeListener(this);
+        mVolumeCategory = findPreference(Constants.GLYPH_VOLUME_CATEGORY);
+
+        if (!Constants.getDevice().equals("phone1")) {
+            mVolumeLevelPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_VOLUME_LEVEL_ENABLE);
+            mVolumeLevelPreference.setEnabled(glyphEnabled);
+            mVolumeLevelPreference.setOnPreferenceChangeListener(this);
+        } else {
+            mVolumeCategory.setVisible(false);
+        }
 
         mMusicVisualizerPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE);
         mMusicVisualizerPreference.setEnabled(glyphEnabled);
@@ -181,9 +189,15 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mSchedulePreference = (Preference) findPreference(Constants.GLYPH_SCHEDULE);
         updateScheduleSummary();
 
-        mProgressPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_ENABLE);
-        mProgressPreference.setEnabled(glyphEnabled);
-        mProgressPreference.setOnPreferenceChangeListener(this);
+        mProgressCategory = findPreference(Constants.GLYPH_PROGRESS_CATEGORY);
+
+        if (!Constants.getDevice().equals("phone1")) {
+            mProgressPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_ENABLE);
+            mProgressPreference.setEnabled(glyphEnabled);
+            mProgressPreference.setOnPreferenceChangeListener(this);
+        } else {
+            mProgressCategory.setVisible(false);
+        }
 
         mProgressMusicPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_MUSIC_ENABLE);
         mProgressMusicPreference.setEnabled(glyphEnabled && mProgressPreference.isChecked());
@@ -237,9 +251,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         }
 
         if (preferenceKey.equals(Constants.GLYPH_PROGRESS_MUSIC_ENABLE)) {
-            mHandler.postDelayed(() -> {
-                ServiceUtils.checkGlyphService();
-            }, 100);
+            mHandler.postDelayed(ServiceUtils::checkGlyphService, 100);
             return true;
         }
 
@@ -286,11 +298,15 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         if (Constants.isPowershareSupported()) {
             mChargingPowersharePreference.setEnabled(isChecked);
         }
-        mVolumeLevelPreference.setEnabled(isChecked);
+        if (!Constants.getDevice().equals("phone1")) {
+            mVolumeLevelPreference.setEnabled(isChecked);
+        }
         mMusicVisualizerPreference.setEnabled(isChecked);
         mFlipRingerModePreference.setEnabled(isChecked && mFlipPreference.isChecked());
-        mProgressPreference.setEnabled(isChecked);
-        mProgressMusicPreference.setEnabled(isChecked && mProgressPreference.isChecked());
+        if (!Constants.getDevice().equals("phone1")) {
+            mProgressPreference.setEnabled(isChecked);
+            mProgressMusicPreference.setEnabled(isChecked && mProgressPreference.isChecked());
+        }
 
         mHandler.post(() -> {
             ServiceUtils.checkGlyphService();

@@ -152,12 +152,14 @@ public final class ServiceUtils {
     }
 
     public static void startVolumeLevelService() {
+        if (Constants.getDevice().equals("phone1")) return;
         if (DEBUG) Log.d(TAG, "Starting Volume Level service");
         getContext().startServiceAsUser(new Intent(getContext(), VolumeLevelService.class),
                 UserHandle.CURRENT);
     }
 
     protected static void stopVolumeLevelService() {
+        if (Constants.getDevice().equals("phone1")) return;
         if (DEBUG) Log.d(TAG, "Stopping Volume Listener service");
         getContext().stopServiceAsUser(new Intent(getContext(), VolumeLevelService.class),
                 UserHandle.CURRENT);
@@ -188,12 +190,14 @@ public final class ServiceUtils {
     }
 
     public static void startProgressService() {
+        if (Constants.getDevice().equals("phone1")) return;
         if (DEBUG) Log.d(TAG, "Starting Progress service");
         context.startServiceAsUser(new Intent(context, ProgressService.class),
                 UserHandle.CURRENT);
     }
 
     public static void stopProgressService() {
+        if (Constants.getDevice().equals("phone1")) return;
         if (DEBUG) Log.d(TAG, "Stopping Progress service");
         context.stopServiceAsUser(new Intent(context, ProgressService.class),
                 UserHandle.CURRENT);
