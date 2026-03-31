@@ -27,8 +27,7 @@ public class AnimationUtils {
             while (it.hasNext()) {
                 frame = it.next();
                 if (frame != null) {
-                    frame = frame.replace(" ", "");
-                    frame = frame.endsWith(",") ? frame.substring(0, frame.length() - 1) : frame;
+                    frame = sanitizeCsvLine(frame);
                     if (currentLine == 1) {
                         requiredFrameLength = getFrameLength(frame);
                         if (requiredFrameLength == 0) {
@@ -127,12 +126,17 @@ public class AnimationUtils {
         return result;
     }
 
+    public static String sanitizeCsvLine(String line) {
+        line = line.replace(" ", "");
+        line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
+        return line;
+    }
+
     public static Iterator<String> iterateCsvLines(BufferedReader reader, boolean reverse) throws IOException {
         List<String> lines = new ArrayList<>();
         String line;
         while ((line = reader.readLine()) != null) {
-            line = line.replace(" ", "");
-            line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
+            line = sanitizeCsvLine(line);
             lines.add(line);
         }
         if (reverse) Collections.reverse(lines);
