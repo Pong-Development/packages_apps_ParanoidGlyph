@@ -51,6 +51,8 @@ import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.GlyphScheduleManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Services.BatterySaverService;
+import static co.aospa.glyph.Utils.InterfaceUtils.showDialog;
+
 import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
 
@@ -261,17 +263,18 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
         if (preferenceKey.equals(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE)) {
             if ((Boolean) newValue && SettingsManager.Pulse.isPulseEnabled()) {
-                new AlertDialog.Builder(requireContext())
-                    .setTitle(R.string.glyph_settings_music_visualizer_warning_title)
-                    .setMessage(R.string.glyph_settings_music_visualizer_warning_message)
-                    .setPositiveButton(R.string.glyph_settings_music_visualizer_disable_pulse, (dialog, which) -> {
-                        mMusicVisualizerPreference.setOnPreferenceChangeListener(null);
-                        mMusicVisualizerPreference.setChecked(true);
-                        mMusicVisualizerPreference.setOnPreferenceChangeListener(this);
-                        mHandler.post(ServiceUtils::checkGlyphService);
-                    })
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show();
+               showDialog(
+                       requireActivity(),
+                       R.string.glyph_settings_music_visualizer_warning_title,
+                       R.string.glyph_settings_music_visualizer_warning_message,
+                       R.string.glyph_settings_music_visualizer_disable_pulse,
+                       () -> {
+                           mMusicVisualizerPreference.setOnPreferenceChangeListener(null);
+                           mMusicVisualizerPreference.setChecked(true);
+                           mMusicVisualizerPreference.setOnPreferenceChangeListener(this);
+                           mHandler.post(ServiceUtils::checkGlyphService);
+                       },
+                    android.R.string.cancel, null);
                 return false;
             }
         }
@@ -338,15 +341,16 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey()) 
     || Constants.GLYPH_PROGRESS_ENABLE.equals(preference.getKey())) {
             if (!ServiceUtils.isNotificationServiceEnabled()) {
-                new AlertDialog.Builder(requireContext())
-                    .setTitle(R.string.glyph_settings_notifs_permission_dialog_title)
-                    .setMessage(R.string.glyph_settings_notifs_permission_dialog_message)
-                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-                        requireContext().startActivity(intent);
-                    })
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show();
+                showDialog(
+                        requireActivity(),
+                        R.string.glyph_settings_notifs_permission_dialog_title,
+                        R.string.glyph_settings_notifs_permission_dialog_message,
+                        android.R.string.ok, () -> {
+                            Intent intent
+                                    = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+                            requireContext().startActivity(intent);
+                        },
+                        android.R.string.cancel, null);
                 return true;
             }
         }
