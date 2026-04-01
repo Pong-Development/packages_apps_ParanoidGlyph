@@ -17,7 +17,7 @@ public class AnimationUtils {
 
     private final String TAG = this.getClass().getSimpleName();
 
-    public static boolean validateAnimation(String csv) throws Exception {
+    public static void validateAnimation(String csv) throws Exception {
         int currentLine = 1;
         int requiredFrameLength = 0;
         int currentFrameLength;
@@ -45,16 +45,15 @@ public class AnimationUtils {
                     try {
                         validateFrameBrightness(frame);
                     } catch (IllegalArgumentException e) {
-                        throw new IllegalArgumentException("Failed to parse frame at line"
+                        throw new IllegalArgumentException("Failed to parse frame at line "
                                 + currentLine, e);
                     }
                 }
             currentLine++;
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("CSV is invalid at line: " + currentLine);
+            throw new IllegalArgumentException("CSV is invalid at line " + currentLine, e);
         }
-        return true;
     }
 
     public static int getFrameLength(String frame) {
@@ -148,7 +147,21 @@ public class AnimationUtils {
                     return "phone3a";
                 }
             }
-        return null;
+        return "";
+    }
+
+    public static boolean isCompatible(String csv) {
+
+        boolean compatible;
+
+        if (Constants.getDevice().equals("phone2")) {
+            compatible = getDevice(csv).equals(Constants.getDevice())
+                    || getDevice(csv).equals("phone1)");
+        } else {
+            compatible = getDevice(csv).equals(Constants.getDevice());
+        }
+
+        return compatible;
     }
 
     public static float[] buildPatternArray(float[]... arrays) {
