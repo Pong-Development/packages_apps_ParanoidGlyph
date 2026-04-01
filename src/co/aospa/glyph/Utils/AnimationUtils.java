@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -73,6 +74,60 @@ public class AnimationUtils {
             }
             idx++;
         }
+    }
+
+    public static boolean isAnimationComplex(String csv) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new StringReader(csv))) {
+            Iterator<String> it = iterateCsvLines(reader, false);
+            String line;
+            String device = getDevice(csv);
+            while (it.hasNext()) {
+                line = it.next();
+                int[] arr = Arrays.stream(line.split(","))
+                        .mapToInt(Integer::parseInt)
+                        .toArray();
+                if (arr.length == 5) return false;
+                switch (device) {
+                    case "phone3a" -> {
+                        if (allSame(arr, 0, 20)
+                                && allSame(arr, 21, 31)
+                                && allSame(arr, 32, 35)) {
+                            continue;
+                        } else {
+                            return true;
+                        }
+                    }
+                    case "phone2" -> {
+                        if (allSame(arr, 0, 2)
+                                && allSame(arr, 3, 18)
+                                && allSame(arr, 19, 32)) {
+                            continue;
+                        } else {
+                            return true;
+                        }
+                    }
+                    case "phone2a" -> {
+                        if (allSame(arr, 0, 23)) {
+                            continue;
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+
+     static boolean allSame(int[] arr, int start, int end) {
+        int first = arr[start];
+        for (int i = start + 1; i <= end; i++) {
+            if (arr[i] != first) return false;
+        }
+        return true;
     }
 
     public static String getDevice(String csv) {
