@@ -127,7 +127,8 @@ public class AnimationUtils {
     }
 
     public static String sanitizeCsvLine(String line) {
-        line = line.replace(" ", "");
+        line = line.replaceAll("-\\d+", "0");
+        line = line.replaceAll("[^0-9,\n]", "");
         line = line.endsWith(",") ? line.substring(0, line.length() - 1) : line;
         return line;
     }
