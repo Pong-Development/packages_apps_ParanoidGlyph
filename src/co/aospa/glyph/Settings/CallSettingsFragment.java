@@ -16,9 +16,12 @@
 
 package co.aospa.glyph.Settings;
 
+import static co.aospa.glyph.Utils.InterfaceUtils.showToast;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import androidx.preference.ListPreference;
@@ -33,16 +36,23 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Preference.GlyphAnimationPreference;
+import co.aospa.glyph.Utils.AnimationUtils;
 import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
 
 public class CallSettingsFragment extends SettingsBasePreferenceFragment implements OnPreferenceChangeListener,
         OnCheckedChangeListener {
+
+    private final String TAG = this.getClass().getSimpleName();
 
     private PreferenceScreen mScreen;
 
@@ -71,9 +81,30 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
 
         mListPreference = (ListPreference) findPreference(Constants.GLYPH_CALL_SUB_ANIMATIONS);
         mListPreference.setOnPreferenceChangeListener(this);
-        mListPreference.setEntries(ResourceUtils.getCallAnimations());
-        mListPreference.setEntryValues(ResourceUtils.getCallAnimations());
-        if (!ArrayUtils.contains(ResourceUtils.getCallAnimations(), mListPreference.getValue())) {
+
+        List<String> userAnimationList
+                = ResourceUtils.getUserCallAnimations();
+
+        List<String> bundledAnimationList
+                = ResourceUtils.getBundledCallAnimations();
+
+        List<String> animationEntryList = new ArrayList<>();
+
+        animationEntryList.addAll(bundledAnimationList);
+        animationEntryList.addAll(userAnimationList);
+        animationEntryList.sort(null);
+
+        List<String> animationEntryValues = new ArrayList<>();
+        animationEntryValues.addAll(bundledAnimationList);
+        animationEntryValues.addAll(userAnimationList
+                .stream()
+                .map(name -> Constants.GLYPH_USER_CALL_CSV_PREFIX + name)
+                .toList());
+        animationEntryValues.sort(null);
+
+        mListPreference.setEntries(animationEntryList.toArray(new String[0]));
+        mListPreference.setEntryValues(animationEntryValues.toArray(new String[0]));
+        if (!animationEntryValues.contains(mListPreference.getValue())) {
             mListPreference.setValue(ResourceUtils.getString("glyph_settings_call_animations_default"));
         }
 
@@ -88,8 +119,28 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mGlyphAnimationPreference.updateAnimation(SettingsManager.isGlyphCallEnabled(),
-                SettingsManager.getGlyphCallAnimation(), mReverseCallAnimationSwitch.isChecked());
+
+        boolean isPlayable = true;
+
+        if (mListPreference.getValue().startsWith(Constants.GLYPH_USER_CALL_CSV_PREFIX)) {
+            String animationName = mListPreference.getValue();
+            checkUserAnimation(animationName);
+            try {
+                String csv = new String(ResourceUtils.getAnimation(animationName).readAllBytes(),
+                        StandardCharsets.UTF_8);
+                isPlayable = !AnimationUtils.isAnimationComplex(csv);
+            } catch (Exception e) {
+
+            }
+        }
+        if (isPlayable) {
+            mGlyphAnimationPreference.updateAnimation(
+                    SettingsManager.isGlyphCallEnabled(),
+                    SettingsManager.getGlyphCallAnimation(),
+                    1500,
+                    mReverseCallAnimationSwitch.isChecked());
+        }
+        mGlyphAnimationPreference.setVisible(isPlayable);
     }
 
     @Override
@@ -97,8 +148,27 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
         final String preferenceKey = preference.getKey();
 
         if (preferenceKey.equals(Constants.GLYPH_CALL_SUB_ANIMATIONS)) {
-            mGlyphAnimationPreference.updateAnimation(SettingsManager.isGlyphCallEnabled(),
-                newValue.toString());
+            String animationName = newValue.toString();
+            boolean isPlayable = true;
+
+            if (animationName.startsWith(Constants.GLYPH_USER_CALL_CSV_PREFIX)) {
+                if (!checkUserAnimation(animationName)) return false;
+                try {
+                    String csv = new String(ResourceUtils.getAnimation(animationName).readAllBytes(),
+                            StandardCharsets.UTF_8);
+                    isPlayable = !AnimationUtils.isAnimationComplex(csv);
+                } catch (Exception e) {
+
+                }
+            }
+            mGlyphAnimationPreference.updateAnimation(
+                    isPlayable && SettingsManager.isGlyphCallEnabled(),
+                    animationName, 1500);
+            mGlyphAnimationPreference.setVisible(isPlayable);
+            if (!isPlayable) {
+                showToast(R.string.glyph_settings_user_animation_is_complex);
+            }
+            return true;
         }
 
         if (preferenceKey.equals(Constants.GLYPH_CALL_REVERSE_ANIMATION_ENABLE)) {
@@ -158,6 +228,24 @@ public class CallSettingsFragment extends SettingsBasePreferenceFragment impleme
         mLivePreviewPreference.setSummary(
                 R.string.glyph_settings_animations_live_preview_summary
         );
+    }
+
+    private boolean checkUserAnimation(String animationName) {
+        try {
+            String csv = new String(ResourceUtils.getAnimation(animationName).readAllBytes(),
+                    StandardCharsets.UTF_8);
+            AnimationUtils.validateAnimation(csv);
+            if (!AnimationUtils.isCompatible(csv)) {
+                showToast(R.string.glyph_settings_user_animation_incompatible);
+                return false;
+            }
+        } catch (Exception e) {
+            showToast(R.string.glyph_settings_user_animation_invalid);
+            Log.w(TAG, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 

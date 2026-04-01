@@ -27,8 +27,8 @@ import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
-import android.preference.SwitchPreference;
 import android.provider.Settings;
 
 import androidx.preference.Preference;
@@ -52,6 +52,8 @@ import co.aospa.glyph.Manager.GlyphScheduleManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Services.BatterySaverService;
 import static co.aospa.glyph.Utils.InterfaceUtils.showDialog;
+
+import java.io.File;
 
 import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
@@ -97,6 +99,17 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.glyph_settings);
+
+        mHandler.post(() -> {
+            File callAnimPath
+                    = new File(Environment.getExternalStorageDirectory(),
+                    Constants.GLYPH_USER_CALL_CSV_PATH);
+            File notifAnimPath
+                    = new File(Environment.getExternalStorageDirectory(),
+                    Constants.GLYPH_USER_NOTIF_CSV_PATH);
+            if (!callAnimPath.exists()) callAnimPath.mkdirs();
+            if (!notifAnimPath.exists()) notifAnimPath.mkdirs();
+        });
 
         mContentResolver = getActivity().getContentResolver();
         mSettingObserver = new SettingObserver();

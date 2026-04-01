@@ -19,17 +19,22 @@ package co.aospa.glyph.Utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.os.Environment;
 import android.util.Log;
 
 import com.android.internal.util.ArrayUtils;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
@@ -43,8 +48,8 @@ public final class ResourceUtils {
     private static AssetManager assetManager;
     private static Resources resources;
 
-    private static String[] callAnimations = null;
-    private static String[] notificationAnimations = null;
+    private static List<String> bundledCallAnimations = null;
+    private static List<String> bundledNotificationAnimations = null;
 
     private static Context getContext() {
         if (context == null) {
@@ -94,62 +99,161 @@ public final class ResourceUtils {
         return getResources().getIntArray(getIdentifier(id, "array"));
     }
 
-    public static String[] getCallAnimations() {
-        if (callAnimations == null) {
+    public static List<String> getUserCallAnimations() {
+
+        List<String> animations = null;
+
+        File dir = new File(Environment.getExternalStorageDirectory(),
+                Constants.GLYPH_USER_CALL_CSV_PATH);
+
+        File[] matchingFiles = dir.listFiles(file ->
+                file.isFile() && file.getName().toLowerCase().endsWith(".csv")
+        );
+
+        if (matchingFiles != null) {
+            animations = Arrays.stream(matchingFiles)
+                    .map(File::getName)
+                    .map(name -> name.substring(0, name.lastIndexOf('.')))
+                    .toList();
+        } else {
+            animations = Collections.emptyList();
+        }
+
+        return animations;
+    }
+
+    public static List<String> getUserNotificationAnimations() {
+
+        List<String> animations = null;
+
+        File dir = new File(Environment.getExternalStorageDirectory(),
+                Constants.GLYPH_USER_NOTIF_CSV_PATH);
+
+        File[] matchingFiles = dir.listFiles(file ->
+                file.isFile() && file.getName().toLowerCase().endsWith(".csv")
+        );
+
+        if (matchingFiles != null) {
+            animations = Arrays.stream(matchingFiles)
+                    .map(File::getName)
+                    .map(name -> name.substring(0, name.lastIndexOf('.')))
+                    .toList();
+        } else {
+            animations = Collections.emptyList();
+        }
+
+        return animations;
+    }
+
+    public static List<String> getBundledCallAnimations() {
+        if (bundledCallAnimations == null) {
             try {
                 String[] assets = getAssetManager().list("call");
                 for (int i=0; i < assets.length; i++) {
                     assets[i] = assets[i].replaceAll(".csv", "");
                 }
-                callAnimations = assets;
+                bundledCallAnimations = Arrays.asList(assets);
             } catch (IOException e) { }
         }
-        return callAnimations;
+        return bundledCallAnimations;
     }
 
-    public static String[] getNotificationAnimations() {
-        if (notificationAnimations == null) {
+    public static List<String> getBundledNotificationAnimations() {
+        if (bundledNotificationAnimations == null) {
             try {
                 String[] assets = getAssetManager().list("notification");
                 for (int i=0; i < assets.length; i++) {
                     assets[i] = assets[i].replaceAll(".csv", "");
                 }
-                notificationAnimations = assets;
+                bundledNotificationAnimations = Arrays.asList(assets);
             } catch (IOException e) { }
         }
-        return notificationAnimations;
+        return bundledNotificationAnimations;
     }
 
     public static InputStream getCallAnimation(String name) throws IOException {
-        if (callAnimations == null) getCallAnimations();
+        if (bundledCallAnimations == null) getBundledCallAnimations();
 
-        if (ArrayUtils.contains(callAnimations, name))
+        InputStream stream = null;
+
+        if (name.startsWith(Constants.GLYPH_USER_CALL_CSV_PREFIX)) {
+            File csv = new File(Environment.getExternalStorageDirectory(),
+                    Constants.GLYPH_USER_CALL_CSV_PATH
+                            + "/" + name.replaceFirst(Constants.GLYPH_USER_CALL_CSV_PREFIX, "") + ".csv");
+            stream = new FileInputStream(csv);
+            return stream;
+        }
+        if (bundledCallAnimations.contains(name))
             return getAssetManager().open("call/" + name + ".csv");
 
-        return getAssetManager().open("call/" + ResourceUtils.getString("glyph_settings_call_animations_default") + ".csv");
+        if (stream == null) {
+            stream = getAssetManager().open("call/"
+                    + ResourceUtils.getString("glyph_settings_call_animations_default") + ".csv");
+        }
+        return stream;
     }
 
     public static InputStream getNotificationAnimation(String name) throws IOException {
-        if (notificationAnimations == null) getNotificationAnimations();
+        if (bundledNotificationAnimations == null) getBundledCallAnimations();
 
-        if (ArrayUtils.contains(notificationAnimations, name))
-            return getAssetManager().open("notification/" + name + ".csv");
+        InputStream stream = null;
 
-        return getAssetManager().open("call/" + ResourceUtils.getString("glyph_settings_notifs_animations_default") + ".csv");
+        if (name.startsWith(Constants.GLYPH_USER_NOTIF_CSV_PREFIX)) {
+            File csv = new File(Environment.getExternalStorageDirectory(),
+                    Constants.GLYPH_USER_NOTIF_CSV_PATH
+                            + "/" + name.replaceFirst(Constants.GLYPH_USER_NOTIF_CSV_PREFIX,"") + ".csv");
+            stream = new FileInputStream(csv);
+            return stream;
+        }
+
+        if (bundledNotificationAnimations.contains(name)) {
+            stream = getAssetManager().open("notification/" + name + ".csv");
+            return stream;
+        }
+
+        if (stream == null) {
+            stream = getAssetManager().open("notification/"
+                    + ResourceUtils.getString("glyph_settings_notifs_animations_default")
+                        + ".csv");
+        }
+
+        return stream;
     }
 
     public static InputStream getAnimation(String name) throws IOException {
-        if (callAnimations == null) getCallAnimations();
-        if (notificationAnimations == null) getNotificationAnimations();
+        if (bundledCallAnimations == null) getBundledCallAnimations();
+        if (bundledNotificationAnimations == null) getBundledNotificationAnimations();
 
-        if (ArrayUtils.contains(callAnimations, name)) {
-            return getCallAnimation(name);
+        InputStream stream = null;
+
+        if (bundledCallAnimations.contains(name)) {
+           stream = getCallAnimation(name);
         }
 
-        if (ArrayUtils.contains(notificationAnimations, name)) {
-            return getNotificationAnimation(name);
+        if (bundledNotificationAnimations.contains(name)) {
+            stream = getNotificationAnimation(name);
         }
 
-        return getAssetManager().open(name + ".csv");
+        if (name.startsWith(Constants.GLYPH_USER_CALL_CSV_PREFIX)) {
+            File csv = new File(Environment.getExternalStorageDirectory(),
+                    Constants.GLYPH_USER_CALL_CSV_PATH
+                            + "/" + name.replaceFirst(Constants.GLYPH_USER_CALL_CSV_PREFIX, "") + ".csv");
+            stream = new FileInputStream(csv);
+            return stream;
+        }
+
+        if (name.startsWith(Constants.GLYPH_USER_NOTIF_CSV_PREFIX)) {
+            File csv = new File(Environment.getExternalStorageDirectory(),
+                    Constants.GLYPH_USER_NOTIF_CSV_PATH
+                            + "/" + name.replaceFirst(Constants.GLYPH_USER_NOTIF_CSV_PREFIX,"") + ".csv" );
+            stream = new FileInputStream(csv);
+            return stream;
+        }
+
+        if (stream == null) {
+            stream = getAssetManager().open(name + ".csv");
+        }
+
+        return stream;
     }
 }

@@ -93,6 +93,10 @@
      </string>
      <string name="glyph_settings_music_visualizer_disable_pulse">Disable Pulse</string>
 
+    <string name="glyph_settings_user_animation_incompatible">Selected animation is not compatible with this device!</string>
+    <string name="glyph_settings_user_animation_invalid">Selected animation is not valid!</string>
+    <string name="glyph_settings_user_animation_is_complex">Complex animations cannot be displayed, use Live Preview instead!</string>
+
     <!-- QS tile -->
     <string name="glyph_accessibility_quick_settings">Glyph</string>
     <string name="glyph_accessibility_quick_settings_torch">Glyph torch</string>
