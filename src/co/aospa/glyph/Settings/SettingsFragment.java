@@ -18,7 +18,6 @@
 
 package co.aospa.glyph.Settings;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -29,6 +28,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 
 import androidx.preference.Preference;
@@ -256,9 +256,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             
             if (enabled) {
                 ServiceUtils.startProgressService();
-                mHandler.postDelayed(() -> {
-                    ServiceUtils.checkGlyphService();
-                }, 250);
+                mHandler.postDelayed(ServiceUtils::checkGlyphService, 250);
             } else {
                 ServiceUtils.checkGlyphService();
             }
@@ -382,15 +380,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mSettingObserver.unregister(mContentResolver);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        mSettingObserver.register(mContentResolver);
         updateScheduleSummary();
         updateMainSwitchState();
     }
@@ -424,7 +415,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
     private class SettingObserver extends ContentObserver {
         public SettingObserver() {
-            super(new Handler());
+            super(new Handler(Looper.getMainLooper()));
         }
 
         public void register(ContentResolver cr) {
@@ -443,13 +434,16 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
-            if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_ENABLE))) {
+            if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_ENABLE))
+                    && mSwitchBar != null) {
                 mSwitchBar.setChecked(SettingsManager.isGlyphEnabledIgnoreSchedule());
             }
-            if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_CALL_ENABLE))) {
+            if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_CALL_ENABLE))
+                    && mCallPreference != null) {
                 mCallPreference.setChecked(SettingsManager.isGlyphCallEnabled());
             }
-            if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_NOTIFS_ENABLE))) {
+            if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_NOTIFS_ENABLE))
+                    && mNotifsPreference != null) {
                 mNotifsPreference.setChecked(SettingsManager.isGlyphNotifsEnabled());
             }
         }
