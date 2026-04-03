@@ -78,7 +78,10 @@
             android:summary="@string/glyph_settings_call_toggle_summary" >
             <intent android:action="android.intent.action.MAIN"
                  android:targetPackage="co.aospa.glyph"
-                 android:targetClass="co.aospa.glyph.Settings.CallSettingsActivity"/>
+                 android:targetClass="co.aospa.glyph.Settings.AnimationSettingsActivity">
+                <extra android:name="type" android:value="call" />
+            </intent>
+
         </com.android.settingslib.PrimarySwitchPreference>
 
     <PreferenceCategory
@@ -91,8 +94,10 @@
             android:title="@string/glyph_settings_notifs_toggle_title"
             android:summary="@string/glyph_settings_notifs_toggle_summary" >
             <intent android:action="android.intent.action.MAIN"
-                 android:targetPackage="co.aospa.glyph"
-                 android:targetClass="co.aospa.glyph.Settings.NotifsSettingsActivity"/>
+                android:targetPackage="co.aospa.glyph"
+                android:targetClass="co.aospa.glyph.Settings.AnimationSettingsActivity">
+                <extra android:name="type" android:value="notifs" />
+            </intent>
         </com.android.settingslib.PrimarySwitchPreference>
 
     <PreferenceCategory

@@ -23,9 +23,9 @@ import co.aospa.glyph.Constants.Constants;
 
 import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
 
-public class CallSettingsActivity extends CollapsingToolbarBaseActivity {
+public class AnimationSettingsActivity extends CollapsingToolbarBaseActivity {
 
-    private CallSettingsFragment mCallSettingsFragment;
+    private AnimationSettingsFragment mAnimationSettingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +35,29 @@ public class CallSettingsActivity extends CollapsingToolbarBaseActivity {
             Constants.CONTEXT = getApplicationContext();
         }
 
-        Fragment fragment = getSupportFragmentManager().findFragmentById(com.android.settingslib.collapsingtoolbar.R.id.content_frame);
+        String type = getIntent().getStringExtra("type");
+        if (type == null) {
+            finish();
+            return;
+        }
+
+        Bundle args = new Bundle();
+        args.putString("type", type);
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(
+                com.android.settingslib.collapsingtoolbar.R.id.content_frame
+        );
         if (fragment == null) {
-            mCallSettingsFragment = new CallSettingsFragment();
+            mAnimationSettingsFragment = new AnimationSettingsFragment();
+            mAnimationSettingsFragment.setArguments(args);
             getSupportFragmentManager().beginTransaction()
-                .add(com.android.settingslib.collapsingtoolbar.R.id.content_frame, mCallSettingsFragment)
+                .add(
+                        com.android.settingslib.collapsingtoolbar.R.id.content_frame,
+                        mAnimationSettingsFragment
+                )
                 .commit();
         } else {
-            mCallSettingsFragment = (CallSettingsFragment) fragment;
+            mAnimationSettingsFragment = (AnimationSettingsFragment) fragment;
         }
     }
 }

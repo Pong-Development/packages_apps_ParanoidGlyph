@@ -174,17 +174,7 @@
         </activity>
 
         <activity
-            android:name=".Settings.CallSettingsActivity"
-            android:configChanges="orientation|screenSize"
-            android:exported="false"
-            android:theme="@style/Theme.SubSettingsBase.Expressive">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".Settings.NotifsSettingsActivity"
+            android:name=".Settings.AnimationSettingsActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
             android:theme="@style/Theme.SubSettingsBase.Expressive">
