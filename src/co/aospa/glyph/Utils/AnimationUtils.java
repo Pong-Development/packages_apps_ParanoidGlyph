@@ -1,10 +1,13 @@
 package co.aospa.glyph.Utils;
 
+import static co.aospa.glyph.Utils.InterfaceUtils.showToast;
+
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import co.aospa.glyph.Constants.Constants;
+
+import co.aospa.glyph.R;
 
 public class AnimationUtils {
 
@@ -119,6 +124,24 @@ public class AnimationUtils {
 
         }
         return false;
+    }
+
+    public static boolean checkUserAnimation(String animationName) {
+        try {
+            String csv = new String(ResourceUtils.getAnimation(animationName).readAllBytes(),
+                    StandardCharsets.UTF_8);
+            validateAnimation(csv);
+            if (isCompatible(csv)) {
+                showToast(R.string.glyph_settings_user_animation_incompatible);
+                return false;
+            }
+        } catch (Exception e) {
+            showToast(R.string.glyph_settings_user_animation_invalid);
+            Log.w(AnimationUtils.class.getSimpleName(), e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
      static boolean allSame(int[] arr, int start, int end) {

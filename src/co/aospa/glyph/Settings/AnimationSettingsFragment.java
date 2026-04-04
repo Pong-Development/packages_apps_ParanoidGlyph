@@ -228,7 +228,7 @@ public class AnimationSettingsFragment
 
         if (mListPreference.getValue().startsWith(userAnimationPrefix)) {
             String animationName = mListPreference.getValue();
-            checkUserAnimation(animationName);
+            AnimationUtils.checkUserAnimation(animationName);
             try {
                 String csv = new String(ResourceUtils.getAnimation(animationName).readAllBytes(),
                         StandardCharsets.UTF_8);
@@ -256,7 +256,7 @@ public class AnimationSettingsFragment
             boolean isPlayable = true;
 
             if (animationName.startsWith(userAnimationPrefix)) {
-                if (!checkUserAnimation(animationName)) return false;
+                if (!AnimationUtils.checkUserAnimation(animationName)) return false;
                 try {
                     String csv = new String(ResourceUtils.getAnimation(animationName).readAllBytes(),
                             StandardCharsets.UTF_8);
@@ -400,23 +400,6 @@ public class AnimationSettingsFragment
         );
     }
 
-    private boolean checkUserAnimation(String animationName) {
-        try {
-            String csv = new String(ResourceUtils.getAnimation(animationName).readAllBytes(),
-                    StandardCharsets.UTF_8);
-            AnimationUtils.validateAnimation(csv);
-            if (!AnimationUtils.isCompatible(csv)) {
-                showToast(R.string.glyph_settings_user_animation_incompatible);
-                return false;
-            }
-        } catch (Exception e) {
-            showToast(R.string.glyph_settings_user_animation_invalid);
-            Log.w(TAG, e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public void onDestroy() {
