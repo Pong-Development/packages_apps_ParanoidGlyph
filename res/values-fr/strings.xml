@@ -25,8 +25,8 @@
     <string name="glyph_settings_flip_title">Flip to Glyph</string>
     <string name="glyph_settings_flip_toggle_title">@string/glyph_settings_flip_title</string>
     <string name="glyph_settings_flip_toggle_summary">Affiche les Glyphs si le téléphone est retourné</string>
-    <string name="glyph_settings_flip_animation_toggle_title">Jouer l\'animation</string>
-    <string name="glyph_settings_flip_animation_toggle_summary">Affiche l\'animation une fois que le téléphone est retourné</string>
+    <string name="glyph_settings_flip_sub_animation_toggle_title">Jouer l\'animation</string>
+    <string name="glyph_settings_flip_sub_animation_toggle_summary">Affiche l\'animation une fois que le téléphone est retourné</string>
     <string name="glyph_settings_auto_brightness_toggle_title">Luminosité automatique</string>
     <string name="glyph_settings_auto_brightness_toggle_summary">La luminosité des Glyphs s\'ajustera automatiquement à votre environnement</string>
     <string name="glyph_settings_brightness">Luminosité</string>

@@ -37,8 +37,15 @@ public final class Constants {
 
     public static final String GLYPH_ENABLE = "glyph_enable";
     public static final String GLYPH_FLIP_ENABLE = "glyph_settings_flip_toggle";
-    public static final String GLYPH_FLIP_ANIMATION_ENABLE = "glyph_settings_flip_animation_toggle";
-    public static final String GLYPH_FLIP_ANIMATION = "glyph_settings_flip_animation";
+    public static final String GLYPH_FLIP_SUB_ENABLE = "glyph_settings_flip_sub_toggle";
+    public static final String GLYPH_FLIP_SUB_PREVIEW = "glyph_settings_flip_sub_preview";
+    public static final String GLYPH_FLIP_SUB_ANIMATIONS = "glyph_settings_flip_sub_animations";
+    public static final String GLYPH_FLIP_SUB_ANIMATION_ENABLE = "glyph_settings_flip_sub_animation_toggle";
+    public static final String GLYPH_FLIP_SUB_LIVE_PREVIEW = "glyph_settings_flip_sub_live_preview";
+
+    public static final String GLYPH_FLIP_SUB_RINGER_MODE = "glyph_settings_flip_sub_ringer_mode";
+    public static final String GLYPH_FLIP_REVERSE_ANIMATION_ENABLE = "glyph_settings_flip_sub_animations_reverse_toggle";
+
     public static final String GLYPH_BRIGHTNESS = "glyph_settings_brightness";
     public static final String GLYPH_BATTERY_SAVER_ENABLE = "glyph_settings_battery_saver_toggle";
     public static final String GLYPH_CHARGING_CATEGORY = "glyph_settings_charging";
@@ -64,7 +71,6 @@ public final class Constants {
     public static final String GLYPH_VOLUME_CATEGORY = "glyph_settings_volume";
     public static final String GLYPH_VOLUME_LEVEL_ENABLE = "glyph_settings_volume_level_toggle";
     public static final String GLYPH_AUTO_BRIGHTNESS_ENABLE = "glyph_settings_auto_brightness_toggle";
-    public static final String GLYPH_FLIP_RINGER_MODE = "glyph_settings_flip_ringer_mode";
     public static final String GLYPH_SCHEDULE = "glyph_settings_schedule";
     public static final String GLYPH_PROGRESS_CATEGORY = "glyph_settings_progress";
     public static final String GLYPH_PROGRESS_ENABLE = "glyph_settings_progress_toggle";
@@ -80,6 +86,8 @@ public final class Constants {
 
     public static final String GLYPH_USER_CALL_CSV_PREFIX = "user_call_";
     public static final String GLYPH_USER_NOTIF_CSV_PREFIX = "user_notif_";
+
+    public static final String GLYPH_NOTIF_ANIMATION_ALTERNATE = "notif_alternate";
 
     public static final String[] APPS_TO_IGNORE = {
         "android",

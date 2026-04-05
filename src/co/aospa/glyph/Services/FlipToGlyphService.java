@@ -30,6 +30,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Manager.StatusManager;
@@ -92,9 +93,11 @@ public class FlipToGlyphService extends Service {
         if (flipped && SettingsManager.isGlyphFlipAnimationEnabled()
                 && StatusManager.isGlyphIdle()) {
             String animationName = SettingsManager.getGlyphFlipAnimation();
-            if (animationName.equals("notif")) {
-                AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
-                AnimationManager.playCsvReverse(mContext, SettingsManager.getGlyphNotifsAnimation());
+            boolean shouldReverse = SettingsManager.isGlyphFlipAnimationReversed();
+            if (animationName.equals(Constants.GLYPH_NOTIF_ANIMATION_ALTERNATE)) {
+                AnimationManager.playCsvAlternate(mContext, SettingsManager.getGlyphNotifsAnimation());
+            } else if (shouldReverse) {
+                AnimationManager.playCsvReverse(mContext, animationName);
             } else {
                 AnimationManager.playCsv(mContext, animationName);
             }

@@ -55,6 +55,8 @@ public class GlyphAnimationPreference extends Preference {
     private String[] animationSlugs;
     private ImageView[] animationImgs;
 
+    private boolean alternateOnce = false;
+
     private View mRootView;
     private final View.OnClickListener mClickListener = v -> performClick(v);
 
@@ -151,6 +153,7 @@ public class GlyphAnimationPreference extends Preference {
     }
 
     public void updateAnimation(boolean play, String name, int time) {
+        alternateOnce = false;
         animationTimeBetween = time;
         animationName = name;
         animationPaused = !play;
@@ -165,7 +168,13 @@ public class GlyphAnimationPreference extends Preference {
         updateAnimation(play, animationName, time, reverse);
     }
 
+    public void updateAnimation(boolean play, String name, int time, boolean reverse, boolean shouldAlternate) {
+        alternateOnce = shouldAlternate;
+        updateAnimation(play, name, time, reverse);
+    }
+
     public void updateAnimation(boolean play, String name, int time, boolean reverse) {
+        alternateOnce = false;
         animationTimeBetween = time;
         animationName = name;
         animationPaused = !play;
@@ -184,7 +193,8 @@ public class GlyphAnimationPreference extends Preference {
                 if (DEBUG) Log.d(TAG, "Displaying animation | name: " + animationName + " mode: " + playMode);
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                         ResourceUtils.getAnimation(animationName)))) {
-                    Iterator<String> it = AnimationUtils.iterateCsvLines(reader, animationReversed);
+                    if (alternateOnce) animationReversed = false;
+                    Iterator<String> it = AnimationUtils.iterateCsvLines(reader, animationReversed, alternateOnce);
                     while (it.hasNext()) {
                         String[] split = it.next().split(",");
                         if (Constants.getDevice().equals("phone1") && split.length == 5) { // Phone (1) pattern on Phone (1)

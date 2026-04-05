@@ -34,18 +34,6 @@
     <string name="glyph_settings_summary_battery_saving">Disabled by Battery Saver</string>
     <string name="glyph_settings_summary_schedule">Disabled by schedule</string>
 
-    <string name="glyph_settings_flip_title">Flip to Glyph</string>
-
-    <string name="glyph_settings_flip_toggle_title">@string/glyph_settings_flip_title</string>
-    <string name="glyph_settings_flip_toggle_summary">Show Glyphs if phone is faced down</string>
-
-    <string name="glyph_settings_flip_animation_toggle_title">Play animation</string>
-    <string name="glyph_settings_flip_animation_toggle_summary">Show animation once flip is detected</string>
-
-    <string name="glyph_settings_flip_animation_title">Flip to glyph animation</string>
-
-    <string name="glyph_settings_flip_animation_option_follow_notification">Use notification animation (forwards-reverse)</string>
-
     <string name="glyph_settings_auto_brightness_toggle_title">Auto Brightness</string>
     <string name="glyph_settings_auto_brightness_toggle_summary">Glyph brightness will automatically adjust to your environment</string>
 
@@ -63,6 +51,26 @@
     <string name="glyph_settings_animations_live_preview_summary_playing">Now Playing...</string>
     <string name="glyph_settings_animations_live_preview_title">Live Preview</string>
     <string name="glyph_settings_animations_live_preview_summary">Preview selected animation on Glyphs</string>
+
+    <string name="glyph_settings_flip_title">Flip to Glyph</string>
+
+    <string name="glyph_settings_flip_toggle_title">@string/glyph_settings_flip_title</string>
+    <string name="glyph_settings_flip_toggle_summary">Show Glyphs if phone is faced down</string>
+
+    <string name="glyph_settings_flip_sub_animation_toggle_title">Play animation</string>
+    <string name="glyph_settings_flip_sub_animation_toggle_summary">Show animation once flip is detected</string>
+
+    <string name="glyph_settings_flip_sub_animations_title">Flip to glyph animation</string>
+
+    <string name="glyph_settings_flip_ringer_mode_title">Ringer mode</string>
+    <string name="glyph_settings_flip_ringer_mode_summary">Choose ringer mode for when device is flipped</string>
+
+    <string name="glyph_settings_flip_ringer_mode_follow_system">Follow system</string>
+    <string name="glyph_settings_flip_ringer_mode_vibrate">Vibrate</string>
+    <string name="glyph_settings_flip_ringer_mode_silent">Silent</string>
+    <string name="glyph_settings_flip_ringer_mode_normal">Ring</string>
+
+    <string name="glyph_settings_flip_animation_option_follow_notification">Use notification animation (forwards-reverse)</string>
 
     <string name="glyph_settings_call_title">Calls</string>
     <string name="glyph_settings_call_toggle_title">Call animation</string>
@@ -121,17 +129,6 @@
     <string name="glyph_accessibility_quick_settings_unavailable">Unavailable</string>
 
     <string name="glyph_music_visualizer_pulse_toast_message">Pulse visualizer has been disabled to avoid conflicts.</string>
-
-    
-    <!-- Flip to Glyph Ringer Mode -->
-    <string name="glyph_settings_flip_ringer_mode_title">Ringer mode</string>
-    <string name="glyph_settings_flip_ringer_mode_summary">Choose ringer mode for when device is flipped</string>
-    
-    <!-- Ringer Mode Options -->
-    <string name="glyph_settings_flip_ringer_mode_follow_system">Follow system</string>
-    <string name="glyph_settings_flip_ringer_mode_vibrate">Vibrate</string>
-    <string name="glyph_settings_flip_ringer_mode_silent">Silent</string>
-    <string name="glyph_settings_flip_ringer_mode_normal">Ring</string>
 
     <!-- Glyph Schedule Settings -->
     <string name="glyph_settings_schedule_title">Schedule Glyph</string>

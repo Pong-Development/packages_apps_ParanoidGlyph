@@ -69,8 +69,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
     private SwitchPreferenceCompat mBatterySaverPreference;
 
-    private SwitchPreferenceCompat mFlipPreference;
-    private ListPreference mFlipAnimationPreference;
+    private PrimarySwitchPreference mFlipPreference;
     private SwitchPreferenceCompat mAutoBrightnessPreference;
     private SliderPreference mBrightnessPreference;
     private PrimarySwitchPreference mNotifsPreference;
@@ -82,7 +81,6 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private SwitchPreferenceCompat mVolumeLevelPreference;
     private SwitchPreferenceCompat mMusicVisualizerPreference;
     private ListPreference mMusicVisualizerModePreference;
-    private ListPreference mFlipRingerModePreference;
     private PreferenceCategory mProgressCategory;
     private SwitchPreferenceCompat mProgressPreference;
     private SwitchPreferenceCompat mProgressMusicPreference;
@@ -130,46 +128,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mBatterySaverPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_BATTERY_SAVER_ENABLE);
         mBatterySaverPreference.setOnPreferenceChangeListener(this);
 
-        mFlipPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_FLIP_ENABLE);
+        mFlipPreference = findPreference(Constants.GLYPH_FLIP_ENABLE);
         mFlipPreference.setEnabled(glyphEnabled);
+        mFlipPreference.setChecked(SettingsManager.isGlyphFlipEnabled());
         mFlipPreference.setOnPreferenceChangeListener(this);
-
-        mFlipAnimationPreference = findPreference(Constants.GLYPH_FLIP_ANIMATION);
-        mFlipAnimationPreference.setOnPreferenceChangeListener(this);
-
-        List<String> bundledAnimationList = ResourceUtils.getBundledNotificationAnimations();
-        List<String> userAnimationList = ResourceUtils.getUserNotificationAnimations();
-
-        List<String> animationEntryList = new ArrayList<>();
-
-        boolean hasFlipCsv = ResourceUtils.hasFlipCsv();
-
-        animationEntryList.addAll(bundledAnimationList);
-        animationEntryList.addAll(userAnimationList);
-        animationEntryList.sort(null);
-        animationEntryList.addFirst(getString(R.string.glyph_settings_flip_animation_option_follow_notification));
-        if (hasFlipCsv) {
-            animationEntryList.addFirst(getString(R.string.glyph_settings_default_option));
-        }
-
-        List<String> animationEntryValues = new ArrayList<>();
-        animationEntryValues.addAll(bundledAnimationList);
-        animationEntryValues.addAll(userAnimationList
-                .stream()
-                .map(name -> Constants.GLYPH_USER_NOTIF_CSV_PREFIX + name)
-                .toList());
-        animationEntryValues.sort(null);
-        animationEntryValues.addFirst("notif");
-        if (hasFlipCsv) {
-            animationEntryValues.addFirst("flip");
-        }
-
-        mFlipAnimationPreference.setEntries(animationEntryList.toArray(new String[0]));
-        mFlipAnimationPreference.setEntryValues(animationEntryValues.toArray(new String[0]));
-
-        if (!animationEntryValues.contains(mFlipAnimationPreference.getValue())) {
-            mFlipAnimationPreference.setValue(hasFlipCsv ? "flip" : "notif");
-        }
 
         mAutoBrightnessPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_AUTO_BRIGHTNESS_ENABLE);
         mAutoBrightnessPreference.setEnabled(glyphEnabled);
@@ -244,10 +206,6 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mMusicVisualizerPreference.setEnabled(glyphEnabled);
         mMusicVisualizerModePreference.setOnPreferenceChangeListener(this);
 
-        mFlipRingerModePreference = (ListPreference) findPreference(Constants.GLYPH_FLIP_RINGER_MODE);
-        mFlipRingerModePreference.setEnabled(glyphEnabled && mFlipPreference.isChecked());
-        mFlipRingerModePreference.setOnPreferenceChangeListener(this);
-
         mSchedulePreference = (Preference) findPreference(Constants.GLYPH_SCHEDULE);
         updateScheduleSummary();
 
@@ -275,35 +233,20 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         final String preferenceKey = preference.getKey();
 
+        if (preferenceKey.equals(Constants.GLYPH_FLIP_ENABLE)) {
+            SettingsManager.setGlyphFlipEnabled((Boolean) newValue);
+        }
+
         if (preferenceKey.equals(Constants.GLYPH_CALL_ENABLE)) {
-            SettingsManager.setGlyphCallEnabled(!mCallPreference.isChecked());
+            SettingsManager.setGlyphCallEnabled((Boolean) newValue);
         }
 
         if (preferenceKey.equals(Constants.GLYPH_NOTIFS_ENABLE)) {
-            SettingsManager.setGlyphNotifsEnabled(!mNotifsPreference.isChecked());
+            SettingsManager.setGlyphNotifsEnabled((Boolean) newValue);
         }
 
         if (preferenceKey.equals(Constants.GLYPH_AUTO_BRIGHTNESS_ENABLE)) {
-            mBrightnessPreference.setEnabled(mAutoBrightnessPreference.isChecked());
-        }
-
-        if (preferenceKey.equals(Constants.GLYPH_FLIP_RINGER_MODE)) {
-            int mode = Integer.parseInt((String) newValue);
-            Settings.Secure.putInt(mContentResolver, 
-                Constants.GLYPH_FLIP_RINGER_MODE, mode);
-        }
-
-        if (preferenceKey.equals(Constants.GLYPH_FLIP_ENABLE)) {
-            boolean flipEnabled = (Boolean) newValue;
-            mFlipRingerModePreference.setEnabled(flipEnabled && SettingsManager.isGlyphEnabled());
-        }
-
-        if (preferenceKey.equals(Constants.GLYPH_FLIP_ANIMATION)) {
-            String animationName = newValue.toString();
-
-            if (animationName.startsWith(Constants.GLYPH_USER_NOTIF_CSV_PREFIX)) {
-                return AnimationUtils.checkUserAnimation(animationName);
-            }
+            mBrightnessPreference.setEnabled(!(Boolean) newValue);
         }
 
         if (preferenceKey.equals(Constants.GLYPH_PROGRESS_ENABLE)) {
@@ -373,7 +316,6 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         }
         mMusicVisualizerPreference.setEnabled(isChecked);
         mMusicVisualizerModePreference.setEnabled(isChecked);
-        mFlipRingerModePreference.setEnabled(isChecked && mFlipPreference.isChecked());
         if (!Constants.getDevice().equals("phone1")) {
             mProgressPreference.setEnabled(isChecked);
             mProgressMusicPreference.setEnabled(isChecked && mProgressPreference.isChecked());
@@ -482,6 +424,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
                 Constants.GLYPH_CALL_ENABLE), false, this);
             cr.registerContentObserver(Settings.Secure.getUriFor(
                 Constants.GLYPH_NOTIFS_ENABLE), false, this);
+            cr.registerContentObserver(Settings.Secure.getUriFor(
+                Constants.GLYPH_FLIP_ENABLE), false, this);
         }
 
         public void unregister(ContentResolver cr) {
@@ -494,6 +438,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_ENABLE))
                     && mSwitchBar != null) {
                 mSwitchBar.setChecked(SettingsManager.isGlyphEnabledIgnoreSchedule());
+            }
+            if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_FLIP_ENABLE))
+                    && mFlipPreference != null) {
+                mFlipPreference.setChecked(SettingsManager.isGlyphFlipEnabled());
             }
             if (uri.equals(Settings.Secure.getUriFor(Constants.GLYPH_CALL_ENABLE))
                     && mCallPreference != null) {

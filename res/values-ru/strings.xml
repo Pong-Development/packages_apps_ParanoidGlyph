@@ -29,7 +29,9 @@
     <string name="glyph_settings_title">Интерфейс Glyph</string>
     <string name="glyph_settings_summary">Настройки подсветки Glyph</string>
 
-    <string name="glyph_settings_flip_toggle_title">Перевернуть для Glyph</string>
+
+    <string name="glyph_settings_flip_title">Перевернуть для Glyph</string>
+    <string name="glyph_settings_flip_toggle_title">@string/glyph_settings_flip_title</string>
     <string name="glyph_settings_flip_toggle_summary">Показывать подсветку, если телефон лежит экраном вниз</string>
 
     <string name="glyph_settings_auto_brightness_toggle_title">Автояркость</string>

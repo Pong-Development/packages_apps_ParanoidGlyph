@@ -84,14 +84,20 @@ public final class SettingsManager {
 
     public static boolean isGlyphFlipEnabled() {
         Context ctx = getContext();
-        return PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getBoolean(Constants.GLYPH_FLIP_ENABLE, false) && isGlyphEnabled();
+        return Settings.Secure.getInt(ctx.getContentResolver(),
+                Constants.GLYPH_FLIP_ENABLE, 1) != 0 && isGlyphEnabled();
+    }
+
+    public static void setGlyphFlipEnabled(boolean enable) {
+        Context ctx = getContext();
+        Settings.Secure.putInt(ctx.getContentResolver(),
+                Constants.GLYPH_FLIP_ENABLE, enable ? 1 : 0);
     }
 
     public static boolean isGlyphFlipAnimationEnabled() {
         Context ctx = getContext();
         return PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getBoolean(Constants.GLYPH_FLIP_ANIMATION_ENABLE, true) && isGlyphEnabled();
+                .getBoolean(Constants.GLYPH_FLIP_SUB_ANIMATION_ENABLE, true) && isGlyphEnabled();
     }
 
     public static int getGlyphBrightness() {
@@ -146,10 +152,18 @@ public final class SettingsManager {
 
     public static String getGlyphFlipAnimation() {
         Context ctx = getContext();
-        String defaultValue = ResourceUtils.hasFlipCsv() ? "flip" : "notif";
+        String defaultValue = ResourceUtils.hasFlipCsv() ? "flip" : Constants.GLYPH_NOTIF_ANIMATION_ALTERNATE;
+
         return PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getString(Constants.GLYPH_FLIP_ANIMATION,
+                .getString(Constants.GLYPH_FLIP_SUB_ANIMATIONS,
                         defaultValue);
+    }
+
+    public static boolean isGlyphFlipAnimationReversed() {
+        Context ctx = getContext();
+        return PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(Constants.GLYPH_FLIP_REVERSE_ANIMATION_ENABLE,
+                        false);
     }
 
     public static boolean isGlyphCallAnimationReversed() {
@@ -231,8 +245,10 @@ public final class SettingsManager {
     }
 
     public static int getFlipRingerMode() {
-        return Settings.Secure.getInt(getContext().getContentResolver(),
-                Constants.GLYPH_FLIP_RINGER_MODE, AudioManager.RINGER_MODE_VIBRATE);
+        Context ctx = getContext();
+        return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getString(Constants.GLYPH_FLIP_SUB_RINGER_MODE,
+                        String.valueOf(AudioManager.RINGER_MODE_VIBRATE)));
     }
 
     public static boolean isGlyphProgressEnabled() {

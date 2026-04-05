@@ -107,6 +107,10 @@ public final class AnimationManager {
         playCsv(context, name, false, false);
     }
 
+    public static void playCsvAlternate(Context context, String name) {
+        playCsv(context, name, false, false, true);
+    }
+
     public static void playCsv(Context context, String name, boolean wait) {
         playCsv(context, name, wait, false);
     }
@@ -120,6 +124,11 @@ public final class AnimationManager {
     }
 
     public static void playCsv(Context context, String name, boolean wait, boolean reverse) {
+        playCsv(context, name, wait, reverse, false);
+    }
+
+    public static void playCsv(Context context, String name, boolean wait, boolean reverse,
+                               boolean shouldAlternate) {
         if (!check(name, wait))
                 return;
 
@@ -129,7 +138,7 @@ public final class AnimationManager {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 ResourceUtils.getAnimation(name)))) {
-            Iterator<String> it = AnimationUtils.iterateCsvLines(reader, reverse);
+            Iterator<String> it = AnimationUtils.iterateCsvLines(reader, reverse, shouldAlternate);
             while (it.hasNext()) {
                 if (checkInterruption("csv")) throw new InterruptedException();
                 String[] pattern = it.next().split(",");

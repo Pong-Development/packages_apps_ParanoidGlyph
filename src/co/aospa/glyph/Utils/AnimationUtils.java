@@ -224,12 +224,24 @@ public class AnimationUtils {
         return line;
     }
 
-    public static Iterator<String> iterateCsvLines(BufferedReader reader, boolean reverse) throws IOException {
+    public static Iterator<String> iterateCsvLines(BufferedReader reader, boolean reverse)
+            throws IOException {
+
+        return iterateCsvLines(reader, reverse, false);
+    }
+
+    public static Iterator<String> iterateCsvLines(BufferedReader reader, boolean reverse,
+                                                   boolean alternate) throws IOException {
         List<String> lines = new ArrayList<>();
         String line;
         while ((line = reader.readLine()) != null) {
             line = sanitizeCsvLine(line);
             lines.add(line);
+        }
+        if (alternate) {
+            List<String> reversed = new ArrayList<>(lines);
+            Collections.reverse(reversed);
+            lines.addAll(reversed);
         }
         if (reverse) Collections.reverse(lines);
         return lines.iterator();
