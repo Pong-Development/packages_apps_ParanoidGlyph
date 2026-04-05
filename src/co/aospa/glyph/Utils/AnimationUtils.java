@@ -131,7 +131,7 @@ public class AnimationUtils {
             String csv = new String(ResourceUtils.getAnimation(animationName).readAllBytes(),
                     StandardCharsets.UTF_8);
             validateAnimation(csv);
-            if (isCompatible(csv)) {
+            if (!isCompatible(csv)) {
                 showToast(R.string.glyph_settings_user_animation_incompatible);
                 return false;
             }
@@ -154,7 +154,7 @@ public class AnimationUtils {
 
     public static String getDevice(String csv) {
 
-        int frameLength = getFrameLength(csv.lines().findFirst().orElse(""));
+        int frameLength = getFrameLength(sanitizeCsvLine(csv.lines().findFirst().orElse("")));
 
             switch (frameLength) {
                 case 5 -> {
@@ -179,7 +179,7 @@ public class AnimationUtils {
 
         if (Constants.getDevice().equals("phone2")) {
             compatible = getDevice(csv).equals(Constants.getDevice())
-                    || getDevice(csv).equals("phone1)");
+                    || getDevice(csv).equals("phone1");
         } else {
             compatible = getDevice(csv).equals(Constants.getDevice());
         }
