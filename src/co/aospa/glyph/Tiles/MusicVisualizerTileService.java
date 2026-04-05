@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
@@ -100,7 +101,7 @@ public class MusicVisualizerTileService extends TileService {
     
     private class SettingObserver extends ContentObserver {
         public SettingObserver() {
-            super(new Handler());
+            super(new Handler(Looper.getMainLooper()));
         }
 
         public void register(ContentResolver cr) {

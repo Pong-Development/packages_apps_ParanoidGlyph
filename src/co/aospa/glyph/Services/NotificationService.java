@@ -293,7 +293,7 @@ public class NotificationService extends NotificationListenerService
 
     private class SettingObserver extends ContentObserver {
         public SettingObserver() {
-            super(new Handler());
+            super(new Handler(Looper.getMainLooper()));
         }
 
         public void register(ContentResolver cr) {
