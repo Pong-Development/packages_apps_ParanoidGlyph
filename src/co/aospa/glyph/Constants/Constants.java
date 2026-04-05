@@ -38,6 +38,7 @@ public final class Constants {
     public static final String GLYPH_ENABLE = "glyph_enable";
     public static final String GLYPH_FLIP_ENABLE = "glyph_settings_flip_toggle";
     public static final String GLYPH_FLIP_ANIMATION_ENABLE = "glyph_settings_flip_animation_toggle";
+    public static final String GLYPH_FLIP_ANIMATION = "glyph_settings_flip_animation";
     public static final String GLYPH_BRIGHTNESS = "glyph_settings_brightness";
     public static final String GLYPH_BATTERY_SAVER_ENABLE = "glyph_settings_battery_saver_toggle";
     public static final String GLYPH_CHARGING_CATEGORY = "glyph_settings_charging";

@@ -24,6 +24,8 @@
     <!-- App Name -->
     <string name="glyph_settings_app_name">Glyph interface</string>
 
+    <string name="glyph_settings_default_option">Default</string>
+
     <!-- Glyph Settings -->
     <string name="glyph_settings_enable">Glyph lights</string>
     <string name="glyph_settings_title">Glyph interface</string>
@@ -39,6 +41,10 @@
 
     <string name="glyph_settings_flip_animation_toggle_title">Play animation</string>
     <string name="glyph_settings_flip_animation_toggle_summary">Show animation once flip is detected</string>
+
+    <string name="glyph_settings_flip_animation_title">Flip to glyph animation</string>
+
+    <string name="glyph_settings_flip_animation_option_follow_notification">Use notification animation (forwards-reverse)</string>
 
     <string name="glyph_settings_auto_brightness_toggle_title">Auto Brightness</string>
     <string name="glyph_settings_auto_brightness_toggle_summary">Glyph brightness will automatically adjust to your environment</string>

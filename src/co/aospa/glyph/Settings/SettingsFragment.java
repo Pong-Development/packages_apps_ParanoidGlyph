@@ -54,7 +54,11 @@ import co.aospa.glyph.Services.BatterySaverService;
 import static co.aospa.glyph.Utils.InterfaceUtils.showDialog;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
+import co.aospa.glyph.Utils.AnimationUtils;
 import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
 
@@ -66,6 +70,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private SwitchPreferenceCompat mBatterySaverPreference;
 
     private SwitchPreferenceCompat mFlipPreference;
+    private ListPreference mFlipAnimationPreference;
     private SwitchPreferenceCompat mAutoBrightnessPreference;
     private SliderPreference mBrightnessPreference;
     private PrimarySwitchPreference mNotifsPreference;
@@ -127,6 +132,43 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mFlipPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_FLIP_ENABLE);
         mFlipPreference.setEnabled(glyphEnabled);
         mFlipPreference.setOnPreferenceChangeListener(this);
+
+        mFlipAnimationPreference = findPreference(Constants.GLYPH_FLIP_ANIMATION);
+        mFlipAnimationPreference.setOnPreferenceChangeListener(this);
+
+        List<String> bundledAnimationList = ResourceUtils.getBundledNotificationAnimations();
+        List<String> userAnimationList = ResourceUtils.getUserNotificationAnimations();
+
+        List<String> animationEntryList = new ArrayList<>();
+
+        boolean hasFlipCsv = ResourceUtils.hasFlipCsv();
+
+        animationEntryList.addAll(bundledAnimationList);
+        animationEntryList.addAll(userAnimationList);
+        animationEntryList.sort(null);
+        animationEntryList.addFirst(getString(R.string.glyph_settings_flip_animation_option_follow_notification));
+        if (hasFlipCsv) {
+            animationEntryList.addFirst(getString(R.string.glyph_settings_default_option));
+        }
+
+        List<String> animationEntryValues = new ArrayList<>();
+        animationEntryValues.addAll(bundledAnimationList);
+        animationEntryValues.addAll(userAnimationList
+                .stream()
+                .map(name -> Constants.GLYPH_USER_NOTIF_CSV_PREFIX + name)
+                .toList());
+        animationEntryValues.sort(null);
+        animationEntryValues.addFirst("notif");
+        if (hasFlipCsv) {
+            animationEntryValues.addFirst("flip");
+        }
+
+        mFlipAnimationPreference.setEntries(animationEntryList.toArray(new String[0]));
+        mFlipAnimationPreference.setEntryValues(animationEntryValues.toArray(new String[0]));
+
+        if (!animationEntryValues.contains(mFlipAnimationPreference.getValue())) {
+            mFlipAnimationPreference.setValue(hasFlipCsv ? "flip" : "notif");
+        }
 
         mAutoBrightnessPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_AUTO_BRIGHTNESS_ENABLE);
         mAutoBrightnessPreference.setEnabled(glyphEnabled);
@@ -250,6 +292,15 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             boolean flipEnabled = (Boolean) newValue;
             mFlipRingerModePreference.setEnabled(flipEnabled && SettingsManager.isGlyphEnabled());
         }
+
+        if (preferenceKey.equals(Constants.GLYPH_FLIP_ANIMATION)) {
+            String animationName = newValue.toString();
+
+            if (animationName.startsWith(Constants.GLYPH_USER_NOTIF_CSV_PREFIX)) {
+                return AnimationUtils.checkUserAnimation(animationName);
+            }
+        }
+
         if (preferenceKey.equals(Constants.GLYPH_PROGRESS_ENABLE)) {
             boolean enabled = (Boolean) newValue;
             mProgressMusicPreference.setEnabled(enabled && SettingsManager.isGlyphEnabled());

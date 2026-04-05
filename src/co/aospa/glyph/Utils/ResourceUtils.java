@@ -99,6 +99,17 @@ public final class ResourceUtils {
         return getResources().getIntArray(getIdentifier(id, "array"));
     }
 
+    public static boolean hasFlipCsv() {
+        boolean hasFlipCsv = false;
+        try {
+            getAnimation("flip");
+            hasFlipCsv = true;
+        } catch (IOException ignored) {
+
+        }
+        return hasFlipCsv;
+    }
+
     public static List<String> getUserCallAnimations() {
 
         List<String> animations = null;

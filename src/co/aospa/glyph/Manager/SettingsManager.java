@@ -144,6 +144,14 @@ public final class SettingsManager {
                         ResourceUtils.getString("glyph_settings_call_animations_default"));
     }
 
+    public static String getGlyphFlipAnimation() {
+        Context ctx = getContext();
+        String defaultValue = ResourceUtils.hasFlipCsv() ? "flip" : "notif";
+        return PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getString(Constants.GLYPH_FLIP_ANIMATION,
+                        defaultValue);
+    }
+
     public static boolean isGlyphCallAnimationReversed() {
         Context ctx = getContext();
          return PreferenceManager.getDefaultSharedPreferences(ctx)

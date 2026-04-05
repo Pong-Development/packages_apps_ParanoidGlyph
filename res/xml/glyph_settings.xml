@@ -58,6 +58,12 @@
         android:dependency="glyph_settings_flip_toggle" />
 
     <ListPreference
+        android:key="glyph_settings_flip_animation"
+        android:title="@string/glyph_settings_flip_animation_title"
+        android:summary="%s">
+    </ListPreference>
+
+    <ListPreference
         android:key="glyph_settings_flip_ringer_mode"
         android:title="@string/glyph_settings_flip_ringer_mode_title"
         android:summary="@string/glyph_settings_flip_ringer_mode_summary"

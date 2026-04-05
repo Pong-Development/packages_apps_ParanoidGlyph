@@ -91,21 +91,12 @@ public class FlipToGlyphService extends Service {
         if (DEBUG) Log.d(TAG, "Flipped: " + flipped);
         if (flipped && SettingsManager.isGlyphFlipAnimationEnabled()
                 && StatusManager.isGlyphIdle()) {
-            boolean hasFlipCsv = false;
-            try {
-                ResourceUtils.getAnimation("flip");
-                hasFlipCsv = true;
-            } catch (IOException ignored) {
-            } finally {
-                boolean finalHasFlipCsv = hasFlipCsv;
-                mThreadHandler.post(() -> {
-                    if (finalHasFlipCsv) {
-                        AnimationManager.playCsv(mContext, "flip");
-                    } else {
-                        AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
-                        AnimationManager.playCsvReverse(mContext, SettingsManager.getGlyphNotifsAnimation());
-                    }
-                });
+            String animationName = SettingsManager.getGlyphFlipAnimation();
+            if (animationName.equals("notif")) {
+                AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
+                AnimationManager.playCsvReverse(mContext, SettingsManager.getGlyphNotifsAnimation());
+            } else {
+                AnimationManager.playCsv(mContext, animationName);
             }
 
             ringerMode = mAudioManager.getRingerModeInternal();
