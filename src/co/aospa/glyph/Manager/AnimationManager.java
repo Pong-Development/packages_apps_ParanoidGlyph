@@ -424,6 +424,48 @@ public final class AnimationManager {
         }
     }
 
+    public static void playMusic(int[] bandBrightness) {
+
+        int[] pattern;
+
+        if (Constants.getDevice().equals("phone3a")) {
+
+            int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
+
+            int[] zone1 = new int[zoneDefs[1]]; // largest (left 1)
+            int[] zone2 = new int[zoneDefs[0]]; // medium (right)
+            int[] zone3 = new int[zoneDefs[2]]; // smallest (left 2)
+
+            Arrays.fill(zone1, bandBrightness[1]); // mid-low
+            Arrays.fill(zone2, bandBrightness[2]); // mid
+            Arrays.fill(zone3, bandBrightness[4]); // high
+
+            pattern = AnimationUtils.buildPatternArray(zone1, zone2, zone3);
+        } else {
+                pattern = new int[5];
+                pattern[4] = bandBrightness[0]; // low
+                pattern[3] = bandBrightness[1]; // mid-low
+                pattern[2] = bandBrightness[2]; // mid
+                pattern[0] = bandBrightness[3]; // mid-high
+                pattern[1] = bandBrightness[4]; // high
+            }
+
+        try {
+            if (StatusManager.isGlyphIdle()) {
+                updateLedFrame(pattern);
+                Thread.sleep(106);
+            }
+        } catch (Exception e) {
+            if (DEBUG)
+                Log.d(TAG, "Exception while playing animation | name: music " + " | exception: " + e);
+        } finally {
+            if (StatusManager.isGlyphIdle()) {
+                clearLEDs();
+                if (DEBUG) Log.d(TAG, "Done playing animation | name: music");
+            }
+        }
+    }
+
     public static void playMusic(Set<String> snapshot) {
         float maxPatternBrightness = (float) Constants.MAX_PATTERN_BRIGHTNESS;
 

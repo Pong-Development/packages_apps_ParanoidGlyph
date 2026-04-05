@@ -81,6 +81,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private PreferenceCategory mVolumeCategory;
     private SwitchPreferenceCompat mVolumeLevelPreference;
     private SwitchPreferenceCompat mMusicVisualizerPreference;
+    private ListPreference mMusicVisualizerModePreference;
     private ListPreference mFlipRingerModePreference;
     private PreferenceCategory mProgressCategory;
     private SwitchPreferenceCompat mProgressPreference;
@@ -239,6 +240,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mMusicVisualizerPreference.setEnabled(glyphEnabled);
         mMusicVisualizerPreference.setOnPreferenceChangeListener(this);
 
+        mMusicVisualizerModePreference = findPreference(Constants.GLYPH_MUSIC_VISUALIZER_MODE);
+        mMusicVisualizerPreference.setEnabled(glyphEnabled);
+        mMusicVisualizerModePreference.setOnPreferenceChangeListener(this);
+
         mFlipRingerModePreference = (ListPreference) findPreference(Constants.GLYPH_FLIP_RINGER_MODE);
         mFlipRingerModePreference.setEnabled(glyphEnabled && mFlipPreference.isChecked());
         mFlipRingerModePreference.setOnPreferenceChangeListener(this);
@@ -367,6 +372,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             mVolumeLevelPreference.setEnabled(isChecked);
         }
         mMusicVisualizerPreference.setEnabled(isChecked);
+        mMusicVisualizerModePreference.setEnabled(isChecked);
         mFlipRingerModePreference.setEnabled(isChecked && mFlipPreference.isChecked());
         if (!Constants.getDevice().equals("phone1")) {
             mProgressPreference.setEnabled(isChecked);

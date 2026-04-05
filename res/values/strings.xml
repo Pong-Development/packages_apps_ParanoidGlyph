@@ -90,8 +90,16 @@
     <string name="glyph_settings_volume_level_toggle_summary">Show volume level when adjusting</string>
 
     <string name="glyph_settings_misc_title">Miscellaneous</string>
-    <string name="glyph_settings_music_visualizer_toggle_title">Music Visualizer</string>
+
+    <string name="glyph_settings_music_visualizer_title">Music Visualizer</string>
+    <string name="glyph_settings_music_visualizer_toggle_title">@string/glyph_settings_music_visualizer_title</string>
     <string name="glyph_settings_music_visualizer_toggle_summary">DISCO LIGHTS!</string>
+
+    <string name="glyph_settings_music_visualizer_mode_title">Visualizer mode</string>
+    <string name="glyph_settings_music_visualizer_mode_beat_trigger">Beat trigger</string>
+    <string name="glyph_settings_music_visualizer_mode_band_intensity">Band intensity</string>
+    <string name="glyph_settings_music_visualizer_mode_band_intensity_inverted">Band intensity (inverted)</string>
+
 
     <string name="glyph_settings_music_visualizer_warning_title">Conflicting Service Detected</string>
     <string name="glyph_settings_music_visualizer_warning_message">Due to Android limitations, only one process may capture audio for session 0 \(Global\). 

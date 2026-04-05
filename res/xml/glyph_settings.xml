@@ -162,10 +162,23 @@
                 android:targetClass="co.aospa.glyph.Settings.ScheduleSettingsActivity"/>
         </Preference>
 
+    <PreferenceCategory
+        android:key="glyph_settings_music_visualizer"
+        android:title="@string/glyph_settings_music_visualizer_title" />
+
         <SwitchPreferenceCompat
             android:key="glyph_settings_music_visualizer_toggle"
             android:defaultValue="false"
             android:title="@string/glyph_settings_music_visualizer_toggle_title"
             android:summary="@string/glyph_settings_music_visualizer_toggle_summary" />
+
+        <ListPreference
+            android:key="glyph_settings_music_visualizer_mode"
+            android:title="@string/glyph_settings_music_visualizer_mode_title"
+            android:summary="%s"
+            android:entries="@array/glyph_music_visualizer_mode_entries"
+            android:entryValues="@array/glyph_music_visualizer_mode_values"
+            android:defaultValue="0"
+            android:dependency="glyph_settings_music_visualizer_toggle" />
 
 </PreferenceScreen>

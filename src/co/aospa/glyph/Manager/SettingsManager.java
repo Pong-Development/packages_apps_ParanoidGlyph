@@ -165,6 +165,12 @@ public final class SettingsManager {
                 .getBoolean(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE, false) && isGlyphEnabled();
     }
 
+    public static int getGlyphMusicVisualizerMode() {
+        Context ctx = getContext();
+        return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getString(Constants.GLYPH_MUSIC_VISUALIZER_MODE, "0"));
+    }
+
     public static void setGlyphMusicVisualizer(boolean state) {
         Context ctx = getContext();
         PreferenceManager.getDefaultSharedPreferences(ctx).edit()

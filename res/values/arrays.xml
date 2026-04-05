@@ -36,6 +36,18 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="glyph_music_visualizer_mode_entries">
+        <item>@string/glyph_settings_music_visualizer_mode_beat_trigger</item>
+        <item>@string/glyph_settings_music_visualizer_mode_band_intensity</item>
+        <item>@string/glyph_settings_music_visualizer_mode_band_intensity_inverted</item>
+    </string-array>
+
+    <string-array name="glyph_music_visualizer_mode_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="day_of_week_names">
         <item>Sunday</item>
         <item>Monday</item>
