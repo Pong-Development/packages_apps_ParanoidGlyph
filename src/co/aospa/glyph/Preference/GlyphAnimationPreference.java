@@ -197,13 +197,13 @@ public class GlyphAnimationPreference extends Preference {
                     Iterator<String> it = AnimationUtils.iterateCsvLines(reader, animationReversed, alternateOnce);
                     while (it.hasNext()) {
                         String[] split = it.next().split(",");
-                        if (Constants.getDevice().equals("phone1") && split.length == 5) { // Phone (1) pattern on Phone (1)
+                        if (Constants.Device.isPhone1() && split.length == 5) { // Phone (1) pattern on Phone (1)
                             mActivity.runOnUiThread(() -> {
                                 for (int i = 0; i < animationSlugs.length; i++) {
                                     setGlyphsDrawable(animationImgs[i], Integer.parseInt(split[i]));
                                 }
                             });
-                        } else if (Constants.getDevice().equals("phone2") && split.length == 5) { // Phone (1) pattern on Phone (2)
+                        } else if (Constants.Device.isPhone2() && split.length == 5) { // Phone (1) pattern on Phone (2)
                             mActivity.runOnUiThread(() -> {
                                     setGlyphsDrawable(animationImgs[0], Integer.parseInt(split[0]));
                                     setGlyphsDrawable(animationImgs[1], Integer.parseInt(split[0]));
@@ -217,7 +217,7 @@ public class GlyphAnimationPreference extends Preference {
                                     setGlyphsDrawable(animationImgs[9], Integer.parseInt(split[3]));
                                     setGlyphsDrawable(animationImgs[10], Integer.parseInt(split[4]));
                             });
-                        } else if (Constants.getDevice().equals("phone2") && split.length == 33) { // Phone (2) pattern on Phone (2)
+                        } else if (Constants.Device.isPhone2() && split.length == 33) { // Phone (2) pattern on Phone (2)
                             mActivity.runOnUiThread(() -> {
                                     setGlyphsDrawable(animationImgs[0], Integer.parseInt(split[0]));
                                     setGlyphsDrawable(animationImgs[1], Integer.parseInt(split[1]));
@@ -231,13 +231,13 @@ public class GlyphAnimationPreference extends Preference {
                                     setGlyphsDrawable(animationImgs[9], Integer.parseInt(split[25]));
                                     setGlyphsDrawable(animationImgs[10], Integer.parseInt(split[24]));
                             });
-                        } else if (Constants.getDevice().equals("phone2a") && split.length == 26) { // Phone (2a) pattern on Phone (2a)
+                        } else if (Constants.Device.isPhone2a() && split.length == 26) { // Phone (2a) pattern on Phone (2a)
                             mActivity.runOnUiThread(() -> {
                                     setGlyphsDrawable(animationImgs[0], Integer.parseInt(split[0]));
                                     setGlyphsDrawable(animationImgs[1], Integer.parseInt(split[25]));
                                     setGlyphsDrawable(animationImgs[2], Integer.parseInt(split[24]));
                             });
-                        } else if (Constants.getDevice().equals("phone3a") && split.length == 36) { // Phone (3a) / (3a) Pro pattern on Phone (3a) / (3a) Pro
+                        } else if (Constants.Device.isPhone3a() && split.length == 36) { // Phone (3a) / (3a) Pro pattern on Phone (3a) / (3a) Pro
                             mActivity.runOnUiThread(() -> {
                                     setGlyphsDrawable(animationImgs[0], Integer.parseInt(split[0]));
                                     setGlyphsDrawable(animationImgs[1], Integer.parseInt(split[20]));

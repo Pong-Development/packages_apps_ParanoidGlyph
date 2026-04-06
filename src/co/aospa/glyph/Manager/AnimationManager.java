@@ -385,7 +385,7 @@ public final class AnimationManager {
                 try {
                     if (checkInterruption("essential")) throw new InterruptedException();
                     int[] steps = {12, 24, 36, 48, 60};
-                    if (Constants.getDevice().equals("phone3a")) {
+                    if (Constants.Device.isPhone3a()) {
                         int[] essentialPattern = new int[11];
                         for (int i : steps) {
                             if (checkInterruption("essential")) throw new InterruptedException();
@@ -408,7 +408,7 @@ public final class AnimationManager {
                 if (DEBUG) Log.d(TAG, "Done playing animation | name: essential");
             });
         } else {
-            if (Constants.getDevice().equals("phone3a")) {
+            if (Constants.Device.isPhone3a()) {
                 int[] essentialPattern = new int[11];
                 int patternBrightness = Constants.MAX_PATTERN_BRIGHTNESS / 100 * 60;
                 Arrays.fill(essentialPattern, patternBrightness);
@@ -424,7 +424,7 @@ public final class AnimationManager {
         if (DEBUG) Log.d(TAG, "Disabling Essential Animation");
         StatusManager.setEssentialLedActive(false);
         if (!StatusManager.isAnimationActive() && !StatusManager.isAllLedActive()) {
-            if (Constants.getDevice().equals("phone3a")) {
+            if (Constants.Device.isPhone3a()) {
                 clearLEDs();
             } else {
                 int led = ResourceUtils.getInteger("glyph_settings_notifs_essential_led");
@@ -437,7 +437,7 @@ public final class AnimationManager {
 
         int[] pattern;
 
-        if (Constants.getDevice().equals("phone3a")) {
+        if (Constants.Device.isPhone3a()) {
 
             int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
 
@@ -480,7 +480,7 @@ public final class AnimationManager {
 
         float[] pattern;
 
-        if (Constants.getDevice().equals("phone3a")) {
+        if (Constants.Device.isPhone3a()) {
 
             int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
 
@@ -557,7 +557,7 @@ public final class AnimationManager {
         float currentBrightness = (float) Constants.getBrightness();
 
         if (StatusManager.isEssentialLedActive()) {
-            if (pattern.length == 5 && !Constants.getDevice().equals("phone3a")) { // Phone (1) pattern
+            if (pattern.length == 5 && !Constants.Device.isPhone3a()) { // Phone (1) pattern
                 if (pattern[1] < (maxPatternBrightness / 100 * 60)) {
                     pattern[1] = maxPatternBrightness / 100 * 60;
                 } 
@@ -576,7 +576,7 @@ public final class AnimationManager {
             pattern[i] = pattern[i] / maxPatternBrightness * currentBrightness;
         }
 
-        if (Constants.getDevice().equals("phone3a")) {
+        if (Constants.Device.isPhone3a()) {
             int[] supportedLengths = Constants.getSupportedAnimationPatternLengths();
             int[] zoneDefs = ResourceUtils.getIntArray("glyph_zone_channel_count");
 
@@ -618,7 +618,7 @@ public final class AnimationManager {
         float maxPatternBrightness = (float) Constants.MAX_PATTERN_BRIGHTNESS;
         float currentBrightness = (float) Constants.getBrightness();
 
-        if (Constants.getDevice().equals("phone3a") && StatusManager.isEssentialLedActive()) {
+        if (Constants.Device.isPhone3a() && StatusManager.isEssentialLedActive()) {
             int[] ledArray = ResourceUtils.getIntArray("glyph_settings_notifs_essential_led_array");
             boolean essentialLedFound = Arrays.stream(ledArray).anyMatch(x -> x == led);
             if (essentialLedFound && brightness < (maxPatternBrightness / 100 * 60)) {

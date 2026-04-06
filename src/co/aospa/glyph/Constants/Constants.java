@@ -89,6 +89,39 @@ public final class Constants {
 
     public static final String GLYPH_NOTIF_ANIMATION_ALTERNATE = "notif_alternate";
 
+
+    public static class Device {
+
+        public static final String PHONE1 = "phone1";
+        public static final String PHONE2 = "phone2";
+        public static final String PHONE2A = "phone2a";
+        public static final String PHONE3A = "phone3a";
+
+        public static String getDevice() {
+            if (device == null)
+                device = ResourceUtils.getString("glyph_settings_device");
+
+            return device;
+        }
+
+        public static boolean isPhone1() {
+            return getDevice().equals(PHONE1);
+        }
+
+        public static boolean isPhone2() {
+            return getDevice().equals(PHONE2);
+        }
+
+        public static boolean isPhone2a() {
+            return getDevice().equals(PHONE2A);
+        }
+
+        public static boolean isPhone3a() {
+            return getDevice().equals(PHONE3A);
+        }
+    }
+    
+
     public static final String[] APPS_TO_IGNORE = {
         "android",
         "com.android.traceur",
@@ -101,13 +134,6 @@ public final class Constants {
         "com.google.android.dialer:phone_ongoing_call",
         "com.android.systemui:BAT"
     };
-
-    public static String getDevice() {
-        if (device == null)
-            device = ResourceUtils.getString("glyph_settings_device");
-
-        return device;
-    }
 
     public static boolean isPowershareSupported() {
        return !ResourceUtils.getString("glyph_settings_paths_powershare_active_absolute").isEmpty();

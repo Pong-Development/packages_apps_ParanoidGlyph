@@ -92,7 +92,7 @@ public class AnimationUtils {
                         .toArray();
                 if (arr.length == 5) return false;
                 switch (device) {
-                    case "phone3a" -> {
+                    case Constants.Device.PHONE3A -> {
                         if (allSame(arr, 0, 20)
                                 && allSame(arr, 21, 31)
                                 && allSame(arr, 32, 35)) {
@@ -101,7 +101,7 @@ public class AnimationUtils {
                             return true;
                         }
                     }
-                    case "phone2" -> {
+                    case Constants.Device.PHONE2 -> {
                         if (allSame(arr, 0, 2)
                                 && allSame(arr, 3, 18)
                                 && allSame(arr, 19, 32)) {
@@ -110,7 +110,7 @@ public class AnimationUtils {
                             return true;
                         }
                     }
-                    case "phone2a" -> {
+                    case Constants.Device.PHONE2A -> {
                         if (allSame(arr, 0, 23)) {
                             continue;
                         } else {
@@ -158,16 +158,16 @@ public class AnimationUtils {
 
             switch (frameLength) {
                 case 5 -> {
-                    return "phone1";
+                    return Constants.Device.PHONE1;
                 }
                 case 26 -> {
-                    return "phone2a";
+                    return Constants.Device.PHONE2A;
                 }
                 case 33 -> {
-                    return "phone2";
+                    return Constants.Device.PHONE2;
                 }
                 case 36 -> {
-                    return "phone3a";
+                    return Constants.Device.PHONE3A;
                 }
             }
         return "";
@@ -177,11 +177,11 @@ public class AnimationUtils {
 
         boolean compatible;
 
-        if (Constants.getDevice().equals("phone2")) {
-            compatible = getDevice(csv).equals(Constants.getDevice())
-                    || getDevice(csv).equals("phone1");
-        } else {
-            compatible = getDevice(csv).equals(Constants.getDevice());
+        compatible = getDevice(csv).equals(Constants.Device.getDevice());
+
+        if (Constants.Device.isPhone2()) {
+            compatible = getDevice(csv).equals(Constants.Device.getDevice())
+                    || getDevice(csv).equals(Constants.Device.PHONE1);
         }
 
         return compatible;

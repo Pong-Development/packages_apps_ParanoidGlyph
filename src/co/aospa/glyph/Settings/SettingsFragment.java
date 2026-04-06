@@ -172,7 +172,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mChargingLevelPreference = (SwitchPreferenceCompat)
                 findPreference(Constants.GLYPH_CHARGING_LEVEL_ENABLE);
 
-        if (Constants.getDevice().equals("phone2a")) {
+        if (Constants.Device.isPhone2a()) {
             mChargingCategory.setVisible(false);
         } else {
             mChargingLevelPreference.setEnabled(glyphEnabled);
@@ -190,7 +190,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
         mVolumeCategory = findPreference(Constants.GLYPH_VOLUME_CATEGORY);
 
-        if (!Constants.getDevice().equals("phone1")) {
+        if (!Constants.Device.isPhone1()) {
             mVolumeLevelPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_VOLUME_LEVEL_ENABLE);
             mVolumeLevelPreference.setEnabled(glyphEnabled);
             mVolumeLevelPreference.setOnPreferenceChangeListener(this);
@@ -211,7 +211,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
         mProgressCategory = findPreference(Constants.GLYPH_PROGRESS_CATEGORY);
 
-        if (!Constants.getDevice().equals("phone1")) {
+        if (!Constants.Device.isPhone1()) {
             mProgressPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_ENABLE);
             mProgressPreference.setEnabled(glyphEnabled);
             mProgressPreference.setOnPreferenceChangeListener(this);
@@ -305,18 +305,18 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mNotifsPreference.setSwitchEnabled(isChecked);
         mCallPreference.setEnabled(isChecked);
         mCallPreference.setSwitchEnabled(isChecked);
-        if (!Constants.getDevice().equals("phone2a")) {
+        if (!Constants.Device.isPhone2a()) {
             mChargingLevelPreference.setEnabled(isChecked);
         }
         if (Constants.isPowershareSupported()) {
             mChargingPowersharePreference.setEnabled(isChecked);
         }
-        if (!Constants.getDevice().equals("phone1")) {
+        if (!Constants.Device.isPhone2a()) {
             mVolumeLevelPreference.setEnabled(isChecked);
         }
         mMusicVisualizerPreference.setEnabled(isChecked);
         mMusicVisualizerModePreference.setEnabled(isChecked);
-        if (!Constants.getDevice().equals("phone1")) {
+        if (!Constants.Device.isPhone1()) {
             mProgressPreference.setEnabled(isChecked);
             mProgressMusicPreference.setEnabled(isChecked && mProgressPreference.isChecked());
         }
