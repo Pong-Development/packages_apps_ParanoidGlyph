@@ -2,7 +2,7 @@ package co.aospa.glyph.Utils;
 
 import static co.aospa.glyph.Constants.Constants.CONTEXT;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
