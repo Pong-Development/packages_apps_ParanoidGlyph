@@ -45,8 +45,10 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.R;
@@ -136,11 +138,21 @@ public class AnimationSettingsFragment
         bundledAnimationList = getAnimations(0);
         userAnimationList = getAnimations(1);
 
-        List<String> animationEntryList = new ArrayList<>();
+        List<String[]> paired = new ArrayList<>();
+        for (String name : bundledAnimationList) {
+            paired.add(new String[]{name, name});
+        }
+        for (String name : userAnimationList) {
+            paired.add(new String[]{name, userAnimationPrefix + name});
+        }
 
-        animationEntryList.addAll(bundledAnimationList);
-        animationEntryList.addAll(userAnimationList);
-        animationEntryList.sort(null);
+        paired.sort(Comparator.comparing(p -> p[0]));
+
+        List<String> animationEntryList
+                = paired.stream().map(p -> p[0]).collect(Collectors.toList());
+        List<String> animationEntryValues
+                = paired.stream().map(p -> p[1]).collect(Collectors.toList());
+
         boolean hasFlipCsv = ResourceUtils.hasFlipCsv();
         if (fragmentType.equals(FRAGMENT_TYPE_FLIP)) {
             animationEntryList.addFirst(
@@ -150,21 +162,12 @@ public class AnimationSettingsFragment
                 animationEntryList.addFirst(getString(R.string.glyph_settings_default_option));
             }
         }
-
-        List<String> animationEntryValues = new ArrayList<>();
-        animationEntryValues.addAll(bundledAnimationList);
-        animationEntryValues.addAll(userAnimationList
-                .stream()
-                .map(name -> userAnimationPrefix + name)
-                .toList());
-        animationEntryValues.sort(null);
         if (fragmentType.equals(FRAGMENT_TYPE_FLIP)) {
             animationEntryValues.addFirst(Constants.GLYPH_NOTIF_ANIMATION_ALTERNATE);
             if (hasFlipCsv) {
                 animationEntryValues.addFirst("flip");
             }
         }
-
         mListPreference.setEntries(animationEntryList.toArray(new String[0]));
         mListPreference.setEntryValues(animationEntryValues.toArray(new String[0]));
             if (!animationEntryValues.contains(mListPreference.getValue())) {
@@ -269,6 +272,7 @@ public class AnimationSettingsFragment
 
         shouldAlternate = fragmentType.equals(FRAGMENT_TYPE_FLIP)
                 && mListPreference.getValue().equals(Constants.GLYPH_NOTIF_ANIMATION_ALTERNATE);
+        boolean shouldReverse = mReverseAnimationSwitch.isChecked() && !shouldAlternate;
 
         mReverseAnimationSwitch.setVisible(!shouldAlternate);
 
@@ -288,8 +292,9 @@ public class AnimationSettingsFragment
                     isAnimationEnabled(),
                     getGlyphAnimation(),
                     1500,
-                    mReverseAnimationSwitch.isChecked(),
-                    shouldAlternate);
+                    shouldReverse,
+                    shouldAlternate
+            );
         }
         mGlyphAnimationPreference.setVisible(isPlayable);
     }
@@ -304,6 +309,7 @@ public class AnimationSettingsFragment
 
             shouldAlternate = fragmentType.equals(FRAGMENT_TYPE_FLIP)
                     && animationName.equals(Constants.GLYPH_NOTIF_ANIMATION_ALTERNATE);
+            boolean shouldReverse = mReverseAnimationSwitch.isChecked() && !shouldAlternate;
 
             mReverseAnimationSwitch.setVisible(!shouldAlternate);
 
@@ -319,8 +325,12 @@ public class AnimationSettingsFragment
                 }
             }
             mGlyphAnimationPreference.updateAnimation(
-                    isPlayable && isAnimationEnabled(),
-                    animationName, 1500);
+                    isAnimationEnabled(),
+                    animationName,
+                    1500,
+                    shouldReverse,
+                    shouldAlternate
+            );
             mGlyphAnimationPreference.setVisible(isPlayable);
             if (livePreviewThread != null && livePreviewThread.isAlive()) {
                 livePreviewThread.interrupt();
@@ -438,12 +448,16 @@ public class AnimationSettingsFragment
                     resetLivePreview();
                     return;
                 }
+                shouldAlternate = fragmentType.equals(FRAGMENT_TYPE_FLIP)
+                        && mListPreference.getValue().equals(Constants.GLYPH_NOTIF_ANIMATION_ALTERNATE);
+                boolean shouldReverse = mReverseAnimationSwitch.isChecked() && !shouldAlternate;
                 AnimationManager.playCsv(
                         requireContext(),
                         getGlyphAnimation(),
                         false,
-                        mReverseAnimationSwitch.isChecked(),
-                        shouldAlternate);
+                        shouldReverse,
+                        shouldAlternate
+                );
 
                 if (activity != null) {
                     activity.runOnUiThread(this::resetLivePreview);

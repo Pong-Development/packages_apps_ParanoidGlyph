@@ -242,6 +242,7 @@ public class AnimationUtils {
             List<String> reversed = new ArrayList<>(lines);
             Collections.reverse(reversed);
             lines.addAll(reversed);
+            return lines.iterator();
         }
         if (reverse) Collections.reverse(lines);
         return lines.iterator();
