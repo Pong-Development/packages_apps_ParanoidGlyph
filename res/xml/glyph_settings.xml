@@ -27,6 +27,7 @@
 
     <SwitchPreferenceCompat
         android:key="glyph_settings_auto_brightness_toggle"
+        android:icon="@drawable/ic_auto_brightness"
         android:defaultValue="true"
         android:title="@string/glyph_settings_auto_brightness_toggle_title"
         android:summary="@string/glyph_settings_auto_brightness_toggle_summary" />
@@ -46,6 +47,7 @@
 
     <com.android.settingslib.PrimarySwitchPreference
         android:key="glyph_settings_flip_toggle"
+        android:icon="@drawable/ic_flip"
         android:defaultValue="true"
         android:title="@string/glyph_settings_flip_toggle_title"
         android:summary="@string/glyph_settings_flip_toggle_summary">
@@ -63,6 +65,7 @@
 
         <com.android.settingslib.PrimarySwitchPreference
             android:key="glyph_settings_call_toggle"
+            android:icon="@drawable/ic_ring_volume"
             android:defaultValue="true"
             android:title="@string/glyph_settings_call_toggle_title"
             android:summary="@string/glyph_settings_call_toggle_summary" >
@@ -81,6 +84,7 @@
         <com.android.settingslib.PrimarySwitchPreference
             android:key="glyph_settings_notifs_toggle"
             android:defaultValue="true"
+            android:icon="@drawable/ic_notification_alert"
             android:title="@string/glyph_settings_notifs_toggle_title"
             android:summary="@string/glyph_settings_notifs_toggle_summary" >
             <intent android:action="android.intent.action.MAIN"
@@ -96,12 +100,14 @@
 
         <SwitchPreferenceCompat
             android:key="glyph_settings_charging_level"
+            android:icon="@drawable/ic_battery"
             android:defaultValue="true"
             android:title="@string/glyph_settings_charging_level_title"
             android:summary="@string/glyph_settings_charging_level_summary" />
 
         <SwitchPreferenceCompat
             android:key="glyph_settings_charging_powershare"
+            android:icon="@drawable/ic_reverse_charging"
             android:defaultValue="true"
             android:title="@string/glyph_settings_charging_powershare_title"
             android:summary="@string/glyph_settings_charging_powershare_summary" />
@@ -113,12 +119,14 @@
     <SwitchPreferenceCompat
         android:key="glyph_settings_progress_toggle"
         android:defaultValue="false"
+        android:icon="@drawable/ic_swap_horiz"
         android:title="@string/glyph_settings_progress_toggle_title"
         android:summary="@string/glyph_settings_progress_toggle_summary" />
 
     <SwitchPreferenceCompat
         android:key="glyph_settings_progress_music_toggle"
         android:defaultValue="false"
+        android:icon="@drawable/ic_volume_media"
         android:title="@string/glyph_settings_progress_music_toggle_title"
         android:summary="@string/glyph_settings_progress_music_toggle_summary"
         android:dependency="glyph_settings_progress_toggle" />
@@ -130,6 +138,7 @@
         <SwitchPreferenceCompat
             android:key="glyph_settings_volume_level_toggle"
             android:defaultValue="true"
+            android:icon="@drawable/ic_volume"
             android:title="@string/glyph_settings_volume_level_toggle_title"
             android:summary="@string/glyph_settings_volume_level_toggle_summary" />
 
@@ -140,6 +149,7 @@
         <Preference
             android:key="glyph_settings_schedule"
             android:title="@string/glyph_settings_schedule_title"
+            android:icon="@drawable/ic_schedule"
             android:summary="@string/glyph_settings_schedule_summary">
             <intent android:action="android.intent.action.MAIN"
                 android:targetPackage="co.aospa.glyph"
@@ -153,6 +163,7 @@
         <SwitchPreferenceCompat
             android:key="glyph_settings_music_visualizer_toggle"
             android:defaultValue="false"
+            android:icon="@drawable/ic_music_visualizer"
             android:title="@string/glyph_settings_music_visualizer_toggle_title"
             android:summary="@string/glyph_settings_music_visualizer_toggle_summary" />
 
