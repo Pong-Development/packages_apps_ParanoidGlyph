@@ -124,11 +124,11 @@
         android:summary="@string/glyph_settings_progress_toggle_summary" />
 
     <SwitchPreferenceCompat
-        android:key="glyph_settings_progress_music_toggle"
+        android:key="glyph_settings_progress_media_toggle"
         android:defaultValue="false"
         android:icon="@drawable/ic_volume_media"
-        android:title="@string/glyph_settings_progress_music_toggle_title"
-        android:summary="@string/glyph_settings_progress_music_toggle_summary"
+        android:title="@string/glyph_settings_progress_media_toggle_title"
+        android:summary="@string/glyph_settings_progress_media_toggle_summary"
         android:dependency="glyph_settings_progress_toggle" />
 
     <PreferenceCategory

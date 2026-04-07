@@ -257,10 +257,10 @@ public final class SettingsManager {
                 .getBoolean(Constants.GLYPH_PROGRESS_ENABLE, false) && isGlyphEnabled();
     }
 
-    public static boolean isGlyphProgressMusicEnabled() {
+    public static boolean isGlyphProgressMediaEnabled() {
         Context ctx = getContext();
         return PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getBoolean(Constants.GLYPH_PROGRESS_MUSIC_ENABLE, false) && isGlyphProgressEnabled();
+                .getBoolean(Constants.GLYPH_PROGRESS_MEDIA_ENABLE, false) && isGlyphProgressEnabled();
     }
     public class Pulse {
 

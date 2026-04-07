@@ -83,7 +83,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private ListPreference mMusicVisualizerModePreference;
     private PreferenceCategory mProgressCategory;
     private SwitchPreferenceCompat mProgressPreference;
-    private SwitchPreferenceCompat mProgressMusicPreference;
+    private SwitchPreferenceCompat mProgressMediaPreference;
 
     private ContentResolver mContentResolver;
     private SettingObserver mSettingObserver;
@@ -219,9 +219,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             mProgressCategory.setVisible(false);
         }
 
-        mProgressMusicPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_MUSIC_ENABLE);
-        mProgressMusicPreference.setEnabled(glyphEnabled && mProgressPreference.isChecked());
-        mProgressMusicPreference.setOnPreferenceChangeListener(this);
+        mProgressMediaPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_MEDIA_ENABLE);
+        mProgressMediaPreference.setEnabled(glyphEnabled && mProgressPreference.isChecked());
+        mProgressMediaPreference.setOnPreferenceChangeListener(this);
 
         IntentFilter filter = new IntentFilter("co.aospa.glyph.UPDATE_MAIN_SWITCH");
         requireContext().registerReceiver(mScheduleUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
@@ -251,7 +251,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
         if (preferenceKey.equals(Constants.GLYPH_PROGRESS_ENABLE)) {
             boolean enabled = (Boolean) newValue;
-            mProgressMusicPreference.setEnabled(enabled && SettingsManager.isGlyphEnabled());
+            mProgressMediaPreference.setEnabled(enabled && SettingsManager.isGlyphEnabled());
             
             if (enabled) {
                 ServiceUtils.startProgressService();
@@ -262,7 +262,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             return true;
         }
 
-        if (preferenceKey.equals(Constants.GLYPH_PROGRESS_MUSIC_ENABLE)) {
+        if (preferenceKey.equals(Constants.GLYPH_PROGRESS_MEDIA_ENABLE)) {
             mHandler.postDelayed(ServiceUtils::checkGlyphService, 100);
             return true;
         }
@@ -318,7 +318,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mMusicVisualizerModePreference.setEnabled(isChecked);
         if (!Constants.Device.isPhone1()) {
             mProgressPreference.setEnabled(isChecked);
-            mProgressMusicPreference.setEnabled(isChecked && mProgressPreference.isChecked());
+            mProgressMediaPreference.setEnabled(isChecked && mProgressPreference.isChecked());
         }
 
         mHandler.post(() -> {

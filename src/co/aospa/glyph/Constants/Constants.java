@@ -74,7 +74,7 @@ public final class Constants {
     public static final String GLYPH_SCHEDULE = "glyph_settings_schedule";
     public static final String GLYPH_PROGRESS_CATEGORY = "glyph_settings_progress";
     public static final String GLYPH_PROGRESS_ENABLE = "glyph_settings_progress_toggle";
-    public static final String GLYPH_PROGRESS_MUSIC_ENABLE = "glyph_settings_progress_music_toggle";
+    public static final String GLYPH_PROGRESS_MEDIA_ENABLE = "glyph_settings_progress_media_toggle";
 
     public static final String ACTION_TORCH_ENABLE = "torch_enable";
     public static final String ACTION_TORCH_DISABLE = "torch_disable";

@@ -60,10 +60,10 @@ public class ProgressService extends Service {
     private int mLastDisplayedProgress = -1;
     private String mLastDisplayedKey = null;
 
-    private int mLastMusicProgress = 0;
+    private int mLastMediaProgress = 0;
 
     private Runnable mProgressChecker;
-    private Runnable mMusicProgressChecker;
+    private Runnable mMediaProgressChecker;
     private Runnable dismissProgress = new Runnable() {
         @Override
         public void run() {
@@ -127,11 +127,11 @@ public class ProgressService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (DEBUG) Log.d(TAG, "Starting service");
-        if (SettingsManager.isGlyphProgressMusicEnabled()) {
-            if (DEBUG) Log.d(TAG, "Starting music progress monitoring");
-            startMusicProgressMonitoring();
+        if (SettingsManager.isGlyphProgressMediaEnabled()) {
+            if (DEBUG) Log.d(TAG, "Starting media progress monitoring");
+            startMediaProgressMonitoring();
         } else {
-            stopMusicProgressMonitoring();
+            stopMediaProgressMonitoring();
         }
         return START_STICKY;
     }
@@ -145,7 +145,7 @@ public class ProgressService extends Service {
             Log.e(TAG, "Error unregistering receiver", e);
         }
         stopProgressMonitoring();
-        stopMusicProgressMonitoring();
+        stopMediaProgressMonitoring();
         mThreadHandler.post(dismissProgress);
         thread.quitSafely();
         super.onDestroy();
@@ -200,7 +200,7 @@ public class ProgressService extends Service {
                     mLastDisplayedKey = key;
 
                     if (!StatusManager.isVolumeAnimationActive() && 
-                        (!SettingsManager.isGlyphProgressMusicEnabled() || mLastMusicProgress == 0)) {
+                        (!SettingsManager.isGlyphProgressMediaEnabled() || mLastMediaProgress == 0)) {
                         playProgressAnimation(progress, 1);
                     }
                 }
@@ -216,30 +216,30 @@ public class ProgressService extends Service {
         }
     }
 
-    private void startMusicProgressMonitoring() {
-        if (!SettingsManager.isGlyphProgressMusicEnabled()) return;
+    private void startMediaProgressMonitoring() {
+        if (!SettingsManager.isGlyphProgressMediaEnabled()) return;
 
-        mMusicProgressChecker = new Runnable() {
+        mMediaProgressChecker = new Runnable() {
             @Override
             public void run() {
-                checkMusicProgress();
+                checkMediaProgress();
                 mThreadHandler.postDelayed(this, 1000);
             }
         };
-        mThreadHandler.post(mMusicProgressChecker);
+        mThreadHandler.post(mMediaProgressChecker);
     }
 
-    private void stopMusicProgressMonitoring() {
-        if (mMusicProgressChecker != null) {
-            mThreadHandler.removeCallbacks(mMusicProgressChecker);
+    private void stopMediaProgressMonitoring() {
+        if (mMediaProgressChecker != null) {
+            mThreadHandler.removeCallbacks(mMediaProgressChecker);
             if (StatusManager.getProgressType() == 2) {
                 mThreadHandler.post(dismissProgress);
             }
         }
     }
 
-    private void checkMusicProgress() {
-        if (!SettingsManager.isGlyphProgressMusicEnabled()) return;
+    private void checkMediaProgress() {
+        if (!SettingsManager.isGlyphProgressMediaEnabled()) return;
 
         try {
             MediaController controller = getActiveMediaController();
@@ -255,9 +255,9 @@ public class ProgressService extends Service {
                         int progress = (int) ((position * 100L) / duration);
                         progress = Math.min(100, Math.max(0, progress));
 
-                        if (Math.abs(progress - mLastMusicProgress) >= 3) {
+                        if (Math.abs(progress - mLastMediaProgress) >= 3) {
                             if (DEBUG) Log.d(TAG, "Music progress: " + progress + "%");
-                            mLastMusicProgress = progress;
+                            mLastMediaProgress = progress;
 
                             if (!StatusManager.isVolumeAnimationActive() && mLastDisplayedProgress == -1) {
                                 playProgressAnimation(progress, 2);
@@ -265,19 +265,19 @@ public class ProgressService extends Service {
                         }
                     }
                 } else {
-                    if (mLastMusicProgress > 0) {
-                        mLastMusicProgress = 0;
+                    if (mLastMediaProgress > 0) {
+                        mLastMediaProgress = 0;
                         dismissProgressIfNeeded();
                     }
                 }
             } else {
-                if (mLastMusicProgress > 0) {
-                    mLastMusicProgress = 0;
+                if (mLastMediaProgress > 0) {
+                    mLastMediaProgress = 0;
                     dismissProgressIfNeeded();
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error checking music progress", e);
+            Log.e(TAG, "Error checking media progress", e);
         }
     }
 
@@ -316,7 +316,7 @@ public class ProgressService extends Service {
     }
 
     private void dismissProgressIfNeeded() {
-        if (mLastDisplayedProgress == -1 && mLastMusicProgress == 0) {
+        if (mLastDisplayedProgress == -1 && mLastMediaProgress == 0) {
             if (mThreadHandler.hasCallbacks(dismissProgress)) {
                 mThreadHandler.removeCallbacks(dismissProgress);
             }

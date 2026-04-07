@@ -158,6 +158,6 @@
     <string name="glyph_settings_progress_title">Progress</string>
     <string name="glyph_settings_progress_toggle_title">Glyph progress</string>
     <string name="glyph_settings_progress_toggle_summary">Show progress bar when Glyph is active</string>
-    <string name="glyph_settings_progress_music_toggle_title">Music progress</string>
-    <string name="glyph_settings_progress_music_toggle_summary">Show progress bar when music is playing</string>
+    <string name="glyph_settings_progress_media_toggle_title">Media progress</string>
+    <string name="glyph_settings_progress_media_toggle_summary">Show progress bar when media is playing</string>
 </resources>

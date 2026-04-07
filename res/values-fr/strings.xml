@@ -101,6 +101,6 @@
     <string name="glyph_settings_progress_title">Progession</string>
     <string name="glyph_settings_progress_toggle_title">Progression Glyph</string>
     <string name="glyph_settings_progress_toggle_summary">Afficher la barre de progression lorsque Glyph est actif</string>
-    <string name="glyph_settings_progress_music_toggle_title">Progression de la musique</string>
-    <string name="glyph_settings_progress_music_toggle_summary">Afficher la barre de progression lorsque la musique est en cours de lecture</string>
+    <string name="glyph_settings_progress_media_toggle_title">Progression des médias</string>
+    <string name="glyph_settings_progress_media_toggle_summary">Afficher la barre de progression lorsque des médias est en cours de lecture</string>
 </resources>
