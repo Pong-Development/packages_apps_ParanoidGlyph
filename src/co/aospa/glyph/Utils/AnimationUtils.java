@@ -23,9 +23,28 @@ public class AnimationUtils {
     private final String TAG = this.getClass().getSimpleName();
 
     public static void validateAnimation(String csv) throws Exception {
+        validateAnimation(csv, true, true);
+    }
+
+    public static List<String> validateAnimationWithList(String csv) {
+        List<String> errorList = new ArrayList<>();
+        try {
+            errorList = validateAnimation(csv, false, false);
+        } catch (Exception ignored) {
+
+        }
+
+        return errorList;
+    }
+
+    private static List<String> validateAnimation(String csv,
+                                                 boolean shouldThrow,
+                                                 boolean shouldRecover) {
         int currentLine = 1;
         int requiredFrameLength = 0;
         int currentFrameLength;
+
+        List<String> errorList = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new StringReader(csv))) {
             Iterator<String> it = reader.lines().iterator();
@@ -33,51 +52,75 @@ public class AnimationUtils {
             while (it.hasNext()) {
                 frame = it.next();
                 if (frame != null) {
-                    frame = sanitizeCsvLine(frame);
+                    if (shouldRecover) {
+                        frame = sanitizeCsvLine(frame);
+                    } else {
+                        frame = frame.endsWith(",") ? frame.substring(0, frame.length() - 1) : frame;
+                    }
                     if (currentLine == 1) {
                         requiredFrameLength = getFrameLength(frame);
                         if (requiredFrameLength == 0) {
-                            throw new IllegalStateException("Frame length invalid at line 1");
+                            String error = "Frame length invalid at line 1";
+                            errorList.add(error);
+                            if (shouldThrow) throw new IllegalStateException(error);
                         }
                     } else {
                         currentFrameLength = getFrameLength(frame);
                         if (currentFrameLength != requiredFrameLength) {
-                            throw new IllegalArgumentException("Frame length invalid at line: "
-                                    + currentLine);
+                            String error = "Frame length invalid at line: " + currentLine +
+                                    ". Expected " + requiredFrameLength + ", Found "
+                                    + currentFrameLength;
+                            errorList.add(error);
+                            if (shouldThrow) throw new IllegalArgumentException(error);
                         }
                     }
 
                     try {
-                        validateFrameBrightness(frame);
+                        errorList.addAll(validateFrameBrightness(frame, shouldThrow));
                     } catch (IllegalArgumentException e) {
-                        throw new IllegalArgumentException("Failed to parse frame at line "
-                                + currentLine, e);
+                        String error = "Failed to parse frame at line "
+                                + currentLine + "(" + e.getMessage() + ")";
+                        if (shouldThrow) throw new IllegalArgumentException(error);
                     }
                 }
             currentLine++;
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("CSV is invalid at line " + currentLine, e);
+           if (shouldThrow) throw new IllegalArgumentException("CSV is invalid at line "
+                   + currentLine, e);
         }
+        return errorList;
     }
 
     public static int getFrameLength(String frame) {
         return frame.split(",").length;
     }
 
-    public static void validateFrameBrightness(String frame) throws IllegalArgumentException {
+    public static List<String> validateFrameBrightness(String frame, boolean shouldThrow)
+            throws IllegalArgumentException {
         int max = Constants.MAX_PATTERN_BRIGHTNESS;
         int min = 0;
         int idx = 1;
 
+        List<String> errorList = new ArrayList<>();
+
         for (String brightness : frame.split(",")) {
             int value = Integer.parseInt(brightness);
             if (value > max || value < min) {
-                throw new IllegalArgumentException("Brightness value: " + value
-                        + " is out of range at index " + idx);
+                String error = "Brightness value: " + value
+                        + " is out of range at index " + idx;
+                errorList.add(error);
+                if (shouldThrow) {
+                    throw new IllegalArgumentException(error);
+                }
             }
             idx++;
         }
+        return errorList;
+    }
+
+    public static void validateFrameBrightness(String frame) throws IllegalArgumentException {
+        validateFrameBrightness(frame, true);
     }
 
     public static boolean isAnimationComplex(String csv) throws IOException {
