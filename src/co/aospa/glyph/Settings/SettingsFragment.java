@@ -238,59 +238,55 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         final String preferenceKey = preference.getKey();
 
-        if (preferenceKey.equals(Constants.GLYPH_FLIP_ENABLE)) {
-            SettingsManager.setGlyphFlipEnabled((Boolean) newValue);
-        }
-
-        if (preferenceKey.equals(Constants.GLYPH_CALL_ENABLE)) {
-            SettingsManager.setGlyphCallEnabled((Boolean) newValue);
-        }
-
-        if (preferenceKey.equals(Constants.GLYPH_NOTIFS_ENABLE)) {
-            SettingsManager.setGlyphNotifsEnabled((Boolean) newValue);
-        }
-
-        if (preferenceKey.equals(Constants.GLYPH_AUTO_BRIGHTNESS_ENABLE)) {
-            mBrightnessPreference.setEnabled(!(Boolean) newValue);
-        }
-
-        if (preferenceKey.equals(Constants.GLYPH_PROGRESS_ENABLE)) {
-            boolean enabled = (Boolean) newValue;
-            mProgressMediaPreference.setEnabled(enabled && SettingsManager.isGlyphEnabled());
-            
-            if (enabled) {
-                ServiceUtils.startProgressService();
-                mHandler.postDelayed(ServiceUtils::checkGlyphService, 250);
-            } else {
-                ServiceUtils.checkGlyphService();
+        switch (preferenceKey) {
+            case Constants.GLYPH_FLIP_ENABLE -> {
+                SettingsManager.setGlyphFlipEnabled((Boolean) newValue);
             }
-            return true;
-        }
+            case Constants.GLYPH_CALL_ENABLE -> {
+                SettingsManager.setGlyphCallEnabled((Boolean) newValue);
+            }
+            case Constants.GLYPH_NOTIFS_ENABLE -> {
+                SettingsManager.setGlyphNotifsEnabled((Boolean) newValue);
+            }
+            case Constants.GLYPH_AUTO_BRIGHTNESS_ENABLE -> {
+                mBrightnessPreference.setEnabled(!(Boolean) newValue);
+            }
+            case Constants.GLYPH_PROGRESS_ENABLE -> {
+                boolean enabled = (Boolean) newValue;
+                mProgressMediaPreference.setEnabled(enabled && SettingsManager.isGlyphEnabled());
 
-        if (preferenceKey.equals(Constants.GLYPH_PROGRESS_MEDIA_ENABLE)) {
-            mHandler.postDelayed(ServiceUtils::checkGlyphService, 100);
-            return true;
-        }
+                if (enabled) {
+                    ServiceUtils.startProgressService();
+                    mHandler.postDelayed(ServiceUtils::checkGlyphService, 250);
+                } else {
+                    ServiceUtils.checkGlyphService();
+                }
+                return true;
+            }
+            case Constants.GLYPH_PROGRESS_MEDIA_ENABLE -> {
+                mHandler.postDelayed(ServiceUtils::checkGlyphService, 100);
+                return true;
 
-        if (preferenceKey.equals(Constants.GLYPH_BATTERY_SAVER_ENABLE)) {
-            updateBatterySaver((Boolean) newValue);
-        }
-
-        if (preferenceKey.equals(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE)) {
-            if ((Boolean) newValue && SettingsManager.Pulse.isPulseEnabled()) {
-               showDialog(
-                       requireActivity(),
-                       R.string.glyph_settings_music_visualizer_warning_title,
-                       R.string.glyph_settings_music_visualizer_warning_message,
-                       R.string.glyph_settings_music_visualizer_disable_pulse,
-                       () -> {
-                           mMusicVisualizerPreference.setOnPreferenceChangeListener(null);
-                           mMusicVisualizerPreference.setChecked(true);
-                           mMusicVisualizerPreference.setOnPreferenceChangeListener(this);
-                           mHandler.post(ServiceUtils::checkGlyphService);
-                       },
-                    android.R.string.cancel, null);
-                return false;
+            }
+            case Constants.GLYPH_BATTERY_SAVER_ENABLE -> {
+                updateBatterySaver((Boolean) newValue);
+            }
+            case Constants.GLYPH_MUSIC_VISUALIZER_ENABLE -> {
+                if ((Boolean) newValue && SettingsManager.Pulse.isPulseEnabled()) {
+                    showDialog(
+                            requireActivity(),
+                            R.string.glyph_settings_music_visualizer_warning_title,
+                            R.string.glyph_settings_music_visualizer_warning_message,
+                            R.string.glyph_settings_music_visualizer_disable_pulse,
+                            () -> {
+                                mMusicVisualizerPreference.setOnPreferenceChangeListener(null);
+                                mMusicVisualizerPreference.setChecked(true);
+                                mMusicVisualizerPreference.setOnPreferenceChangeListener(this);
+                                mHandler.post(ServiceUtils::checkGlyphService);
+                            },
+                            android.R.string.cancel, null);
+                    return false;
+                }
             }
         }
 
