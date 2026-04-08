@@ -48,4 +48,7 @@
     <!-- Volume Animations -->
     <integer name="glyph_settings_volume_levels_num" translatable="false">16</integer>
 
+    <!-- Red Dot/line led index -->
+    <integer name="glyph_red_led_index">13</integer>
+
 </resources>

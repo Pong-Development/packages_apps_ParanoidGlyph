@@ -39,4 +39,7 @@
     <!-- Must be the same length and aligned with the names for glyph_settings_animations_slugs -->
     <integer-array name="glyph_zone_channel_count"></integer-array>
 
+    <!-- Red Dot/line led index -->
+    <integer name="glyph_red_led_index"></integer>
+
 </resources>
