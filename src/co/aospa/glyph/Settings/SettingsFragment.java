@@ -182,12 +182,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mChargingLevelPreference = (SwitchPreferenceCompat)
                 findPreference(Constants.GLYPH_CHARGING_LEVEL_ENABLE);
 
-        if (Constants.Device.isPhone2a()) {
-            mChargingCategory.setVisible(false);
-        } else {
-            mChargingLevelPreference.setEnabled(glyphEnabled);
-            mChargingLevelPreference.setOnPreferenceChangeListener(this);
-        }
+        mChargingLevelPreference.setEnabled(glyphEnabled);
+        mChargingLevelPreference.setOnPreferenceChangeListener(this);
+
+        mChargingCategory.setVisible(!Constants.Device.isPhone2a());
 
         mChargingPowersharePreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_CHARGING_POWERSHARE_ENABLE);
 
@@ -199,14 +197,11 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         }
 
         mVolumeCategory = findPreference(Constants.GLYPH_VOLUME_CATEGORY);
+        mVolumeCategory.setVisible(!Constants.Device.isPhone1());
 
-        if (!Constants.Device.isPhone1()) {
-            mVolumeLevelPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_VOLUME_LEVEL_ENABLE);
-            mVolumeLevelPreference.setEnabled(glyphEnabled);
-            mVolumeLevelPreference.setOnPreferenceChangeListener(this);
-        } else {
-            mVolumeCategory.setVisible(false);
-        }
+        mVolumeLevelPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_VOLUME_LEVEL_ENABLE);
+        mVolumeLevelPreference.setEnabled(glyphEnabled);
+        mVolumeLevelPreference.setOnPreferenceChangeListener(this);
 
         mMusicVisualizerPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_MUSIC_VISUALIZER_ENABLE);
         mMusicVisualizerPreference.setEnabled(glyphEnabled);
@@ -221,13 +216,11 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
         mProgressCategory = findPreference(Constants.GLYPH_PROGRESS_CATEGORY);
 
-        if (!Constants.Device.isPhone1()) {
-            mProgressPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_ENABLE);
-            mProgressPreference.setEnabled(glyphEnabled);
-            mProgressPreference.setOnPreferenceChangeListener(this);
-        } else {
-            mProgressCategory.setVisible(false);
-        }
+        mProgressCategory.setVisible(!Constants.Device.isPhone1());
+
+        mProgressPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_ENABLE);
+        mProgressPreference.setEnabled(glyphEnabled);
+        mProgressPreference.setOnPreferenceChangeListener(this);
 
         mProgressMediaPreference = (SwitchPreferenceCompat) findPreference(Constants.GLYPH_PROGRESS_MEDIA_ENABLE);
         mProgressMediaPreference.setEnabled(glyphEnabled && mProgressPreference.isChecked());

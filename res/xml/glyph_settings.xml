@@ -42,26 +42,27 @@
         android:title="@string/glyph_settings_battery_saver_toggle_title"
         android:summary="@string/glyph_settings_battery_saver_toggle_summary" />
 
-    <PreferenceCategory
-        android:title="@string/glyph_settings_flip_title"/>
+    <PreferenceCategory android:title="@string/glyph_settings_flip_title">
 
-    <com.android.settingslib.PrimarySwitchPreference
-        android:key="glyph_settings_flip_toggle"
-        android:icon="@drawable/ic_flip"
-        android:defaultValue="true"
-        android:title="@string/glyph_settings_flip_toggle_title"
-        android:summary="@string/glyph_settings_flip_toggle_summary">
-        <intent android:action="android.intent.action.MAIN"
-            android:targetPackage="co.aospa.glyph"
-            android:targetClass="co.aospa.glyph.Settings.AnimationSettingsActivity">
-            <extra android:name="type" android:value="flip" />
-        </intent>
+        <com.android.settingslib.PrimarySwitchPreference
+            android:key="glyph_settings_flip_toggle"
+            android:icon="@drawable/ic_flip"
+            android:defaultValue="true"
+            android:title="@string/glyph_settings_flip_toggle_title"
+            android:summary="@string/glyph_settings_flip_toggle_summary">
+            <intent android:action="android.intent.action.MAIN"
+                android:targetPackage="co.aospa.glyph"
+                android:targetClass="co.aospa.glyph.Settings.AnimationSettingsActivity">
+                <extra android:name="type" android:value="flip" />
+            </intent>
 
-    </com.android.settingslib.PrimarySwitchPreference>
+        </com.android.settingslib.PrimarySwitchPreference>
+
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="glyph_settings_call"
-        android:title="@string/glyph_settings_call_title" />
+        android:title="@string/glyph_settings_call_title">
 
         <com.android.settingslib.PrimarySwitchPreference
             android:key="glyph_settings_call_toggle"
@@ -76,10 +77,11 @@
             </intent>
 
         </com.android.settingslib.PrimarySwitchPreference>
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="glyph_settings_notifs"
-        android:title="@string/glyph_settings_notifs_title" />
+        android:title="@string/glyph_settings_notifs_title" >
 
         <com.android.settingslib.PrimarySwitchPreference
             android:key="glyph_settings_notifs_toggle"
@@ -94,52 +96,56 @@
             </intent>
         </com.android.settingslib.PrimarySwitchPreference>
 
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:key="glyph_settings_charging"
-        android:title="@string/glyph_settings_charging_title" />
+        android:title="@string/glyph_settings_charging_title" >
 
-        <SwitchPreferenceCompat
-            android:key="glyph_settings_charging_level"
-            android:icon="@drawable/ic_battery"
-            android:defaultValue="true"
-            android:title="@string/glyph_settings_charging_level_title"
-            android:summary="@string/glyph_settings_charging_level_summary" />
+            <SwitchPreferenceCompat
+                android:key="glyph_settings_charging_level"
+                android:icon="@drawable/ic_battery"
+                android:defaultValue="true"
+                android:title="@string/glyph_settings_charging_level_title"
+                android:summary="@string/glyph_settings_charging_level_summary" />
 
-        <SwitchPreferenceCompat
-            android:key="glyph_settings_charging_powershare"
-            android:icon="@drawable/ic_reverse_charging"
-            android:defaultValue="true"
-            android:title="@string/glyph_settings_charging_powershare_title"
-            android:summary="@string/glyph_settings_charging_powershare_summary" />
+            <SwitchPreferenceCompat
+                android:key="glyph_settings_charging_powershare"
+                android:icon="@drawable/ic_reverse_charging"
+                android:defaultValue="true"
+                android:title="@string/glyph_settings_charging_powershare_title"
+                android:summary="@string/glyph_settings_charging_powershare_summary" />
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="glyph_settings_progress"
-        android:title="@string/glyph_settings_progress_title" />
+        android:title="@string/glyph_settings_progress_title">
 
-    <SwitchPreferenceCompat
-        android:key="glyph_settings_progress_toggle"
-        android:defaultValue="false"
-        android:icon="@drawable/ic_swap_horiz"
-        android:title="@string/glyph_settings_progress_toggle_title"
-        android:summary="@string/glyph_settings_progress_toggle_summary" />
+        <SwitchPreferenceCompat
+            android:key="glyph_settings_progress_toggle"
+            android:defaultValue="false"
+            android:icon="@drawable/ic_swap_horiz"
+            android:title="@string/glyph_settings_progress_toggle_title"
+            android:summary="@string/glyph_settings_progress_toggle_summary" />
 
-    <SwitchPreferenceCompat
-        android:key="glyph_settings_progress_media_toggle"
-        android:defaultValue="false"
-        android:icon="@drawable/ic_volume_media"
-        android:title="@string/glyph_settings_progress_media_toggle_title"
-        android:summary="@string/glyph_settings_progress_media_toggle_summary"
-        android:dependency="glyph_settings_progress_toggle" />
+        <SwitchPreferenceCompat
+            android:key="glyph_settings_progress_media_toggle"
+            android:defaultValue="false"
+            android:icon="@drawable/ic_volume_media"
+            android:title="@string/glyph_settings_progress_media_toggle_title"
+            android:summary="@string/glyph_settings_progress_media_toggle_summary"
+            android:dependency="glyph_settings_progress_toggle" />
 
-    <Preference
-        android:key="glyph_settings_progress_media_app_blacklist"
-        android:icon="@drawable/ic_blocked"
-        android:title="@string/glyph_settings_progress_media_app_blacklist_title"
-        android:summary="@string/glyph_settings_progress_media_app_blacklist_summary" />
+        <Preference
+            android:key="glyph_settings_progress_media_app_blacklist"
+            android:icon="@drawable/ic_blocked"
+            android:title="@string/glyph_settings_progress_media_app_blacklist_title"
+            android:summary="@string/glyph_settings_progress_media_app_blacklist_summary" />
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="glyph_settings_volume"
-        android:title="@string/glyph_settings_volume_title" />
+        android:title="@string/glyph_settings_volume_title">
 
         <SwitchPreferenceCompat
             android:key="glyph_settings_volume_level_toggle"
@@ -147,6 +153,7 @@
             android:icon="@drawable/ic_volume"
             android:title="@string/glyph_settings_volume_level_toggle_title"
             android:summary="@string/glyph_settings_volume_level_toggle_summary" />
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="glyph_settings_misc"
@@ -164,7 +171,7 @@
 
     <PreferenceCategory
         android:key="glyph_settings_music_visualizer"
-        android:title="@string/glyph_settings_music_visualizer_title" />
+        android:title="@string/glyph_settings_music_visualizer_title" >
 
         <SwitchPreferenceCompat
             android:key="glyph_settings_music_visualizer_toggle"
@@ -181,5 +188,6 @@
             android:entryValues="@array/glyph_music_visualizer_mode_values"
             android:defaultValue="0"
             android:dependency="glyph_settings_music_visualizer_toggle" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
