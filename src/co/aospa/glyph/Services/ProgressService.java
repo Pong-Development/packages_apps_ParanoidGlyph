@@ -244,6 +244,15 @@ public class ProgressService extends Service {
         try {
             MediaController controller = getActiveMediaController();
             if (controller != null && controller.getPlaybackState() != null) {
+                String packageName = controller.getPackageName();
+
+                if (SettingsManager.isMediaPackageBlacklisted(packageName)) {
+                    Log.d(TAG, "Package: " + packageName + " is not allowed for media progress");
+                    if (StatusManager.getProgressType() == 2) {
+                        mThreadHandler.post(dismissProgress);
+                    }
+                    return;
+                }
                 PlaybackState state = controller.getPlaybackState();
 
                 if (state.getState() == PlaybackState.STATE_PLAYING) {

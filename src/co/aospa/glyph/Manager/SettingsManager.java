@@ -262,6 +262,14 @@ public final class SettingsManager {
         return PreferenceManager.getDefaultSharedPreferences(ctx)
                 .getBoolean(Constants.GLYPH_PROGRESS_MEDIA_ENABLE, false) && isGlyphProgressEnabled();
     }
+
+    public static boolean isMediaPackageBlacklisted(String name) {
+        Context ctx = getContext();
+        Set<String> pkgList = PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getStringSet(Constants.GLYPH_PROGRESS_MEDIA_BLACKLIST, new HashSet<>());
+        return pkgList.contains(name);
+    }
+
     public class Pulse {
 
         public static void setPulseVisualizer(boolean state) {

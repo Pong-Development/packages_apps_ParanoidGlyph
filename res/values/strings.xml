@@ -160,4 +160,6 @@
     <string name="glyph_settings_progress_toggle_summary">Show progress bar when Glyph is active</string>
     <string name="glyph_settings_progress_media_toggle_title">Media progress</string>
     <string name="glyph_settings_progress_media_toggle_summary">Show progress bar when media is playing</string>
+    <string name="glyph_settings_progress_media_app_blacklist_title">Excluded media applications</string>
+    <string name="glyph_settings_progress_media_app_blacklist_summary">Prevent selected apps from being used for media progress</string>
 </resources>

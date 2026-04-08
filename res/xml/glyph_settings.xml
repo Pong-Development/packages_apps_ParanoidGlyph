@@ -131,6 +131,12 @@
         android:summary="@string/glyph_settings_progress_media_toggle_summary"
         android:dependency="glyph_settings_progress_toggle" />
 
+    <Preference
+        android:key="glyph_settings_progress_media_app_blacklist"
+        android:icon="@drawable/ic_blocked"
+        android:title="@string/glyph_settings_progress_media_app_blacklist_title"
+        android:summary="@string/glyph_settings_progress_media_app_blacklist_summary" />
+
     <PreferenceCategory
         android:key="glyph_settings_volume"
         android:title="@string/glyph_settings_volume_title" />

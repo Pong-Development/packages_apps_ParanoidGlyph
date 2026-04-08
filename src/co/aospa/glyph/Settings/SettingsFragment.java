@@ -23,6 +23,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +55,7 @@ import co.aospa.glyph.Manager.GlyphScheduleManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Services.BatterySaverService;
 import static co.aospa.glyph.Utils.InterfaceUtils.showDialog;
+import static co.aospa.glyph.Utils.InterfaceUtils.showMultiPickerDialog;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -84,12 +88,17 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private PreferenceCategory mProgressCategory;
     private SwitchPreferenceCompat mProgressPreference;
     private SwitchPreferenceCompat mProgressMediaPreference;
+    private Preference mProgressMediaBlacklistPreference;
 
     private ContentResolver mContentResolver;
     private SettingObserver mSettingObserver;
     private Preference mSchedulePreference;
 
     private Handler mHandler = new Handler();
+
+    String[] mediaPermissions = {
+            "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+    };
 
     private BroadcastReceiver mScheduleUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -223,6 +232,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mProgressMediaPreference.setEnabled(glyphEnabled && mProgressPreference.isChecked());
         mProgressMediaPreference.setOnPreferenceChangeListener(this);
 
+        mProgressMediaBlacklistPreference = findPreference(Constants.GLYPH_PROGRESS_MEDIA_BLACKLIST);
+
         IntentFilter filter = new IntentFilter("co.aospa.glyph.UPDATE_MAIN_SWITCH");
         requireContext().registerReceiver(mScheduleUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
 
@@ -346,25 +357,58 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         }
     }
 
-    @Override
-    public boolean onPreferenceTreeClick(Preference preference) {
-    if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey()) 
-    || Constants.GLYPH_PROGRESS_ENABLE.equals(preference.getKey())) {
-            if (!ServiceUtils.isNotificationServiceEnabled()) {
-                showDialog(
-                        requireActivity(),
-                        R.string.glyph_settings_notifs_permission_dialog_title,
-                        R.string.glyph_settings_notifs_permission_dialog_message,
-                        android.R.string.ok, () -> {
-                            Intent intent
-                                    = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-                            requireContext().startActivity(intent);
-                        },
-                        android.R.string.cancel, null);
-                return true;
+    private String[] getMediaApplications(boolean resolveLabel) {
+        List<String> packages = new ArrayList<>();
+        PackageManager pm = requireContext().getPackageManager();
+        List<PackageInfo> allApps = pm.getInstalledPackages(PackageManager.GET_PERMISSIONS);
+        for (PackageInfo pkg : allApps) {
+            int pkgFlags = pkg.applicationInfo.flags;
+            if (pkg.requestedPermissions == null) continue;
+            if (pm.getLaunchIntentForPackage(pkg.packageName) == null) continue; // must be launchable
+            if ((pkgFlags & ApplicationInfo.FLAG_INSTALLED) == 0 // must be installed for current user
+                    || (pkgFlags & ApplicationInfo.FLAG_PERSISTENT) != 0) continue; // exclude persistent
+            for (String perm : pkg.requestedPermissions) {
+                for (String mediaPerm : mediaPermissions) {
+                    if (perm.equals(mediaPerm)) {
+                        packages.add(
+                                resolveLabel
+                                ? pm.getApplicationLabel(pkg.applicationInfo).toString()
+                                : pkg.packageName);
+                    }
+                }
             }
         }
-    return super.onPreferenceTreeClick(preference);
+        return packages.toArray(new String[0]);
+    }
+
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey())
+            || Constants.GLYPH_PROGRESS_ENABLE.equals(preference.getKey())) {
+                if (!ServiceUtils.isNotificationServiceEnabled()) {
+                    showDialog(
+                            requireActivity(),
+                            R.string.glyph_settings_notifs_permission_dialog_title,
+                            R.string.glyph_settings_notifs_permission_dialog_message,
+                            android.R.string.ok, () -> {
+                                Intent intent
+                                        = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+                                requireContext().startActivity(intent);
+                            },
+                            android.R.string.cancel, null);
+                    return true;
+                }
+        }
+        if (Constants.GLYPH_PROGRESS_MEDIA_BLACKLIST.equals(preference.getKey())) {
+            showMultiPickerDialog(
+                    requireActivity(),
+                    preference,
+                    getMediaApplications(true),
+                    getMediaApplications(false)
+            );
+        }
+        return super.onPreferenceTreeClick(preference);
     }
 
     @Override
