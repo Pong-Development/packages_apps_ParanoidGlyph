@@ -35,6 +35,7 @@ import android.os.Looper;
 import android.provider.Settings;
 
 import androidx.preference.Preference;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
@@ -305,31 +306,40 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         return true;
     }
 
+    private List<Preference> getAllPreferences(PreferenceGroup group) {
+        List<Preference> preferences = new ArrayList<>();
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            Preference pref = group.getPreference(i);
+            preferences.add(pref);
+            if (pref instanceof PreferenceGroup) {
+                preferences.addAll(getAllPreferences((PreferenceGroup) pref));
+            }
+        }
+        return preferences;
+    }
+
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         SettingsManager.enableGlyph(isChecked);
 
-        mFlipPreference.setEnabled(isChecked);
-        mAutoBrightnessPreference.setEnabled(isChecked);
-        mBrightnessPreference.setEnabled(isChecked && !mAutoBrightnessPreference.isChecked());
-        mNotifsPreference.setEnabled(isChecked);
-        mNotifsPreference.setSwitchEnabled(isChecked);
-        mCallPreference.setEnabled(isChecked);
-        mCallPreference.setSwitchEnabled(isChecked);
-        if (!Constants.Device.isPhone2a()) {
-            mChargingLevelPreference.setEnabled(isChecked);
-        }
-        if (Constants.isPowershareSupported()) {
-            mChargingPowersharePreference.setEnabled(isChecked);
-        }
-        if (!Constants.Device.isPhone2a()) {
-            mVolumeLevelPreference.setEnabled(isChecked);
-        }
-        mMusicVisualizerPreference.setEnabled(isChecked);
-        mMusicVisualizerModePreference.setEnabled(isChecked);
-        if (!Constants.Device.isPhone1()) {
-            mProgressPreference.setEnabled(isChecked);
-            mProgressMediaPreference.setEnabled(isChecked && mProgressPreference.isChecked());
+        List<Preference> allPrefs = getAllPreferences(getPreferenceScreen());
+
+        for (Preference pref : allPrefs) {
+
+            if (pref instanceof PrimarySwitchPreference p) {
+                p.setSwitchEnabled(isChecked);
+                p.setEnabled(isChecked);
+            } else if (pref == (Preference) mBrightnessPreference) {
+                pref.setEnabled(!mAutoBrightnessPreference.isChecked() && isChecked);
+            } else if (pref == (Preference) mBatterySaverPreference || pref == mSchedulePreference) {
+                ; // skip
+            } else if (pref instanceof MainSwitchPreference m) {
+                ; // skip
+            } else if (pref instanceof PreferenceCategory c) {
+                ; // skip
+            } else {
+                pref.setEnabled(isChecked);
+            }
         }
 
         mHandler.post(() -> {
