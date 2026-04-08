@@ -117,6 +117,27 @@
                 android:summary="@string/glyph_settings_charging_powershare_summary" />
     </PreferenceCategory>
 
+
+    <PreferenceCategory
+        android:key="glyph_settings_red_led"
+        android:title="@string/glyph_settings_red_led_title">
+
+        <SwitchPreferenceCompat
+            android:key="glyph_settings_mic_activity_toggle"
+            android:icon="@drawable/ic_mic"
+            android:defaultValue="false"
+            android:title="@string/glyph_settings_mic_activity_toggle_title"
+            android:summary="@string/glyph_settings_mic_activity_toggle_summary" />
+
+        <ListPreference
+            android:key="glyph_settings_red_led_mode"
+            android:icon="@drawable/ic_light_filled"
+            android:title="@string/glyph_settings_red_led_mode_title"
+            android:entries="@array/glyph_red_led_mode_entries"
+            android:entryValues="@array/glyph_red_led_mode_values"
+            android:summary="%s" />
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:key="glyph_settings_progress"
         android:title="@string/glyph_settings_progress_title">

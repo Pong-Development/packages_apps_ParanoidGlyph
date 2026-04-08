@@ -270,6 +270,18 @@ public final class SettingsManager {
         return pkgList.contains(name);
     }
 
+    public static boolean isGlyphMicActivityEnabled() {
+        Context ctx = getContext();
+        return PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(Constants.GLYPH_MIC_ACTIVITY_ENABLE, false) && isGlyphEnabled();
+    }
+
+    public static int getGlyphRedLedMode() {
+        Context ctx = getContext();
+        return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getString(Constants.GLYPH_RED_LED_MODE, "0"));
+    }
+
     public class Pulse {
 
         public static void setPulseVisualizer(boolean state) {

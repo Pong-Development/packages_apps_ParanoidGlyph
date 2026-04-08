@@ -90,6 +90,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private SwitchPreferenceCompat mProgressPreference;
     private SwitchPreferenceCompat mProgressMediaPreference;
     private Preference mProgressMediaBlacklistPreference;
+    private PreferenceCategory mRedLedCategory;
+    private SwitchPreferenceCompat mMicActivityPreference;
+    private ListPreference mRedLedModePreference;
 
     private ContentResolver mContentResolver;
     private SettingObserver mSettingObserver;
@@ -227,6 +230,15 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mProgressMediaPreference.setOnPreferenceChangeListener(this);
 
         mProgressMediaBlacklistPreference = findPreference(Constants.GLYPH_PROGRESS_MEDIA_BLACKLIST);
+
+        mMicActivityPreference = findPreference(Constants.GLYPH_MIC_ACTIVITY_ENABLE);
+        mMicActivityPreference.setOnPreferenceChangeListener(this);
+
+        mRedLedCategory = findPreference(Constants.GLYPH_RED_LED_CATEGORY);
+        mRedLedCategory.setVisible(Constants.Device.isPhone2() || Constants.Device.isPhone1());
+
+        mRedLedModePreference = findPreference(Constants.GLYPH_RED_LED_MODE);
+        mRedLedModePreference.setOnPreferenceChangeListener(this);
 
         IntentFilter filter = new IntentFilter("co.aospa.glyph.UPDATE_MAIN_SWITCH");
         requireContext().registerReceiver(mScheduleUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);

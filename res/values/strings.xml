@@ -164,4 +164,13 @@
     <string name="glyph_settings_progress_media_toggle_summary">Show progress bar when media is playing</string>
     <string name="glyph_settings_progress_media_app_blacklist_title">Excluded media applications</string>
     <string name="glyph_settings_progress_media_app_blacklist_summary">Prevent selected apps from being used for media progress</string>
+
+    <string name="glyph_settings_red_led_title">Red LED</string>
+
+    <string name="glyph_settings_red_led_mode_title">LED Mode</string>
+
+    <string name="glyph_settings_mic_activity_toggle_title">Microphone activity</string>
+    <string name="glyph_settings_mic_activity_toggle_summary">Turn on the red LED when an app is using the microphone</string>
+
+
 </resources>

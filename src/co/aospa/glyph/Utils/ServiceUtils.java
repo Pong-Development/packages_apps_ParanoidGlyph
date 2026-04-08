@@ -35,6 +35,7 @@ import co.aospa.glyph.Services.BatterySaverService;
 import co.aospa.glyph.Services.CallReceiverService;
 import co.aospa.glyph.Services.ChargingService;
 import co.aospa.glyph.Services.FlipToGlyphService;
+import co.aospa.glyph.Services.MicActivityService;
 import co.aospa.glyph.Services.MusicVisualizerService;
 import co.aospa.glyph.Services.PowershareService;
 import co.aospa.glyph.Services.ProgressService;
@@ -203,6 +204,20 @@ public final class ServiceUtils {
                 UserHandle.CURRENT);
     }
 
+    public static void startMicActivityService() {
+        if (!(Constants.Device.isPhone1() || Constants.Device.isPhone2())) return;
+        if (DEBUG) Log.d(TAG, "Starting Mic activity service");
+        context.startServiceAsUser(new Intent(context, MicActivityService.class),
+                UserHandle.CURRENT);
+    }
+
+    public static void stopMicActivityService() {
+        if (!(Constants.Device.isPhone1() || Constants.Device.isPhone2())) return;
+        if (DEBUG) Log.d(TAG, "Starting Mic activity service");
+        context.stopServiceAsUser(new Intent(context, MicActivityService.class),
+                UserHandle.CURRENT);
+    }
+
     public static void startTorchService() {
         if (DEBUG) Log.d(TAG, "Starting Torch service");
         context.startServiceAsUser(new Intent(context, TorchService.class),
@@ -253,6 +268,11 @@ public final class ServiceUtils {
             } else {
                 stopPowershareService();
             }
+            if (SettingsManager.isGlyphMicActivityEnabled()) {
+                startMicActivityService();
+            } else {
+                stopMicActivityService();
+            }
             if (SettingsManager.isGlyphCallEnabled()) {
                 startCallReceiverService();
             } else {
@@ -293,6 +313,7 @@ public final class ServiceUtils {
         stopChargingService();
         stopPowershareService();
         stopCallReceiverService();
+        stopMicActivityService();
         stopFlipToGlyphService();
         stopMusicVisualizerService();
         stopVolumeLevelService();

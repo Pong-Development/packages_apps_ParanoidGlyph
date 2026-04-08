@@ -77,6 +77,11 @@ public final class Constants {
     public static final String GLYPH_PROGRESS_MEDIA_ENABLE = "glyph_settings_progress_media_toggle";
     public static final String GLYPH_PROGRESS_MEDIA_BLACKLIST = "glyph_settings_progress_media_app_blacklist";
 
+
+    public static final String GLYPH_RED_LED_CATEGORY = "glyph_settings_red_led";
+    public static final String GLYPH_RED_LED_MODE = "glyph_settings_red_led_mode";
+    public static final String GLYPH_MIC_ACTIVITY_ENABLE = "glyph_settings_mic_activity_toggle";
+
     public static final String ACTION_TORCH_ENABLE = "torch_enable";
     public static final String ACTION_TORCH_DISABLE = "torch_disable";
 
