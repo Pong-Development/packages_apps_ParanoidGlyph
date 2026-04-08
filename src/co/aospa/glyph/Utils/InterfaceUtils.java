@@ -4,8 +4,15 @@ import static co.aospa.glyph.Constants.Constants.CONTEXT;
 
 import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class InterfaceUtils {
 
@@ -77,6 +84,55 @@ public class InterfaceUtils {
                 negativeText, onNegative,
                 (String) null, null);
     }
+
+    public static void showMultiPickerDialog(Context context, Preference preference,
+                                      String[] entries, String[] values,
+                                      Runnable afterDismiss) {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> selected = prefs.getStringSet(preference.getKey(), new HashSet<>());
+
+        boolean[] checked = new boolean[entries.length];
+        for (int i = 0; i < values.length; i++) {
+            checked[i] = selected.contains(values[i]);
+        }
+
+        new AlertDialog.Builder(context)
+                .setTitle(preference.getTitle())
+                .setMultiChoiceItems(entries, checked, (dialog, which, isChecked) -> {
+                    checked[which] = isChecked;
+                })
+                .setOnDismissListener(dialog -> {
+                    Set<String> newSelected = new HashSet<>();
+                    for (int i = 0; i < checked.length; i++) {
+                        if (checked[i]) newSelected.add(values[i]);
+                    }
+                    prefs.edit().putStringSet(preference.getKey(), newSelected).apply();
+                    if (afterDismiss != null) {
+                        afterDismiss.run();
+                    }
+                })
+                .show();
+    }
+
+    public static void showMultiPickerDialog(Context context, Preference preference,
+                                      String[] entries, String[] values) {
+        showMultiPickerDialog(context, preference,
+                entries, values, null);
+    }
+
+    public static void showMultiPickerDialog(Context context, Preference preference,
+                                      List<String> entries, List<String> values) {
+        showMultiPickerDialog(context, preference,
+                entries.toArray(new String[0]), values.toArray(new String[0]), null);
+    }
+
+    public static void showMultiPickerDialog(Context context, Preference preference,
+                                      List<String> entries, List<String> values, Runnable afterDismiss) {
+        showMultiPickerDialog(context, preference,
+                entries.toArray(new String[0]), values.toArray(new String[0]), afterDismiss);
+    }
+
 
 
 }

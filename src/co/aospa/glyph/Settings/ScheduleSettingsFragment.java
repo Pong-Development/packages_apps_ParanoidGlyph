@@ -33,6 +33,7 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 
 import co.aospa.glyph.Manager.GlyphScheduleManager;
 import co.aospa.glyph.R;
+import co.aospa.glyph.Utils.InterfaceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
 
 import java.util.HashSet;
@@ -132,35 +133,16 @@ public class ScheduleSettingsFragment extends SettingsBasePreferenceFragment
     }
 
     private void showDayPickerDialog(Preference preference) {
-    String[] days = getResources().getStringArray(R.array.day_of_week_names);
-    String[] dayValues = getResources().getStringArray(R.array.day_of_week_values);
+        String[] days = getResources().getStringArray(R.array.day_of_week_names);
+        String[] dayValues = getResources().getStringArray(R.array.day_of_week_values);
 
-    // Load current selection from SharedPreferences
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-    Set<String> selected = prefs.getStringSet(preference.getKey(), new HashSet<>());
-
-    boolean[] checked = new boolean[days.length];
-    for (int i = 0; i < dayValues.length; i++) {
-        checked[i] = selected.contains(dayValues[i]);
-    }
-
-    new AlertDialog.Builder(getContext())
-        .setTitle(preference.getTitle())
-        .setMultiChoiceItems(days, checked, (dialog, which, isChecked) -> {
-            checked[which] = isChecked;
-        })
-        .setOnDismissListener(dialog -> {
-            Set<String> newSelected = new HashSet<>();
-            for (int i = 0; i < checked.length; i++) {
-                if (checked[i]) newSelected.add(dayValues[i]);
-            }
-            prefs.edit().putStringSet(preference.getKey(), newSelected).apply();
+        InterfaceUtils.showMultiPickerDialog(requireActivity(), preference, days, dayValues, () -> {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            Set<String> newSelected = prefs.getStringSet(preference.getKey(), new HashSet<>());
             GlyphScheduleManager.setScheduleDays(requireContext(), newSelected);
             updatePreferences();
-        })
-        .show();
-}
-
+        });
+    }
 
     private void updatePreferences() {
         Context context = requireContext();
