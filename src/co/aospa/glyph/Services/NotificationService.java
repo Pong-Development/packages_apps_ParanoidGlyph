@@ -37,6 +37,12 @@ import android.util.Log;
 
 import com.android.internal.util.ArrayUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
@@ -58,6 +64,10 @@ public class NotificationService extends NotificationListenerService
     private SettingObserver mSettingObserver;
 
     private SharedPreferences mSharedPreferences;
+
+    private final Map<String, Runnable> pendingCallbacks = new HashMap<>();
+    private final Map<String, Future<?>> pendingFutures = new HashMap<>();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     @Override
     public void onCreate() {
@@ -137,17 +147,23 @@ public class NotificationService extends NotificationListenerService
         if (DEBUG) Log.d(TAG, "onNotificationPosted: package:" + packageName + " | channel id: " + packageChannelID + " | importance: " + packageImportance + " | can bypass dnd: " + packageCanBypassDnd);
         
         if (SettingsManager.isGlyphNotifsAppEnabled(packageName)
-                        && !sbn.isOngoing()
+                        && !sbn.isOngoing() 
                         && !ArrayUtils.contains(Constants.APPS_TO_IGNORE, packageName)
                         && !ArrayUtils.contains(Constants.NOTIFS_TO_IGNORE, packageName + ":" + packageChannelID)
                         && (packageImportance >= NotificationManager.IMPORTANCE_DEFAULT || packageImportance == -1)
                         && (interruptionFilter <= NotificationManager.INTERRUPTION_FILTER_ALL || packageCanBypassDnd)) {
-            mThreadHandler.post(() -> {
+            String notifKey = sbn.getKey();
+            Runnable runnable = () -> {
                 if (SettingsManager.isGlyphNotifsAnimationReversed()) {
                     AnimationManager.playCsvReverse(mContext, SettingsManager.getGlyphNotifsAnimation());
                 } else {
                     AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
                 }
+            };
+            pendingCallbacks.put(notifKey, runnable);
+            mThreadHandler.post(() -> {
+                Future<?> future = executor.submit(runnable);
+                pendingFutures.put(notifKey, future);
             });
         }
         
@@ -234,11 +250,20 @@ public class NotificationService extends NotificationListenerService
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn){
-        if (DEBUG) Log.d(TAG, "onNotificationRemoved: package:" + sbn.getPackageName() + " | channel id: " + sbn.getNotification().getChannelId());
+        if (DEBUG) Log.d(TAG, "onNotificationRemoved: package:" + sbn.getPackageName()
+                + " | channel id: " + sbn.getNotification().getChannelId());
         
         if (SettingsManager.isGlyphProgressEnabled()) {
             checkProgressNotificationRemoved(sbn);
         }
+        String key = sbn.getKey();
+        Runnable runnable = pendingCallbacks.remove(key);
+        if (runnable != null) {
+            mThreadHandler.removeCallbacks(runnable);
+        }
+
+        Future<?> future = pendingFutures.remove(key);
+        if (future != null) future.cancel(true);
         
         onNotificationUpdated();
     }
