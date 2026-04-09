@@ -75,7 +75,7 @@ public final class Constants {
     public static final String GLYPH_PROGRESS_CATEGORY = "glyph_settings_progress";
     public static final String GLYPH_PROGRESS_ENABLE = "glyph_settings_progress_toggle";
     public static final String GLYPH_PROGRESS_MEDIA_ENABLE = "glyph_settings_progress_media_toggle";
-    public static final String GLYPH_PROGRESS_MEDIA_BLACKLIST = "glyph_settings_progress_media_app_blacklist";
+    public static final String GLYPH_PROGRESS_MEDIA_WHITELIST = "glyph_settings_progress_media_app_whitelist";
 
 
     public static final String GLYPH_RED_LED_CATEGORY = "glyph_settings_red_led";

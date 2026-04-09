@@ -246,7 +246,7 @@ public class ProgressService extends Service {
             if (controller != null && controller.getPlaybackState() != null) {
                 String packageName = controller.getPackageName();
 
-                if (SettingsManager.isMediaPackageBlacklisted(packageName)) {
+                if (!SettingsManager.isMediaPackageWhitelisted(packageName)) {
                     Log.d(TAG, "Package: " + packageName + " is not allowed for media progress");
                     if (StatusManager.getProgressType() == 2) {
                         mThreadHandler.post(dismissProgress);

@@ -263,10 +263,10 @@ public final class SettingsManager {
                 .getBoolean(Constants.GLYPH_PROGRESS_MEDIA_ENABLE, false) && isGlyphProgressEnabled();
     }
 
-    public static boolean isMediaPackageBlacklisted(String name) {
+    public static boolean isMediaPackageWhitelisted(String name) {
         Context ctx = getContext();
         Set<String> pkgList = PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getStringSet(Constants.GLYPH_PROGRESS_MEDIA_BLACKLIST, new HashSet<>());
+                .getStringSet(Constants.GLYPH_PROGRESS_MEDIA_WHITELIST, new HashSet<>());
         return pkgList.contains(name);
     }
 

@@ -89,7 +89,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private PreferenceCategory mProgressCategory;
     private SwitchPreferenceCompat mProgressPreference;
     private SwitchPreferenceCompat mProgressMediaPreference;
-    private Preference mProgressMediaBlacklistPreference;
+    private Preference mProgressMediaWhitelistPreference;
     private PreferenceCategory mRedLedCategory;
     private SwitchPreferenceCompat mMicActivityPreference;
     private ListPreference mRedLedModePreference;
@@ -229,7 +229,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mProgressMediaPreference.setEnabled(glyphEnabled && mProgressPreference.isChecked());
         mProgressMediaPreference.setOnPreferenceChangeListener(this);
 
-        mProgressMediaBlacklistPreference = findPreference(Constants.GLYPH_PROGRESS_MEDIA_BLACKLIST);
+        mProgressMediaWhitelistPreference = findPreference(Constants.GLYPH_PROGRESS_MEDIA_WHITELIST);
 
         mMicActivityPreference = findPreference(Constants.GLYPH_MIC_ACTIVITY_ENABLE);
         mMicActivityPreference.setOnPreferenceChangeListener(this);
@@ -411,7 +411,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
                     return true;
                 }
         }
-        if (Constants.GLYPH_PROGRESS_MEDIA_BLACKLIST.equals(preference.getKey())) {
+        if (Constants.GLYPH_PROGRESS_MEDIA_WHITELIST.equals(preference.getKey())) {
             showMultiPickerDialog(
                     requireActivity(),
                     preference,

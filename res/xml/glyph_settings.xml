@@ -158,10 +158,10 @@
             android:dependency="glyph_settings_progress_toggle" />
 
         <Preference
-            android:key="glyph_settings_progress_media_app_blacklist"
-            android:icon="@drawable/ic_blocked"
-            android:title="@string/glyph_settings_progress_media_app_blacklist_title"
-            android:summary="@string/glyph_settings_progress_media_app_blacklist_summary" />
+            android:key="glyph_settings_progress_media_app_whitelist"
+            android:icon="@drawable/ic_play"
+            android:title="@string/glyph_settings_progress_media_app_whitelist_title"
+            android:summary="@string/glyph_settings_progress_media_app_whitelist_summary" />
     </PreferenceCategory>
 
     <PreferenceCategory
