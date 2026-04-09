@@ -18,6 +18,7 @@
 
 package co.aospa.glyph.Settings;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -92,6 +93,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private Preference mProgressMediaWhitelistPreference;
     private PreferenceCategory mRedLedCategory;
     private SwitchPreferenceCompat mMicActivityPreference;
+    private Preference mMicActivityWhitelistPreference;
     private ListPreference mRedLedModePreference;
 
     private ContentResolver mContentResolver;
@@ -101,7 +103,11 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private Handler mHandler = new Handler();
 
     String[] mediaPermissions = {
-            "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+            Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
+    };
+
+    String[] micPermissions = {
+            Manifest.permission.RECORD_AUDIO
     };
 
     private BroadcastReceiver mScheduleUpdateReceiver = new BroadcastReceiver() {
@@ -231,11 +237,14 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
         mProgressMediaWhitelistPreference = findPreference(Constants.GLYPH_PROGRESS_MEDIA_WHITELIST);
 
+        mRedLedCategory = findPreference(Constants.GLYPH_RED_LED_CATEGORY);
+        mRedLedCategory.setVisible(Constants.Device.isPhone2() || Constants.Device.isPhone1());
+
         mMicActivityPreference = findPreference(Constants.GLYPH_MIC_ACTIVITY_ENABLE);
         mMicActivityPreference.setOnPreferenceChangeListener(this);
 
-        mRedLedCategory = findPreference(Constants.GLYPH_RED_LED_CATEGORY);
-        mRedLedCategory.setVisible(Constants.Device.isPhone2() || Constants.Device.isPhone1());
+        mMicActivityWhitelistPreference = findPreference(Constants.GLYPH_MIC_ACTIVITY_WHITELIST);
+        mMicActivityWhitelistPreference.setOnPreferenceChangeListener(this);
 
         mRedLedModePreference = findPreference(Constants.GLYPH_RED_LED_MODE);
         mRedLedModePreference.setOnPreferenceChangeListener(this);
@@ -368,28 +377,35 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         }
     }
 
-    private String[] getMediaApplications(boolean resolveLabel) {
-        List<String> packages = new ArrayList<>();
+    private String[] getApplicationsWithPermission(boolean resolveLabel, String[] permissionList) {
+        List<ApplicationInfo> matched = new ArrayList<>();
         PackageManager pm = requireContext().getPackageManager();
         List<PackageInfo> allApps = pm.getInstalledPackages(PackageManager.GET_PERMISSIONS);
         for (PackageInfo pkg : allApps) {
             int pkgFlags = pkg.applicationInfo.flags;
             if (pkg.requestedPermissions == null) continue;
-            if (pm.getLaunchIntentForPackage(pkg.packageName) == null) continue; // must be launchable
-            if ((pkgFlags & ApplicationInfo.FLAG_INSTALLED) == 0 // must be installed for current user
-                    || (pkgFlags & ApplicationInfo.FLAG_PERSISTENT) != 0) continue; // exclude persistent
+            if (pm.getLaunchIntentForPackage(pkg.packageName) == null) continue;
+            if ((pkgFlags & ApplicationInfo.FLAG_INSTALLED) == 0
+                    || (pkgFlags & ApplicationInfo.FLAG_PERSISTENT) != 0) continue;
             for (String perm : pkg.requestedPermissions) {
-                for (String mediaPerm : mediaPermissions) {
-                    if (perm.equals(mediaPerm)) {
-                        packages.add(
-                                resolveLabel
-                                ? pm.getApplicationLabel(pkg.applicationInfo).toString()
-                                : pkg.packageName);
+                for (String requiredPerm : permissionList) {
+                    if (perm.equals(requiredPerm)) {
+                        matched.add(pkg.applicationInfo);
                     }
                 }
             }
         }
-        return packages.toArray(new String[0]);
+
+        matched.sort((a, b) -> pm.getApplicationLabel(a).toString()
+                .compareToIgnoreCase(pm.getApplicationLabel(b).toString()));
+
+        List<String> result = new ArrayList<>();
+        for (ApplicationInfo app : matched) {
+            result.add(resolveLabel
+                    ? pm.getApplicationLabel(app).toString()
+                    : app.packageName);
+        }
+        return result.toArray(new String[0]);
     }
 
 
@@ -415,8 +431,16 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             showMultiPickerDialog(
                     requireActivity(),
                     preference,
-                    getMediaApplications(true),
-                    getMediaApplications(false)
+                    getApplicationsWithPermission(true, mediaPermissions),
+                    getApplicationsWithPermission(false, mediaPermissions)
+            );
+        }
+        if (Constants.GLYPH_MIC_ACTIVITY_WHITELIST.equals(preference.getKey())) {
+            showMultiPickerDialog(
+                    requireActivity(),
+                    preference,
+                    getApplicationsWithPermission(true, micPermissions),
+                    getApplicationsWithPermission(false, micPermissions)
             );
         }
         return super.onPreferenceTreeClick(preference);

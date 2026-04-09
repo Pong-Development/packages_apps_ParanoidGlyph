@@ -172,5 +172,8 @@
     <string name="glyph_settings_mic_activity_toggle_title">Microphone activity</string>
     <string name="glyph_settings_mic_activity_toggle_summary">Turn on the red LED when an app is using the microphone</string>
 
+    <string name="glyph_settings_mic_activity_whitelist_title">Mic apps</string>
+    <string name="glyph_settings_mic_activity_whitelist_summary">Choose apps to monitor for mic usage</string>
+    
 
 </resources>

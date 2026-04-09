@@ -129,6 +129,12 @@
             android:title="@string/glyph_settings_mic_activity_toggle_title"
             android:summary="@string/glyph_settings_mic_activity_toggle_summary" />
 
+        <Preference
+            android:key="glyph_settings_mic_activity_whitelist"
+            android:icon="@drawable/ic_android"
+            android:title="@string/glyph_settings_mic_activity_whitelist_title"
+            android:summary="@string/glyph_settings_mic_activity_whitelist_summary" />
+
         <ListPreference
             android:key="glyph_settings_red_led_mode"
             android:icon="@drawable/ic_light_filled"

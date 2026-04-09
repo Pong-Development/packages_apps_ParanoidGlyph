@@ -10,7 +10,10 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.SettingsManager;
@@ -39,6 +42,7 @@ public class MicActivityService extends Service {
     private int mStep = 9;
     private static final int BREATH_INTERVAL = 150;
 
+    private Set<String> mWhitelist = new HashSet<>();
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -59,13 +63,14 @@ public class MicActivityService extends Service {
         }
 
         mAudioManager = getSystemService(AudioManager.class);
-        mAudioManager.registerAudioRecordingCallback(GlyphCallback,  new Handler(Looper.getMainLooper()));
+        mAudioManager.registerAudioRecordingCallback(GlyphCallback,  mHandler);
 
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mode = SettingsManager.getGlyphRedLedMode();
+        mWhitelist = SettingsManager.getMonitoredMicApps();
         return START_STICKY;
     }
 
@@ -84,7 +89,7 @@ public class MicActivityService extends Service {
         toggleLed(false);
     }
 
-    private Runnable LedRunnable = new Runnable() {
+    private final Runnable LedRunnable = new Runnable() {
         @Override
         public void run() {
             switch (mode) {
@@ -113,7 +118,14 @@ public class MicActivityService extends Service {
             public void onRecordingConfigChanged(List<AudioRecordingConfiguration> configs) {
                 boolean micInUse = !configs.isEmpty();
                 if (micInUse) {
-                    mHandler.post(LedRunnable);
+                    boolean whitelistedAppRecording = configs.stream()
+                            .map(AudioRecordingConfiguration::getClientPackageName)
+                            .anyMatch(mWhitelist::contains);
+                    if (whitelistedAppRecording) {
+                        mHandler.post(LedRunnable);
+                    } else {
+                        stopLed();
+                    }
                 } else {
                     stopLed();
                 }

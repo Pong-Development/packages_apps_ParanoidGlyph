@@ -282,6 +282,13 @@ public final class SettingsManager {
                 .getString(Constants.GLYPH_RED_LED_MODE, "0"));
     }
 
+    public static Set<String> getMonitoredMicApps() {
+        Context ctx = getContext();
+        Set<String> pkgList = PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getStringSet(Constants.GLYPH_MIC_ACTIVITY_WHITELIST, new HashSet<>());
+        return pkgList;
+    }
+
     public class Pulse {
 
         public static void setPulseVisualizer(boolean state) {
