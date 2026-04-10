@@ -143,9 +143,24 @@ public final class SettingsManager {
                 Constants.GLYPH_CALL_ENABLE, enable ? 1 : 0);
     }
 
+    public static boolean contactHasGlyphCallConfig(String contactId) {
+        Context ctx = getContext();
+        return !ctx.getSharedPreferences(Constants.GLYPH_CALL_CONTACT_PREF_PREFIX
+                        + contactId, Context.MODE_PRIVATE)
+                .getAll().isEmpty();
+    }
+
     public static String getGlyphCallAnimation() {
         Context ctx = getContext();
         return PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getString(Constants.GLYPH_CALL_SUB_ANIMATIONS,
+                        ResourceUtils.getString("glyph_settings_call_animations_default"));
+    }
+
+    public static String getGlyphCallAnimation(String contactId) {
+        Context ctx = getContext();
+        return ctx.getSharedPreferences(Constants.GLYPH_CALL_CONTACT_PREF_PREFIX
+                        + contactId, Context.MODE_PRIVATE)
                 .getString(Constants.GLYPH_CALL_SUB_ANIMATIONS,
                         ResourceUtils.getString("glyph_settings_call_animations_default"));
     }
@@ -169,6 +184,14 @@ public final class SettingsManager {
     public static boolean isGlyphCallAnimationReversed() {
         Context ctx = getContext();
          return PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(Constants.GLYPH_CALL_REVERSE_ANIMATION_ENABLE,
+                        false);
+    }
+
+    public static boolean isGlyphCallAnimationReversed(String contactId) {
+        Context ctx = getContext();
+        return ctx.getSharedPreferences(Constants.GLYPH_CALL_CONTACT_PREF_PREFIX
+                        + contactId, Context.MODE_PRIVATE)
                 .getBoolean(Constants.GLYPH_CALL_REVERSE_ANIMATION_ENABLE,
                         false);
     }

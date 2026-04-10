@@ -39,6 +39,8 @@
 
     <string name="glyph_settings_brightness">Brightness</string>
 
+    <string name="glyph_settings_sub_animations_title">Pattern</string>
+
     <string name="glyph_settings_battery_saver_toggle_title">Follow battery saver</string>
     <string name="glyph_settings_battery_saver_toggle_summary">Disable glyph interface when battery saver is enabled</string>
 
@@ -76,7 +78,14 @@
     <string name="glyph_settings_call_toggle_title">Call animation</string>
     <string name="glyph_settings_call_toggle_summary">Flash LEDs on incoming calls</string>
     <string name="glyph_settings_call_sub_toggle_title">Enable call animation</string>
-    <string name="glyph_settings_call_sub_animations_title">Pattern</string>
+
+    <string name="glyph_settings_call_sub_contact_select_title">Contact-specific settings</string>
+    <string name="glyph_settings_call_sub_contact_select_summary">Choose a contact to set options for</string>
+
+    <string name="glyph_call_contact_delete_confirm_message_start">Are you sure you want to delete settings for</string>
+    <string name="glyph_call_contact_delete_confirm_title">Delete settings</string>
+
+    <string name="glyph_settings_call_sub_animations_title">@string/glyph_settings_sub_animations_title</string>
 
     <string name="glyph_settings_notifs_title">Notifications</string>
     <string name="glyph_settings_notifs_toggle_title">Notification animation</string>

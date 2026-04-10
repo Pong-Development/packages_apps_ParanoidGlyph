@@ -31,6 +31,7 @@ import android.util.Log;
 
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
+import co.aospa.glyph.Utils.ResourceUtils;
 
 public class CallReceiverService extends Service {
 
@@ -42,10 +43,16 @@ public class CallReceiverService extends Service {
     private HandlerThread thread;
     private Handler mThreadHandler;
 
+    private String contactId = null;
+
     private Runnable playCall = new Runnable() {
         @Override
         public void run() {
-            AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+            if (contactId != null && SettingsManager.contactHasGlyphCallConfig(contactId)) {
+                AnimationManager.playCall(SettingsManager.getGlyphCallAnimation(contactId));
+            } else {
+                AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+            }
         }
     };
 
@@ -105,6 +112,8 @@ public class CallReceiverService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
+                String number = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+                contactId = ResourceUtils.getContactIdForNumber(number);
                 String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
                 if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
                     if (DEBUG) Log.d(TAG, "EXTRA_STATE_RINGING");

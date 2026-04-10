@@ -44,4 +44,11 @@
             android:defaultValue="false"
             android:summary="@string/glyph_settings_sub_animations_reverse_toggle_summary" />
 
+    <PreferenceCategory>
+        <Preference
+            android:key="glyph_settings_call_sub_contact_select"
+            android:title="@string/glyph_settings_call_sub_contact_select_title"
+            android:summary="@string/glyph_settings_call_sub_contact_select_summary" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -19,7 +19,10 @@ package co.aospa.glyph.Utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.android.internal.util.ArrayUtils;
@@ -32,9 +35,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
@@ -180,6 +181,42 @@ public final class ResourceUtils {
             } catch (IOException e) { }
         }
         return bundledNotificationAnimations;
+    }
+    public static String getContactName(Context context, String contactId) {
+        Cursor cursor = context.getContentResolver().query(
+                ContactsContract.Contacts.CONTENT_URI,
+                new String[]{ContactsContract.Contacts.DISPLAY_NAME},
+                ContactsContract.Contacts._ID + " = ?",
+                new String[]{contactId},
+                null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String name = cursor.getString(0);
+            cursor.close();
+            return name;
+        }
+        if (cursor != null) cursor.close();
+
+        return null;
+    }
+
+    public static String getContactIdForNumber(String number) {
+        Uri uri = Uri.withAppendedPath(
+                ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+                Uri.encode(number));
+
+        Cursor cursor = context.getContentResolver().query(
+                uri,
+                new String[]{ContactsContract.PhoneLookup.CONTACT_ID},
+                null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String contactId = cursor.getString(0);
+            cursor.close();
+            return contactId;
+        }
+        if (cursor != null) cursor.close();
+        return null;
     }
 
     public static InputStream getCallAnimation(String name) throws IOException {

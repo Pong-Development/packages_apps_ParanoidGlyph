@@ -56,6 +56,7 @@ public final class Constants {
     public static final String GLYPH_CALL_REVERSE_ANIMATION_ENABLE = "glyph_settings_call_sub_animations_reverse_toggle";
     public static final String GLYPH_CALL_SUB_PREVIEW = "glyph_settings_call_sub_preview";
     public static final String GLYPH_CALL_SUB_ANIMATIONS = "glyph_settings_call_sub_animations";
+    public static final String GLYPH_CALL_SUB_CONTACT_SELECT = "glyph_settings_call_sub_contact_select";
     public static final String GLYPH_CALL_SUB_LIVE_PREVIEW = "glyph_settings_call_sub_animations_live_preview";
     public static final String GLYPH_CALL_SUB_ENABLE = "glyph_settings_call_sub_toggle";
     public static final String GLYPH_MUSIC_VISUALIZER_ENABLE = "glyph_settings_music_visualizer_toggle";
@@ -96,6 +97,7 @@ public final class Constants {
 
     public static final String GLYPH_NOTIF_ANIMATION_ALTERNATE = "notif_alternate";
 
+    public static final String GLYPH_CALL_CONTACT_PREF_PREFIX = "call_contact_";
 
     public static class Device {
 

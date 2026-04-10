@@ -330,7 +330,7 @@ public final class AnimationManager {
         }
     }
 
-    public static void playCall(String name) {
+    public static void playCall(String name, boolean reversed) {
         StatusManager.setCallLedEnabled(true);
 
         if (!check("call: " + name, true))
@@ -341,8 +341,7 @@ public final class AnimationManager {
         while (StatusManager.isCallLedEnabled()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceUtils.getCallAnimation(name)))) {
-                Iterator<String> it = AnimationUtils.iterateCsvLines(reader,
-                        SettingsManager.isGlyphCallAnimationReversed());
+                Iterator<String> it = AnimationUtils.iterateCsvLines(reader, reversed);
                 while (it.hasNext()) {
                     if (checkInterruption("call")) throw new InterruptedException();
                     String[] pattern = it.next().split(",");
@@ -363,6 +362,14 @@ public final class AnimationManager {
                 }
             }
         }
+    }
+
+    public static void playCall(String name, String contactId) {
+        playCall(name, SettingsManager.isGlyphCallAnimationReversed(contactId));
+    }
+
+    public static void playCall(String name) {
+        playCall(name, SettingsManager.isGlyphCallAnimationReversed());
     }
 
     public static void stopCall() {

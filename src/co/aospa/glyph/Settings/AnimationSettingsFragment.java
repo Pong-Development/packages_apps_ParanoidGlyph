@@ -16,18 +16,26 @@
 
 package co.aospa.glyph.Settings;
 
+import static co.aospa.glyph.Utils.InterfaceUtils.showDialog;
 import static co.aospa.glyph.Utils.InterfaceUtils.showToast;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.preference.ListPreference;
 import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
@@ -47,7 +55,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import co.aospa.glyph.Manager.AnimationManager;
@@ -109,12 +117,30 @@ public class AnimationSettingsFragment
 
     private boolean shouldAlternate = false;
 
+    private Consumer<Uri> mContactPickerAction;
+    private boolean isContactSpecific = false;
+    private String contactId;
+    private String contactName;
+
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
         Bundle args = getArguments();
         fragmentType = args.getString("type", "").toUpperCase();
+        contactId = args.getString("contact_id", "");
+
+        isContactSpecific = !contactId.isEmpty();
+
+        if (isContactSpecific) {
+            contactName = ResourceUtils.getContactName(requireContext(), contactId);
+            if (contactName == null) {
+                requireContext().getSharedPreferences(Constants.GLYPH_CALL_CONTACT_PREF_PREFIX
+                                + contactId, Context.MODE_PRIVATE)
+                        .edit().clear().apply();
+                showToast("Contact does not exist!");
+            }
+        }
 
         if (fragmentType.isEmpty() || !fragmentType.equals(FRAGMENT_TYPE_NOTIF)
                 && !fragmentType.equals(FRAGMENT_TYPE_CALL)
@@ -128,9 +154,11 @@ public class AnimationSettingsFragment
 
         getActivity().setTitle(fragmentTitle);
 
-        mSwitchBar = findPreference(enableKey);
-        mSwitchBar.addOnSwitchChangeListener(this);
-        mSwitchBar.setChecked(isAnimationEnabled());
+        if (!isContactSpecific) {
+            mSwitchBar = findPreference(enableKey);
+            mSwitchBar.addOnSwitchChangeListener(this);
+            mSwitchBar.setChecked(isAnimationEnabled());
+        }
 
         mListPreference = findPreference(animationListKey);
         mListPreference.setOnPreferenceChangeListener(this);
@@ -232,10 +260,71 @@ public class AnimationSettingsFragment
                 mMultiSelectListPreference.setEntries(mEssentialAppsNames.toArray(new CharSequence[0]));
                 mMultiSelectListPreference.setEntryValues(mEssentialApps.toArray(new CharSequence[0]));
             }
+
             case FRAGMENT_TYPE_CALL -> {
-                addPreferencesFromResource(R.xml.glyph_call_settings);
-                fragmentTitle =
-                        requireContext().getString(R.string.glyph_settings_call_toggle_title);
+
+                if (isContactSpecific) {
+                    getPreferenceManager().setSharedPreferencesName(
+                            Constants.GLYPH_CALL_CONTACT_PREF_PREFIX + contactId);
+                    addPreferencesFromResource(R.xml.glyph_call_contact_settings);
+                    PreferenceScreen mScreen = getPreferenceScreen();
+
+                    fragmentTitle =
+                            requireContext().getString(R.string.glyph_settings_call_toggle_title)
+                                    + " (" + contactName + ")";
+
+                    PreferenceCategory mCategory = new PreferenceCategory(mScreen.getContext());
+                    Preference mDeletePreferences = new Preference(mScreen.getContext());
+                    mDeletePreferences.setTitle(R.string.glyph_call_contact_delete_confirm_title);
+                    mDeletePreferences.setOnPreferenceClickListener(pref -> {
+                        showDialog(requireActivity(),
+                                getString(R.string.glyph_call_contact_delete_confirm_title) + "?",
+                                getString(R.string.glyph_call_contact_delete_confirm_message_start)
+                                        + " " + contactName + "?",
+                                android.R.string.ok,
+                                () -> {
+                                    requireContext().deleteSharedPreferences(
+                                            Constants.GLYPH_CALL_CONTACT_PREF_PREFIX + contactId);
+                                    getActivity().finish();
+                                },
+                                android.R.string.cancel, null);
+                        return true;
+                    });
+                    mScreen.addPreference(mCategory);
+                    mCategory.addPreference(mDeletePreferences);
+                } else {
+                    addPreferencesFromResource(R.xml.glyph_call_settings);
+                    fragmentTitle =
+                            requireContext().getString(R.string.glyph_settings_call_toggle_title);
+
+                    Preference mContactSelectPreference
+                            = findPreference(Constants.GLYPH_CALL_SUB_CONTACT_SELECT);
+
+                    mContactSelectPreference.setOnPreferenceClickListener(pref -> {
+                           mContactPickerAction = uri -> {
+                                if (uri != null) {
+                                    Cursor cursor = requireContext().getContentResolver().query(
+                                            uri,
+                                            new String[]{ContactsContract.Contacts._ID},
+                                            null, null, null);
+
+                                    if (cursor != null && cursor.moveToFirst()) {
+                                        String contact = cursor.getString(0);
+                                        cursor.close();
+                                        Intent intent = new Intent(requireContext(),
+                                                AnimationSettingsActivity.class);
+                                        intent.putExtra("type", fragmentType);
+                                        intent.putExtra("contact_id", contact);
+                                        startActivity(intent);
+                                    } else {
+                                        if (cursor != null) cursor.close();
+                                    }
+                                }
+                           };
+                           mContactPicker.launch(null);
+                           return true;
+                    });
+                }
 
                 animationPreviewKey = Constants.GLYPH_CALL_SUB_PREVIEW;
                 userAnimationPrefix = Constants.GLYPH_USER_CALL_CSV_PREFIX;
@@ -353,6 +442,15 @@ public class AnimationSettingsFragment
         return true;
     }
 
+    private final ActivityResultLauncher<Void> mContactPicker
+            = registerForActivityResult(
+                    new ActivityResultContracts.PickContact(), uri -> {
+                if (uri != null && mContactPickerAction != null) {
+                    mContactPickerAction.accept(uri);
+                }
+            }
+    );
+
     private List<String> getAnimations(int domain) {
         switch (domain) {
             case 0 -> {
@@ -386,7 +484,11 @@ public class AnimationSettingsFragment
             }
 
             case FRAGMENT_TYPE_CALL -> {
-                return SettingsManager.getGlyphCallAnimation();
+                if (isContactSpecific) {
+                    return SettingsManager.getGlyphCallAnimation(contactId);
+                } else {
+                    return SettingsManager.getGlyphCallAnimation();
+                }
             }
 
             case FRAGMENT_TYPE_FLIP -> {
