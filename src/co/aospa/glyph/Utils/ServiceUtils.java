@@ -30,18 +30,7 @@ import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Manager.StatusManager;
-import co.aospa.glyph.Services.AutoBrightnessService;
-import co.aospa.glyph.Services.BatterySaverService;
-import co.aospa.glyph.Services.CallReceiverService;
-import co.aospa.glyph.Services.ChargingService;
-import co.aospa.glyph.Services.FlipToGlyphService;
-import co.aospa.glyph.Services.MicActivityService;
-import co.aospa.glyph.Services.MusicVisualizerService;
-import co.aospa.glyph.Services.PowershareService;
-import co.aospa.glyph.Services.ProgressService;
-import co.aospa.glyph.Services.ThirdPartyService;
-import co.aospa.glyph.Services.TorchService;
-import co.aospa.glyph.Services.VolumeLevelService;
+import co.aospa.glyph.Services.*;
 
 public final class ServiceUtils {
 
