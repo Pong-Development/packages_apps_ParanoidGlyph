@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.OpenableColumns;
 import android.util.Log;
 
 import com.android.internal.util.ArrayUtils;
@@ -182,6 +183,19 @@ public final class ResourceUtils {
         }
         return bundledNotificationAnimations;
     }
+
+    public static String getFileName(Context context, Uri uri) {
+        String name = null;
+        Cursor cursor = context.getContentResolver()
+                .query(uri, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            if (index != -1) name = cursor.getString(index);
+            cursor.close();
+        }
+        return name;
+    }
+
     public static String getContactName(Context context, String contactId) {
         Cursor cursor = context.getContentResolver().query(
                 ContactsContract.Contacts.CONTENT_URI,

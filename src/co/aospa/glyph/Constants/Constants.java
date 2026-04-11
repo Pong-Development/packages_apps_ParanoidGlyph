@@ -99,6 +99,12 @@ public final class Constants {
 
     public static final String GLYPH_CALL_CONTACT_PREF_PREFIX = "call_contact_";
 
+    public static final String GLYPH_OGG_LIVE_PREVIEW = "glyph_utilities_ogg_live_preview";
+
+    public static final String GLYPH_UTILITIES_VALIDATE_CSV = "glyph_utilities_validate_csv";
+    public static final String GLYPH_UTILITIES_READ_OGG = "glyph_utilities_read_ogg";
+    public static final String GLYPH_UTILITIES_OGG_EXPORT_CSV = "glyph_utilities_export_csv_from_ogg";
+
     public static class Device {
 
         public static final String PHONE1 = "phone1";

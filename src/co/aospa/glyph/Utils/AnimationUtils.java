@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import co.aospa.glyph.Constants.Constants;
 
@@ -267,6 +268,44 @@ public class AnimationUtils {
         return line;
     }
 
+    public static int getLineCount(String csv) {
+        return csv.split("\n", -1).length;
+    }
+
+    public static double calcAnimPlaytime(int lineCount) {
+        double frameInterval = 1000.0 / 60;
+        return lineCount * frameInterval;
+    }
+
+    public static double calcAnimPlaytime(String csv) {
+        double frameInterval = 1000.0 / 60;
+        return getLineCount(csv) * frameInterval;
+    }
+
+    public static String toReadableDuration(long ms) {
+        long totalSeconds = ms / 1000;
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        StringBuilder sb = new StringBuilder();
+        if (hours > 0) sb.append(hours).append("h ");
+        if (minutes > 0) sb.append(minutes).append("m ");
+        if (seconds > 0 || sb.isEmpty()) sb.append(seconds).append("s");
+
+        return sb.toString().trim();
+    }
+
+    public static String toReadableDuration(double ms) {
+        return toReadableDuration((long) ms);
+    }
+
+    public static Iterator<String> iterateCsvLines(BufferedReader reader)
+            throws IOException {
+
+        return iterateCsvLines(reader, false, false);
+    }
+
     public static Iterator<String> iterateCsvLines(BufferedReader reader, boolean reverse)
             throws IOException {
 
@@ -305,6 +344,27 @@ public class AnimationUtils {
             copy[i] = array[array.length - 1 - i];
         }
         return copy;
+    }
+
+    public static class Holder {
+
+        public static class oggMeta {
+
+            private static Map<String, String> map;
+
+            public static void setMap(Map<String, String> m) {
+                map = m;
+            }
+
+            public static Map<String, String> getMap() {
+                return map;
+            }
+
+            public static void clear() {
+                map = null;
+            }
+        }
+
     }
 
 }

@@ -24,6 +24,7 @@ import com.android.internal.util.ArrayUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
@@ -101,6 +102,39 @@ public final class AnimationManager {
                 || (!Objects.equals(name, "call") && StatusManager.isCallLedEnabled())
                 || (Objects.equals(name, "call") && !StatusManager.isCallLedEnabled())
                 || (Objects.equals(name, "progress") && StatusManager.isVolumeAnimationActive());
+    }
+
+    public static void playExternalCsv(String csv, String name)  {
+        if (!check(name, false))
+            return;
+
+        acquireWakeLock(Constants.CONTEXT);
+
+        StatusManager.setAnimationActive(true);
+        BufferedReader reader = new BufferedReader(new StringReader(csv));
+        try {
+            Iterator<String> it = AnimationUtils.iterateCsvLines(reader, false, false);
+            while (it.hasNext()) {
+                if (checkInterruption("csv")) throw new InterruptedException();
+                String[] pattern = it.next().split(",");
+                if (ArrayUtils.contains(Constants.getSupportedAnimationPatternLengths(), pattern.length)) {
+                    updateLedFrame(pattern);
+                } else {
+                    if (DEBUG)
+                        Log.d(TAG, "Animation line length mismatch | name: " + name + " | line: " + it.next());
+                    throw new InterruptedException();
+                }
+                Thread.sleep(16, 666000);
+            }
+        } catch (Exception e) {
+            if (DEBUG)
+                Log.d(TAG, "Exception while playing animation | name: " + name + " | exception: " + e);
+        } finally {
+            clearLEDs();
+            StatusManager.setAnimationActive(false);
+            if (DEBUG) Log.d(TAG, "Done playing animation | name: " + name);
+            releaseWakeLock();
+        }
     }
 
     public static void playCsv(Context context, String name) {

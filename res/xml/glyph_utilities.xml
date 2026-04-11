@@ -1,0 +1,23 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/glyph_settings_utilities_title">
+
+
+    <PreferenceCategory
+        android:title="@string/glyph_utilities_csv_title" />
+
+    <Preference
+        android:key="glyph_utilities_validate_csv"
+        android:title="@string/glyph_utilities_validate_csv_title"
+        android:summary="@string/glyph_utilities_validate_csv_summary" />
+
+
+    <PreferenceCategory
+        android:title="@string/glyph_settings_utilities_ogg_title" />
+
+    <Preference
+        android:key="glyph_utilities_read_ogg"
+        android:title="@string/glyph_settings_utilities_read_ogg_title"
+        android:summary="@string/glyph_settings_utilities_read_ogg_summary" />
+
+</PreferenceScreen>

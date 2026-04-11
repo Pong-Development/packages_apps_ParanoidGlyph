@@ -217,4 +217,19 @@
             android:dependency="glyph_settings_music_visualizer_toggle" />
     </PreferenceCategory>
 
+    <PreferenceCategory>
+
+        <Preference
+            android:key="glyph_settings_utilities"
+            android:title="@string/glyph_settings_utilities_title"
+            android:summary="@string/glyph_settings_utilities_summary">
+            <intent android:action="android.intent.action.MAIN"
+                android:targetPackage="co.aospa.glyph"
+                android:targetClass="co.aospa.glyph.Settings.SubSettingsActivity">
+                <extra android:name="fragment" android:value=".Settings.Utilities.UtilitiesFragment" />
+            </intent>
+        </Preference>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -185,4 +185,32 @@
     <string name="glyph_settings_mic_activity_whitelist_summary">Choose apps to monitor for mic usage</string>
     
 
+    <!-- Utilities -->
+    <string name="glyph_settings_utilities_title">Utilities</string>
+    <string name="glyph_settings_utilities_summary">Extra glyph tools</string>
+    <string name="glyph_settings_utilities_ogg_title">OGG</string>
+
+    <string name="glyph_settings_utilities_export_csv_from_ogg_title">Export CSV from OGG</string>
+    <string name="glyph_settings_utilities_export_csv_from_ogg_summary">Get a CSV file from animation OGG</string>
+    <string name="glyph_settings_utilities_read_ogg_title">Read OGG</string>
+    <string name="glyph_settings_utilities_read_ogg_summary">Show metadata found in an ogg file</string>
+
+    <string name="glyph_utilities_validate_csv_title">Validate CSV</string>
+    <string name="glyph_utilities_validate_csv_summary">Check a CSV file for errors</string>
+
+    <string name="glyph_utilities_csv_title">CSV</string>
+
+    <string name="glyph_ogg_metadata_title">Ogg info</string>
+
+    <string name="metadata_device">Device</string>
+
+    <string name="metadata_device_phone1_proper">Phone (1)</string>
+    <string name="metadata_device_phone2_proper">Phone (2)</string>
+    <string name="metadata_device_phone2a_proper">Phone (2a)</string>
+    <string name="metadata_device_phone3a_proper">Phone (3a)</string>
+
+    <string name="metadata_device_unsupported">Unsupported</string>
+    <string name="metadata_pattern_duration">Animation duration</string>
+    <string name="metadata_filename">Filename</string>
+
 </resources>
