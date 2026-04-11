@@ -69,6 +69,8 @@ public class NotificationService extends NotificationListenerService
     private final Map<String, Future<?>> pendingFutures = new HashMap<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
+    private int SYNC_DELAY = 345;
+
     @Override
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
@@ -161,10 +163,10 @@ public class NotificationService extends NotificationListenerService
                 }
             };
             pendingCallbacks.put(notifKey, runnable);
-            mThreadHandler.post(() -> {
+            mThreadHandler.postDelayed(() -> {
                 Future<?> future = executor.submit(runnable);
                 pendingFutures.put(notifKey, future);
-            });
+            }, SYNC_DELAY);
         }
         
         if (SettingsManager.isGlyphNotifsAppEssential(packageName)
