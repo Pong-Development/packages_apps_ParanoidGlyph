@@ -70,6 +70,7 @@ public class MusicVisualizerService extends Service {
     private double[] bandEnergies;
     private double[] mPeakEnergy;
 
+    private String pulsePrefKey = "";
     
     // Define the max value for a frequency band
     private static final int LOW_FREQUENCY = 250;
@@ -87,9 +88,15 @@ public class MusicVisualizerService extends Service {
     public void onCreate() {
         if (DEBUG) Log.d(TAG, "Creating service");
 
-        if (SettingsManager.Pulse.isPulseEnabled()) {
+        if (SettingsManager.Pulse.isLockscreenPulseEnabled()) {
+            pulsePrefKey = Constants.PULSE_LOCKSCREEN_ENABLED_SETTING;
+        } else if (SettingsManager.Pulse.isPulseEnabled()) {
+            pulsePrefKey = Constants.PULSE_ENABLED_SETTING;
+        }
+
+        if (!pulsePrefKey.isEmpty()) {
             PULSE_PREVIOUS_STATE = true;
-            SettingsManager.Pulse.setPulseVisualizer(false);
+            SettingsManager.setIntSecure(pulsePrefKey, false);
         }
         PulseSettingObserver = new SettingObserver();
         PulseSettingObserver.register(getContentResolver());
@@ -158,7 +165,7 @@ public class MusicVisualizerService extends Service {
         mVisualizer.setEnabled(false);
         mVisualizer.release();
         if (PULSE_PREVIOUS_STATE) {
-            SettingsManager.Pulse.setPulseVisualizer(true);
+            SettingsManager.setIntSecure(pulsePrefKey, true);
         }
         PulseSettingObserver.unregister(getContentResolver());
         thread.quit();
@@ -182,6 +189,12 @@ public class MusicVisualizerService extends Service {
                 this, 
                 ActivityManager.getCurrentUser()
             );
+            cr.registerContentObserver(
+                    Settings.Secure.getUriFor(Constants.PULSE_ENABLED_SETTING),
+                    false,
+                    this,
+                    ActivityManager.getCurrentUser()
+            );
         }
 
         public void unregister(ContentResolver cr) {
@@ -191,7 +204,8 @@ public class MusicVisualizerService extends Service {
         @Override
         public void onChange(boolean selfChange) {
             super.onChange(selfChange);
-            if (SettingsManager.Pulse.isPulseEnabled()) {
+            if (SettingsManager.Pulse.isPulseEnabled()
+                    || SettingsManager.Pulse.isLockscreenPulseEnabled()) {
                 SettingsManager.setGlyphMusicVisualizer(false);
                 stopSelf();
             }

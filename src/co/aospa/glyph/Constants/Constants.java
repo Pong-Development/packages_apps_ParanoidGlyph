@@ -88,6 +88,7 @@ public final class Constants {
     public static final String ACTION_TORCH_DISABLE = "torch_disable";
 
     public static final String PULSE_LOCKSCREEN_ENABLED_SETTING = "lockscreen_pulse_enabled";
+    public static final String PULSE_ENABLED_SETTING = "visualizer_pulse_enabled";
 
     public static final String GLYPH_USER_NOTIF_CSV_PATH = "Glyph/Notifications";
     public static final String GLYPH_USER_CALL_CSV_PATH = "Glyph/Call";

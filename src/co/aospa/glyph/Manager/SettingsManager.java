@@ -312,20 +312,28 @@ public final class SettingsManager {
         return pkgList;
     }
 
-    public class Pulse {
+    public static void setIntSecure(String key, boolean state) {
+        Context ctx = getContext();
+        int currentUser = ActivityManager.getCurrentUser();
+        Settings.Secure.putIntForUser(ctx.getContentResolver(),
+                key, state ? 1 : 0, currentUser);
+    }
 
-        public static void setPulseVisualizer(boolean state) {
+
+    public static class Pulse {
+
+        public static boolean isLockscreenPulseEnabled() {
             Context ctx = getContext();
             int currentUser = ActivityManager.getCurrentUser();
-            Settings.Secure.putIntForUser(ctx.getContentResolver(),
-                    Constants.PULSE_LOCKSCREEN_ENABLED_SETTING, state ? 1 : 0, currentUser);
+            return Settings.Secure.getIntForUser(ctx.getContentResolver(),
+                    Constants.PULSE_LOCKSCREEN_ENABLED_SETTING, 0, currentUser) == 1;
         }
 
         public static boolean isPulseEnabled() {
             Context ctx = getContext();
             int currentUser = ActivityManager.getCurrentUser();
             return Settings.Secure.getIntForUser(ctx.getContentResolver(),
-                    Constants.PULSE_LOCKSCREEN_ENABLED_SETTING, 0, currentUser) == 1;
+                    Constants.PULSE_ENABLED_SETTING, 0, currentUser) == 1;
         }
     }
 }
