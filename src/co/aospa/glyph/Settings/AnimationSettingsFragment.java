@@ -432,7 +432,11 @@ public class AnimationSettingsFragment
         }
 
         if (preferenceKey.equals(Constants.GLYPH_FLIP_SUB_ANIMATION_ENABLE)) {
-            mGlyphAnimationPreference.updateAnimation((Boolean) newValue);
+            shouldAlternate = fragmentType.equals(FRAGMENT_TYPE_FLIP)
+                    && getGlyphAnimation().equals(Constants.GLYPH_NOTIF_ANIMATION_ALTERNATE);
+            boolean shouldReverse = mReverseAnimationSwitch.isChecked() && !shouldAlternate;
+            
+            mGlyphAnimationPreference.updateAnimation((Boolean) newValue, 1500, shouldReverse);
         }
 
         if (preferenceKey.equals(reverseAnimationKey)) {
