@@ -157,7 +157,11 @@ public class AnimationSettingsFragment
         if (!isContactSpecific) {
             mSwitchBar = findPreference(enableKey);
             mSwitchBar.addOnSwitchChangeListener(this);
-            mSwitchBar.setChecked(isAnimationEnabled());
+            if (fragmentType.equals(FRAGMENT_TYPE_FLIP)) {
+                mSwitchBar.setChecked(SettingsManager.isGlyphFlipEnabled());
+            } else {
+                mSwitchBar.setChecked(isAnimationEnabled());
+            }
         }
 
         mListPreference = findPreference(animationListKey);
