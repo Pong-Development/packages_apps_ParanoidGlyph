@@ -39,6 +39,7 @@
     <SwitchPreferenceCompat
         android:key="glyph_settings_battery_saver_toggle"
         android:defaultValue="false"
+        android:icon="@drawable/ic_battery_plus"
         android:title="@string/glyph_settings_battery_saver_toggle_title"
         android:summary="@string/glyph_settings_battery_saver_toggle_summary" />
 
@@ -104,7 +105,7 @@
 
             <SwitchPreferenceCompat
                 android:key="glyph_settings_charging_level"
-                android:icon="@drawable/ic_battery"
+                android:icon="@drawable/ic_battery_charging"
                 android:defaultValue="false"
                 android:title="@string/glyph_settings_charging_level_title"
                 android:summary="@string/glyph_settings_charging_level_summary" />
@@ -131,7 +132,7 @@
 
         <Preference
             android:key="glyph_settings_mic_activity_whitelist"
-            android:icon="@drawable/ic_android"
+            android:icon="@drawable/ic_app_registration"
             android:title="@string/glyph_settings_mic_activity_whitelist_title"
             android:summary="@string/glyph_settings_mic_activity_whitelist_summary" />
 
@@ -152,7 +153,7 @@
         <SwitchPreferenceCompat
             android:key="glyph_settings_progress_toggle"
             android:defaultValue="false"
-            android:icon="@drawable/ic_swap_horiz"
+            android:icon="@drawable/ic_progress"
             android:title="@string/glyph_settings_progress_toggle_title"
             android:summary="@string/glyph_settings_progress_toggle_summary" />
 
@@ -166,7 +167,7 @@
 
         <Preference
             android:key="glyph_settings_progress_media_app_whitelist"
-            android:icon="@drawable/ic_play"
+            android:icon="@drawable/ic_app_registration"
             android:title="@string/glyph_settings_progress_media_app_whitelist_title"
             android:summary="@string/glyph_settings_progress_media_app_whitelist_summary" />
     </PreferenceCategory>
@@ -210,6 +211,7 @@
 
         <ListPreference
             android:key="glyph_settings_music_visualizer_mode"
+            android:icon="@drawable/ic_tune"
             android:title="@string/glyph_settings_music_visualizer_mode_title"
             android:summary="%s"
             android:entries="@array/glyph_music_visualizer_mode_entries"
@@ -222,6 +224,7 @@
 
         <Preference
             android:key="glyph_settings_utilities"
+            android:icon="@drawable/ic_build"
             android:title="@string/glyph_settings_utilities_title"
             android:summary="@string/glyph_settings_utilities_summary">
             <intent android:action="android.intent.action.MAIN"

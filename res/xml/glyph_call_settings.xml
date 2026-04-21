@@ -28,6 +28,7 @@
 
         <ListPreference
             android:key="glyph_settings_call_sub_animations"
+            android:icon="@drawable/ic_animation"
             android:title="@string/glyph_settings_call_sub_animations_title"
             android:defaultValue="@string/glyph_settings_call_animations_default"
             android:layout="@layout/preference"
@@ -35,11 +36,13 @@
 
         <Preference
             android:key="glyph_settings_call_sub_animations_live_preview"
+            android:icon="@drawable/ic_live"
             android:title="@string/glyph_settings_animations_live_preview_title"
             android:summary="@string/glyph_settings_animations_live_preview_summary" />
 
         <SwitchPreferenceCompat
             android:key="glyph_settings_call_sub_animations_reverse_toggle"
+            android:icon="@drawable/ic_rewind"
             android:title="@string/glyph_settings_sub_animations_reverse_toggle_title"
             android:defaultValue="false"
             android:summary="@string/glyph_settings_sub_animations_reverse_toggle_summary" />
@@ -47,6 +50,7 @@
     <PreferenceCategory>
         <Preference
             android:key="glyph_settings_call_sub_contact_select"
+            android:icon="@drawable/ic_account_box"
             android:title="@string/glyph_settings_call_sub_contact_select_title"
             android:summary="@string/glyph_settings_call_sub_contact_select_summary" />
     </PreferenceCategory>

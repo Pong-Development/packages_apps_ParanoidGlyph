@@ -28,17 +28,20 @@
 
         <ListPreference
             android:key="glyph_settings_flip_sub_animations"
+            android:icon="@drawable/ic_animation"
             android:title="@string/glyph_settings_flip_sub_animations_title"
             android:layout="@layout/preference"
             android:summary="%s" />
 
         <Preference
             android:key="glyph_settings_flip_sub_live_preview"
+            android:icon="@drawable/ic_live"
             android:title="@string/glyph_settings_animations_live_preview_title"
             android:summary="@string/glyph_settings_animations_live_preview_summary" />
 
         <SwitchPreferenceCompat
             android:key="glyph_settings_flip_sub_animation_toggle"
+            android:icon="@drawable/ic_play"
             android:title="@string/glyph_settings_flip_sub_animation_toggle_title"
             android:defaultValue="true"
             android:summary="@string/glyph_settings_flip_sub_animation_toggle_summary" />
@@ -46,6 +49,7 @@
         <SwitchPreferenceCompat
             android:key="glyph_settings_flip_sub_animations_reverse_toggle"
             android:title="@string/glyph_settings_sub_animations_reverse_toggle_title"
+            android:icon="@drawable/ic_rewind"
             android:defaultValue="false"
             android:summary="@string/glyph_settings_sub_animations_reverse_toggle_summary" />
 
@@ -53,6 +57,7 @@
 
         <ListPreference
             android:key="glyph_settings_flip_sub_ringer_mode"
+            android:icon="@drawable/ic_notification_settings"
             android:title="@string/glyph_settings_flip_ringer_mode_title"
             android:summary="%s"
             android:entries="@array/glyph_flip_ringer_mode_entries"

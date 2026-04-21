@@ -24,18 +24,21 @@
 
     <androidx.preference.Preference
         android:key="glyph_schedule_days"
+        android:icon="@drawable/ic_calendar_check"
         android:title="@string/glyph_settings_active_days_title"
         android:summary="@string/glyph_settings_active_days_summary"
         android:dependency="glyph_schedule_enable" />
 
     <Preference
         android:key="glyph_schedule_start_time"
+        android:icon="@drawable/ic_hourglass_top"
         android:title="@string/glyph_settings_schedule_start_time_title"
         android:summary="@string/glyph_settings_schedule_start_time_summary"
         android:dependency="glyph_schedule_enable" />
 
     <Preference
         android:key="glyph_schedule_end_time"
+        android:icon="@drawable/ic_hourglass_bottom"
         android:title="@string/glyph_settings_schedule_end_time_title"
         android:summary="@string/glyph_settings_schedule_end_time_summary"
         android:dependency="glyph_schedule_enable" />

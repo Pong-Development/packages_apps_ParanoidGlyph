@@ -294,6 +294,7 @@ public class AnimationSettingsFragment
                                 android.R.string.cancel, null);
                         return true;
                     });
+                    mDeletePreferences.setIcon(R.drawable.ic_delete_forever);
                     mScreen.addPreference(mCategory);
                     mCategory.addPreference(mDeletePreferences);
                 } else {

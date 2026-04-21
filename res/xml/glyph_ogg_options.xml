@@ -6,6 +6,7 @@
 
     <Preference
         android:key="glyph_utilities_ogg_live_preview"
+        android:icon="@drawable/ic_live"
         android:title="@string/glyph_settings_animations_live_preview_title"
         android:summary="@string/glyph_settings_animations_live_preview_summary" />
 
@@ -15,6 +16,7 @@
 
     <Preference
         android:key="glyph_utilities_export_csv_from_ogg"
+        android:icon="@drawable/ic_file_save"
         android:title="@string/glyph_settings_utilities_export_csv_from_ogg_title"
         android:summary="@string/glyph_settings_utilities_export_csv_from_ogg_summary" />
 

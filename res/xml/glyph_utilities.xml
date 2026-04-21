@@ -9,6 +9,7 @@
     <Preference
         android:key="glyph_utilities_validate_csv"
         android:title="@string/glyph_utilities_validate_csv_title"
+        android:icon="@drawable/ic_csv"
         android:summary="@string/glyph_utilities_validate_csv_summary" />
 
 
@@ -17,6 +18,7 @@
 
     <Preference
         android:key="glyph_utilities_read_ogg"
+        android:icon="@drawable/ic_file_open"
         android:title="@string/glyph_settings_utilities_read_ogg_title"
         android:summary="@string/glyph_settings_utilities_read_ogg_summary" />
 
