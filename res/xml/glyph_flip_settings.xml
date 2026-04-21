@@ -56,7 +56,7 @@
             android:summary="%s"
             android:entries="@array/glyph_flip_ringer_mode_entries"
             android:entryValues="@array/glyph_flip_ringer_mode_values"
-            android:defaultValue="1" />
+            android:defaultValue="-1" />
 
 
 </PreferenceScreen>

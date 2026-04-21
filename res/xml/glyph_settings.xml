@@ -47,7 +47,7 @@
         <com.android.settingslib.PrimarySwitchPreference
             android:key="glyph_settings_flip_toggle"
             android:icon="@drawable/ic_flip"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:title="@string/glyph_settings_flip_toggle_title"
             android:summary="@string/glyph_settings_flip_toggle_summary">
             <intent android:action="android.intent.action.MAIN"
@@ -67,7 +67,7 @@
         <com.android.settingslib.PrimarySwitchPreference
             android:key="glyph_settings_call_toggle"
             android:icon="@drawable/ic_ring_volume"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:title="@string/glyph_settings_call_toggle_title"
             android:summary="@string/glyph_settings_call_toggle_summary" >
             <intent android:action="android.intent.action.MAIN"
@@ -85,7 +85,7 @@
 
         <com.android.settingslib.PrimarySwitchPreference
             android:key="glyph_settings_notifs_toggle"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:icon="@drawable/ic_notification_alert"
             android:title="@string/glyph_settings_notifs_toggle_title"
             android:summary="@string/glyph_settings_notifs_toggle_summary" >
@@ -105,14 +105,14 @@
             <SwitchPreferenceCompat
                 android:key="glyph_settings_charging_level"
                 android:icon="@drawable/ic_battery"
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:title="@string/glyph_settings_charging_level_title"
                 android:summary="@string/glyph_settings_charging_level_summary" />
 
             <SwitchPreferenceCompat
                 android:key="glyph_settings_charging_powershare"
                 android:icon="@drawable/ic_reverse_charging"
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:title="@string/glyph_settings_charging_powershare_title"
                 android:summary="@string/glyph_settings_charging_powershare_summary" />
     </PreferenceCategory>
@@ -177,7 +177,7 @@
 
         <SwitchPreferenceCompat
             android:key="glyph_settings_volume_level_toggle"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:icon="@drawable/ic_volume"
             android:title="@string/glyph_settings_volume_level_toggle_title"
             android:summary="@string/glyph_settings_volume_level_toggle_summary" />
