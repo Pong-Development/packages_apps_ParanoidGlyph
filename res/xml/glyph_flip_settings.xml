@@ -49,6 +49,7 @@
             android:defaultValue="false"
             android:summary="@string/glyph_settings_sub_animations_reverse_toggle_summary" />
 
+    <PreferenceCategory />
 
         <ListPreference
             android:key="glyph_settings_flip_sub_ringer_mode"
