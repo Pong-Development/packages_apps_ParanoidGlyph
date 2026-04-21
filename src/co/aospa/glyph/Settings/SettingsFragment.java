@@ -100,6 +100,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private SettingObserver mSettingObserver;
     private Preference mSchedulePreference;
 
+    private Preference mUtilitiesPreference;
+
     private Handler mHandler = new Handler();
 
     String[] mediaPermissions = {
@@ -249,6 +251,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mRedLedModePreference = findPreference(Constants.GLYPH_RED_LED_MODE);
         mRedLedModePreference.setOnPreferenceChangeListener(this);
 
+        mUtilitiesPreference = findPreference(Constants.GLYPH_UTILITIES);
+
         IntentFilter filter = new IntentFilter("co.aospa.glyph.UPDATE_MAIN_SWITCH");
         requireContext().registerReceiver(mScheduleUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
 
@@ -341,7 +345,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
                 p.setEnabled(isChecked);
             } else if (pref == (Preference) mBrightnessPreference) {
                 pref.setEnabled(!mAutoBrightnessPreference.isChecked() && isChecked);
-            } else if (pref == (Preference) mBatterySaverPreference || pref == mSchedulePreference) {
+            } else if (pref == (Preference) mBatterySaverPreference || pref == mSchedulePreference
+                    || pref == mUtilitiesPreference) {
                 ; // skip
             } else if (pref instanceof MainSwitchPreference m) {
                 ; // skip
