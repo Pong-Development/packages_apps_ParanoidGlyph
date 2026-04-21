@@ -1,6 +1,8 @@
 package co.aospa.glyph.Settings;
 
 
+import static co.aospa.glyph.Utils.InterfaceUtils.showToast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
@@ -118,6 +120,7 @@ public class OggSettingsFragment extends SettingsBasePreferenceFragment
                     try (OutputStream output =
                                  requireContext().getContentResolver().openOutputStream(uri)) {
                         output.write(csv.getBytes(StandardCharsets.UTF_8));
+                        showToast(getString(R.string.file_export_complete_message));
                     } catch (IOException e) {
                         Log.e(TAG, "Failed to save file", e);
                     }

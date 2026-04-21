@@ -213,4 +213,6 @@
     <string name="metadata_pattern_duration">Animation duration</string>
     <string name="metadata_filename">Filename</string>
 
+    <string name="file_export_complete_message">File saved successfully!</string>
+
 </resources>
