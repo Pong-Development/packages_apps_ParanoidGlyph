@@ -101,6 +101,7 @@ public final class Constants {
 
     public static final String GLYPH_CALL_CONTACT_PREF_PREFIX = "call_contact_";
     public static final String GLYPH_CALL_APP_PREF_PREFIX = "call_";
+    public static final String GLYPH_NOTIF_APP_PREF_PREFIX = "notif_";
 
     public static final String GLYPH_OGG_LIVE_PREVIEW = "glyph_utilities_ogg_live_preview";
 

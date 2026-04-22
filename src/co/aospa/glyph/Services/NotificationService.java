@@ -148,7 +148,7 @@ public class NotificationService extends NotificationListenerService
         
         if (DEBUG) Log.d(TAG, "onNotificationPosted: package:" + packageName + " | channel id: " + packageChannelID + " | importance: " + packageImportance + " | can bypass dnd: " + packageCanBypassDnd);
         
-        if (SettingsManager.isGlyphNotifsAppEnabled(packageName)
+        if (SettingsManager.isGlyphNotifsEnabled(packageName)
                         && !sbn.isOngoing() 
                         && !ArrayUtils.contains(Constants.APPS_TO_IGNORE, packageName)
                         && !ArrayUtils.contains(Constants.NOTIFS_TO_IGNORE, packageName + ":" + packageChannelID)
@@ -156,10 +156,30 @@ public class NotificationService extends NotificationListenerService
                         && (interruptionFilter <= NotificationManager.INTERRUPTION_FILTER_ALL || packageCanBypassDnd)) {
             String notifKey = sbn.getKey();
             Runnable runnable = () -> {
-                if (SettingsManager.isGlyphNotifsAnimationReversed()) {
-                    AnimationManager.playCsvReverse(mContext, SettingsManager.getGlyphNotifsAnimation());
+                if (SettingsManager.appHasGlyphNotifsConfig(packageName)) {
+                    if (SettingsManager.isGlyphNotifsAnimationReversed(packageName)) {
+                        AnimationManager.playCsvReverse(
+                                mContext,
+                                SettingsManager.getGlyphNotifsAnimation(packageName)
+                            );
+                    } else {
+                        AnimationManager.playCsv(
+                                mContext,
+                                SettingsManager.getGlyphNotifsAnimation(packageName)
+                        );
+                    }
                 } else {
-                    AnimationManager.playCsv(mContext, SettingsManager.getGlyphNotifsAnimation());
+                    if (SettingsManager.isGlyphNotifsAnimationReversed()) {
+                        AnimationManager.playCsvReverse(
+                                mContext,
+                                SettingsManager.getGlyphNotifsAnimation()
+                        );
+                    } else {
+                        AnimationManager.playCsv(
+                                mContext,
+                                SettingsManager.getGlyphNotifsAnimation()
+                        );
+                    }
                 }
             };
             pendingCallbacks.put(notifKey, runnable);

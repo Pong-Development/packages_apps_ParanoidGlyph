@@ -199,20 +199,16 @@ public class AnimationSettingsFragment
         List<String> animationEntryValues
                 = paired.stream().map(p -> p[1]).collect(Collectors.toList());
 
-        boolean hasFlipCsv = ResourceUtils.hasFlipCsv();
         if (fragmentType.equals(FRAGMENT_TYPE_FLIP)) {
+            boolean hasFlipCsv = ResourceUtils.hasFlipCsv();
             animationEntryList.addFirst(
                     getString(R.string.glyph_settings_flip_animation_option_follow_notification)
             );
             if (hasFlipCsv) {
                 animationEntryList.addFirst(getString(R.string.glyph_settings_default_option));
             }
-        }
-        if (fragmentType.equals(FRAGMENT_TYPE_FLIP)) {
             animationEntryValues.addFirst(Constants.GLYPH_NOTIF_ANIMATION_ALTERNATE);
-            if (hasFlipCsv) {
-                animationEntryValues.addFirst("flip");
-            }
+            if (hasFlipCsv) animationEntryValues.addFirst("flip");
         }
         mListPreference.setEntries(animationEntryList.toArray(new String[0]));
         mListPreference.setEntryValues(animationEntryValues.toArray(new String[0]));
@@ -235,9 +231,43 @@ public class AnimationSettingsFragment
     private void evaluatePrefs() {
         switch (fragmentType) {
             case FRAGMENT_TYPE_NOTIF -> {
-                addPreferencesFromResource(R.xml.glyph_notifs_settings);
-                fragmentTitle = requireContext().getString(R.string.glyph_settings_notifs_toggle_title);
+                if (isAppSpecific) {
+                    getPreferenceManager().setSharedPreferencesName(Constants.GLYPH_NOTIF_APP_PREF_PREFIX
+                            + targetPkg);
+                    addPreferencesFromResource(R.xml.glyph_notifs_settings_app);
+                    PreferenceScreen mScreen = getPreferenceScreen();
+                    String pkgLabel = getPackageLabel(targetPkg);
+                    fragmentTitle
+                            = requireContext().getString(R.string.glyph_settings_notifs_toggle_title)
+                            + " (" + pkgLabel + ")";
 
+                    PreferenceCategory mCategory = new PreferenceCategory(mScreen.getContext());
+                    Preference mDeletePreferences = new Preference(mScreen.getContext());
+                    mDeletePreferences.setTitle(R.string.glyph_settings_delete_title);
+                    mDeletePreferences.setOnPreferenceClickListener(pref -> {
+                        showDialog(requireActivity(),
+                                getString(R.string.glyph_settings_delete_title) + "?",
+                                getString(R.string.glyph_settings_delete_confirm_message_start)
+                                        + " " + pkgLabel + "?",
+                                android.R.string.ok,
+                                () -> {
+                                    requireContext().deleteSharedPreferences(
+                                            Constants.GLYPH_NOTIF_APP_PREF_PREFIX + targetPkg);
+                                    getActivity().finish();
+                                },
+                                android.R.string.cancel, null);
+                        return true;
+                    });
+                    mDeletePreferences.setIcon(R.drawable.ic_delete_forever);
+                    mScreen.addPreference(mCategory);
+                    mCategory.addPreference(mDeletePreferences);
+                } else {
+                        addPreferencesFromResource(R.xml.glyph_notifs_settings);
+                        fragmentTitle = requireContext().getString(R.string.glyph_settings_notifs_toggle_title);
+
+                        appListCategory = findPreference(Constants.GLYPH_NOTIFS_SUB_CATEGORY);
+                        inflateAppLists();
+                    }
                 animationPreviewKey = Constants.GLYPH_NOTIFS_SUB_PREVIEW;
 
                 enableKey = Constants.GLYPH_NOTIFS_SUB_ENABLE;
@@ -249,14 +279,6 @@ public class AnimationSettingsFragment
 
                 defaultAnimation = "glyph_settings_notifs_animations_default";
                 reverseAnimationKey = Constants.GLYPH_NOTIFS_REVERSE_ANIMATION_ENABLE;
-
-                appListCategory = findPreference(Constants.GLYPH_NOTIFS_SUB_CATEGORY);
-                inflateAppLists();
-
-                mMultiSelectListPreference = findPreference(Constants.GLYPH_NOTIFS_SUB_ESSENTIAL);
-                mMultiSelectListPreference.setOnPreferenceChangeListener(this);
-                mMultiSelectListPreference.setEntries(mEssentialAppsNames.toArray(new CharSequence[0]));
-                mMultiSelectListPreference.setEntryValues(mEssentialApps.toArray(new CharSequence[0]));
             }
 
             case FRAGMENT_TYPE_CALL -> {
@@ -490,74 +512,71 @@ public class AnimationSettingsFragment
 
         if (fragmentType.equals(FRAGMENT_TYPE_CALL)) {
             String[] callPermissions = {"android.permission.MANAGE_OWN_CALLS"};
-
             List<String> callApps =
                     new ArrayList<>(Arrays.asList(
                             ResourceUtils.getApplicationsWithPermission(false, callPermissions)));
-            List<String> callAppsNames =
-                    new ArrayList<>(Arrays.asList(
-                            ResourceUtils.getApplicationsWithPermission(true, callPermissions)));
 
             callApps.remove(getDefaultDialer());
-            callAppsNames.remove(getPackageLabel(getDefaultDialer()));
 
             if (callApps.isEmpty()) {
                 getPreferenceScreen().removePreference(appListCategory);
                 return;
             }
 
-            for (int i = 0; i < callApps.size(); i++) {
-                PrimarySwitchPreference mSwitchPreference
-                        = new PrimarySwitchPreference(getPreferenceScreen().getContext());
-                mSwitchPreference.setKey(callApps.get(i));
-                mSwitchPreference.setTitle(" " + callAppsNames.get(i));
-                try {
-                    mSwitchPreference.setIcon(mPackageManager.getApplicationIcon(callApps.get(i)));
-                } catch (PackageManager.NameNotFoundException e) {
-                    mSwitchPreference.setIcon(mPackageManager.getDefaultActivityIcon());
-                }
-                mSwitchPreference.setChecked(SettingsManager.isGlyphCallEnabled(callApps.get(i)));
-                mSwitchPreference.setOnPreferenceClickListener(preference -> {
-                    String key = preference.getKey();
-                    Intent intent = new Intent(requireContext(),
-                            AnimationSettingsActivity.class);
-                    intent.putExtra("type", fragmentType);
-                    intent.putExtra("package", key);
-                    startActivity(intent);
-                    return true;
-                });
-                mSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    String key = preference.getKey();
-                    SettingsManager.setGlyphCallEnabled(key, (Boolean) newValue);
-                    return true;
-                });
-                appListCategory.addPreference(mSwitchPreference);
+            for (String pkg : callApps) {
+                addAppPreference(pkg);
             }
 
         }
 
         if (fragmentType.equals(FRAGMENT_TYPE_NOTIF)) {
-
             List<ApplicationInfo> mApps =
                     mPackageManager.getInstalledApplications(PackageManager.GET_GIDS);
             mApps.sort(new ApplicationInfo.DisplayNameComparator(mPackageManager));
             for (ApplicationInfo app : mApps) {
                 if (mPackageManager.getLaunchIntentForPackage(app.packageName) != null
                         && !ArrayUtils.contains(Constants.APPS_TO_IGNORE, app.packageName)) {// apps with launcher intent
-                    SwitchPreferenceCompat mSwitchPreference
-                            = new SwitchPreferenceCompat(getPreferenceScreen().getContext());
-                    mSwitchPreference.setKey(app.packageName);
-                    mSwitchPreference.setTitle(" " + app.loadLabel(mPackageManager));
-                    mSwitchPreference.setIcon(app.loadIcon(mPackageManager));
-                    mSwitchPreference.setDefaultValue(true);
-                    mSwitchPreference.setOnPreferenceChangeListener(this);
-                    appListCategory.addPreference(mSwitchPreference);
+                    addAppPreference(app.packageName);
 
                     mEssentialApps.add(app.packageName);
                     mEssentialAppsNames.add(app.loadLabel(mPackageManager).toString());
                 }
             }
+            mMultiSelectListPreference = findPreference(Constants.GLYPH_NOTIFS_SUB_ESSENTIAL);
+            mMultiSelectListPreference.setOnPreferenceChangeListener(this);
+            mMultiSelectListPreference.setEntries(mEssentialAppsNames.toArray(new CharSequence[0]));
+            mMultiSelectListPreference.setEntryValues(mEssentialApps.toArray(new CharSequence[0]));
         }
+    }
+
+    private void addAppPreference(String pkg) {
+        String label = getPackageLabel(pkg);
+        PrimarySwitchPreference mSwitchPreference
+                = new PrimarySwitchPreference(getPreferenceScreen().getContext());
+        mSwitchPreference.setKey(pkg);
+        mSwitchPreference.setTitle(" " + label);
+        try {
+            mSwitchPreference.setIcon(mPackageManager.getApplicationIcon(pkg));
+        } catch (PackageManager.NameNotFoundException e) {
+            mSwitchPreference.setIcon(mPackageManager.getDefaultActivityIcon());
+        }
+        mSwitchPreference.setChecked(isAnimationEnabled(pkg));
+        mSwitchPreference.setOnPreferenceClickListener(preference -> {
+            String key = preference.getKey();
+            Intent intent = new Intent(requireContext(),
+                    AnimationSettingsActivity.class);
+            intent.putExtra("type", fragmentType);
+            intent.putExtra("package", key);
+            startActivity(intent);
+            return true;
+        });
+        mSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+            String key = preference.getKey();
+            setAnimationEnabled(key, (Boolean) newValue);
+            return true;
+        });
+        appListCategory.addPreference(mSwitchPreference);
+
     }
 
     private String getPackageLabel(String packageName) {
@@ -573,7 +592,8 @@ public class AnimationSettingsFragment
     private String getDefaultDialer() {
         String packageName = "";
         Intent dialerIntent = new Intent(Intent.ACTION_DIAL);
-        ResolveInfo resolveInfo = mPackageManager.resolveActivity(dialerIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        ResolveInfo resolveInfo = mPackageManager.resolveActivity(dialerIntent,
+                PackageManager.MATCH_DEFAULT_ONLY);
         if (resolveInfo != null) {
             packageName = resolveInfo.activityInfo.packageName;
         }
@@ -609,7 +629,11 @@ public class AnimationSettingsFragment
     private String getGlyphAnimation() {
         switch (fragmentType) {
             case FRAGMENT_TYPE_NOTIF -> {
-                return SettingsManager.getGlyphNotifsAnimation();
+                if (isAppSpecific) {
+                    return SettingsManager.getGlyphNotifsAnimation(targetPkg);
+                } else {
+                    return SettingsManager.getGlyphNotifsAnimation();
+                }
             }
 
             case FRAGMENT_TYPE_CALL -> {
@@ -637,7 +661,11 @@ public class AnimationSettingsFragment
     private boolean isAnimationEnabled() {
         switch (fragmentType) {
             case FRAGMENT_TYPE_NOTIF -> {
-                return SettingsManager.isGlyphNotifsEnabled();
+                if (isAppSpecific) {
+                    return SettingsManager.isGlyphNotifsEnabled(targetPkg);
+                } else {
+                    return SettingsManager.isGlyphNotifsEnabled();
+                }
             }
 
             case FRAGMENT_TYPE_CALL -> {
@@ -656,10 +684,27 @@ public class AnimationSettingsFragment
         return false;
     }
 
+    private boolean isAnimationEnabled(String pkg) {
+        switch (fragmentType) {
+            case FRAGMENT_TYPE_NOTIF -> {
+                    return SettingsManager.isGlyphNotifsEnabled(pkg);
+            }
+
+            case FRAGMENT_TYPE_CALL -> {
+                    return SettingsManager.isGlyphCallEnabled(pkg);
+            }
+        }
+        return false;
+    }
+
     private void setAnimationEnabled(boolean state) {
         switch (fragmentType) {
             case FRAGMENT_TYPE_NOTIF -> {
-                SettingsManager.setGlyphNotifsEnabled(state);
+                if (isAppSpecific) {
+                    SettingsManager.setGlyphNotifsEnabled(targetPkg, state);
+                } else {
+                    SettingsManager.setGlyphNotifsEnabled(state);
+                }
             }
             case FRAGMENT_TYPE_CALL -> {
                 if (isAppSpecific) {
@@ -673,6 +718,18 @@ public class AnimationSettingsFragment
             }
         }
     }
+
+    private void setAnimationEnabled(String pkg, boolean state) {
+        switch (fragmentType) {
+            case FRAGMENT_TYPE_NOTIF -> {
+                    SettingsManager.setGlyphNotifsEnabled(pkg, state);
+            }
+            case FRAGMENT_TYPE_CALL -> {
+                    SettingsManager.setGlyphCallEnabled(pkg, state);
+            }
+        }
+    }
+
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
@@ -725,12 +782,20 @@ public class AnimationSettingsFragment
     }
 
     private void updatePrimarySwitches() {
-        if (fragmentType.equals(FRAGMENT_TYPE_CALL) && !isAppSpecific && !isContactSpecific) {
+        if ((fragmentType.equals(FRAGMENT_TYPE_CALL)
+                || fragmentType.equals(FRAGMENT_TYPE_NOTIF))
+                && !isAppSpecific
+                && !isContactSpecific) {
             for (int i = 0; i < appListCategory.getPreferenceCount(); i++) {
                 Preference pref = appListCategory.getPreference(i);
                 if (pref instanceof PrimarySwitchPreference) {
                     PrimarySwitchPreference switchPref = (PrimarySwitchPreference) pref;
-                    switchPref.setChecked(SettingsManager.isGlyphCallEnabled(pref.getKey()));
+                    switch (fragmentType) {
+                        case FRAGMENT_TYPE_NOTIF ->
+                                switchPref.setChecked(SettingsManager.isGlyphNotifsEnabled(pref.getKey()));
+                        case FRAGMENT_TYPE_CALL ->
+                                switchPref.setChecked(SettingsManager.isGlyphCallEnabled(pref.getKey()));
+                    }
                 }
             }
         }

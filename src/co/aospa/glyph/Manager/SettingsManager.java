@@ -265,10 +265,33 @@ public final class SettingsManager {
                 Constants.GLYPH_NOTIFS_ENABLE, 1) != 0 && isGlyphEnabled();
     }
 
-    public static boolean setGlyphNotifsEnabled(boolean enable) {
+    public static boolean appHasGlyphNotifsConfig(String pkg) {
         Context ctx = getContext();
-        return Settings.Secure.putInt(ctx.getContentResolver(),
+        return !ctx.getSharedPreferences(Constants.GLYPH_NOTIF_APP_PREF_PREFIX + pkg,
+                        Context.MODE_PRIVATE)
+                .getAll().isEmpty();
+    }
+
+    public static boolean isGlyphNotifsEnabled(String pkg) {
+        Context ctx = getContext();
+        return ctx.getSharedPreferences(Constants.GLYPH_NOTIF_APP_PREF_PREFIX + pkg,
+                        Context.MODE_PRIVATE)
+                .getBoolean(Constants.GLYPH_NOTIFS_SUB_ENABLE, true);
+    }
+
+    public static void setGlyphNotifsEnabled(boolean enable) {
+        Context ctx = getContext();
+        Settings.Secure.putInt(ctx.getContentResolver(),
                 Constants.GLYPH_NOTIFS_ENABLE, enable ? 1 : 0);
+    }
+
+    public static void setGlyphNotifsEnabled(String pkg, boolean enable) {
+        Context ctx = getContext();
+        ctx.getSharedPreferences(Constants.GLYPH_NOTIF_APP_PREF_PREFIX + pkg
+                        , Context.MODE_PRIVATE)
+                .edit()
+                .putBoolean(Constants.GLYPH_NOTIFS_SUB_ENABLE, enable)
+                .apply();
     }
 
     public static String getGlyphNotifsAnimation() {
@@ -278,17 +301,25 @@ public final class SettingsManager {
                         ResourceUtils.getString("glyph_settings_notifs_animations_default"));
     }
 
+    public static String getGlyphNotifsAnimation(String pkg) {
+        Context ctx = getContext();
+        return ctx.getSharedPreferences(Constants.GLYPH_NOTIF_APP_PREF_PREFIX + pkg,
+                        Context.MODE_PRIVATE)
+                .getString(Constants.GLYPH_NOTIFS_SUB_ANIMATIONS,
+                        ResourceUtils.getString("glyph_settings_notifs_animations_default"));
+    }
+
+    public static boolean isGlyphNotifsAnimationReversed(String pkg) {
+        Context ctx = getContext();
+        return ctx.getSharedPreferences(Constants.GLYPH_NOTIF_APP_PREF_PREFIX + pkg,
+                        Context.MODE_PRIVATE)
+                .getBoolean(Constants.GLYPH_NOTIFS_REVERSE_ANIMATION_ENABLE, false);
+    }
+
     public static boolean isGlyphNotifsAnimationReversed() {
         Context ctx = getContext();
         return PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getBoolean(Constants.GLYPH_NOTIFS_REVERSE_ANIMATION_ENABLE,
-                        false);
-    }
-
-    public static boolean isGlyphNotifsAppEnabled(String app) {
-        Context ctx = getContext();
-        return PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getBoolean(app, true) && isGlyphNotifsEnabled();
+                .getBoolean(Constants.GLYPH_NOTIFS_REVERSE_ANIMATION_ENABLE, false);
     }
 
     public static boolean isGlyphNotifsAppEssential(String app) {
