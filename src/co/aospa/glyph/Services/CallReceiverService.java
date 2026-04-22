@@ -16,24 +16,23 @@
 
 package co.aospa.glyph.Services;
 
-import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.database.Cursor;
 import android.media.AudioManager;
-import android.os.IBinder;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.telephony.TelephonyManager;
+import android.provider.ContactsContract;
+import android.telecom.Call;
+import android.telecom.InCallService;
 import android.util.Log;
 
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Utils.ResourceUtils;
 
-public class CallReceiverService extends Service {
+public class CallReceiverService extends InCallService {
 
     private static final String TAG = "GlyphCallReceiverService";
     private static final boolean DEBUG = true;
@@ -43,36 +42,64 @@ public class CallReceiverService extends Service {
     private HandlerThread thread;
     private Handler mThreadHandler;
 
-    private String contactId = null;
+    private int contactId = 0;
 
-    private Runnable playCall = new Runnable() {
+    private final Runnable playCall = new Runnable() {
         @Override
         public void run() {
-            if (contactId != null && SettingsManager.contactHasGlyphCallConfig(contactId)) {
-                AnimationManager.playCall(SettingsManager.getGlyphCallAnimation(contactId));
+            if (contactId != 0
+                    && SettingsManager.contactHasGlyphCallConfig(contactId)) {
+                AnimationManager.playCall(
+                        SettingsManager.getGlyphCallAnimation(contactId),
+                        SettingsManager.isGlyphCallAnimationReversed(contactId));
             } else {
-                AnimationManager.playCall(SettingsManager.getGlyphCallAnimation());
+                AnimationManager.playCall(
+                        SettingsManager.getGlyphCallAnimation(),
+                        SettingsManager.isGlyphCallAnimationReversed());
             }
         }
     };
 
     @Override
+    public void onCallAdded(Call call) {
+        super.onCallAdded(call);
+
+        if (call.getDetails().getState() == Call.STATE_RINGING) {
+            tryContactId(call.getDetails());
+            enableCallAnimation();
+        }
+
+        call.registerCallback(new Call.Callback() {
+            @Override
+            public void onStateChanged(Call call, int state) {
+                switch (state) {
+                    case Call.STATE_RINGING:
+                        tryContactId(call.getDetails());
+                        enableCallAnimation();
+                        break;
+                    case Call.STATE_ACTIVE, Call.STATE_DISCONNECTED:
+                        disableCallAnimation();
+                        break;
+                }
+            }
+        });
+    }
+
+    @Override
     public void onCreate() {
+        if (!SettingsManager.isGlyphCallEnabled()) return;
+
         if (DEBUG) Log.d(TAG, "Creating service");
 
-        // Add a handler thread
         thread = new HandlerThread("CallReceiverService");
         thread.start();
         Looper looper = thread.getLooper();
         mThreadHandler = new Handler(looper);
 
         mAudioManager = getSystemService(AudioManager.class);
-        mAudioManager.addOnModeChangedListener(cmd -> mThreadHandler.post(cmd), mAudioManagerOnModeChangedListener);
+        mAudioManager.addOnModeChangedListener(cmd ->
+                mThreadHandler.post(cmd), mAudioManagerOnModeChangedListener);
         mAudioManagerOnModeChangedListener.onModeChanged(mAudioManager.getMode());
-
-        IntentFilter callReceiver = new IntentFilter();
-        callReceiver.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-        registerReceiver(mCallReceiver, callReceiver);
     }
 
     @Override
@@ -82,18 +109,40 @@ public class CallReceiverService extends Service {
     }
 
     @Override
+    public void onCallRemoved(Call call) {
+        super.onCallRemoved(call);
+        disableCallAnimation();
+    }
+
+    @Override
     public void onDestroy() {
         if (DEBUG) Log.d(TAG, "Destroying service");
-        this.unregisterReceiver(mCallReceiver);
         mAudioManager.removeOnModeChangedListener(mAudioManagerOnModeChangedListener);
         disableCallAnimation();
         thread.quit();
         super.onDestroy();
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    private void tryContactId(Call.Details details) {
+        Uri handle = details.getHandle();
+        String number = "";
+        if (handle == null) return;
+
+        String scheme = handle.getScheme();
+
+        if ("tel".equals(scheme)) {
+            number = handle.getSchemeSpecificPart();
+        }
+
+        if (number == null || number.isEmpty()) return;
+
+        String id = ResourceUtils.getContactIdForNumber(number);
+        if (id != null) {
+            contactId = Integer.parseInt(id);
+        } else {
+            contactId = 0;
+        }
+
     }
 
     private void enableCallAnimation() {
@@ -108,36 +157,11 @@ public class CallReceiverService extends Service {
         AnimationManager.stopCall();
     }
 
-    private final BroadcastReceiver mCallReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
-                String number = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
-                contactId = ResourceUtils.getContactIdForNumber(number);
-                String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-                if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
-                    if (DEBUG) Log.d(TAG, "EXTRA_STATE_RINGING");
-                    enableCallAnimation();
-                }
-                if ((state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK))){
-                    if (DEBUG) Log.d(TAG, "EXTRA_STATE_OFFHOOK");
+    private final AudioManager.OnModeChangedListener mAudioManagerOnModeChangedListener
+            = mode -> {
+                if (mode != AudioManager.MODE_RINGTONE) {
+                    if (DEBUG) Log.d(TAG, "mAudioManagerOnModeChangedListener: " + mode);
                     disableCallAnimation();
                 }
-                if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)){
-                    if (DEBUG) Log.d(TAG, "EXTRA_STATE_IDLE");
-                    disableCallAnimation();
-                }
-            }
-        }
-    };
-
-    private final AudioManager.OnModeChangedListener mAudioManagerOnModeChangedListener = new AudioManager.OnModeChangedListener() {
-        @Override
-        public void onModeChanged(int mode) {
-            if (mode != AudioManager.MODE_RINGTONE) {
-                if (DEBUG) Log.d(TAG, "mAudioManagerOnModeChangedListener: " + mode);
-                disableCallAnimation();
-            }
-        }
-    };
+            };
 }

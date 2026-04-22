@@ -398,14 +398,6 @@ public final class AnimationManager {
         }
     }
 
-    public static void playCall(String name, String contactId) {
-        playCall(name, SettingsManager.isGlyphCallAnimationReversed(contactId));
-    }
-
-    public static void playCall(String name) {
-        playCall(name, SettingsManager.isGlyphCallAnimationReversed());
-    }
-
     public static void stopCall() {
         if (DEBUG) Log.d(TAG, "Disabling Call Animation");
         StatusManager.setCallLedEnabled(false);

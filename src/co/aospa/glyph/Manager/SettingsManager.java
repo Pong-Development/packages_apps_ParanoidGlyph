@@ -157,7 +157,7 @@ public final class SettingsManager {
                         ResourceUtils.getString("glyph_settings_call_animations_default"));
     }
 
-    public static String getGlyphCallAnimation(String contactId) {
+    public static String getGlyphCallAnimation(int contactId) {
         Context ctx = getContext();
         return ctx.getSharedPreferences(Constants.GLYPH_CALL_CONTACT_PREF_PREFIX
                         + contactId, Context.MODE_PRIVATE)
@@ -188,7 +188,7 @@ public final class SettingsManager {
                         false);
     }
 
-    public static boolean isGlyphCallAnimationReversed(String contactId) {
+    public static boolean isGlyphCallAnimationReversed(int contactId) {
         Context ctx = getContext();
         return ctx.getSharedPreferences(Constants.GLYPH_CALL_CONTACT_PREF_PREFIX
                         + contactId, Context.MODE_PRIVATE)

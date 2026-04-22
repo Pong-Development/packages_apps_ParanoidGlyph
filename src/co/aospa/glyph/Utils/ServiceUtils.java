@@ -262,11 +262,6 @@ public final class ServiceUtils {
             } else {
                 stopMicActivityService();
             }
-            if (SettingsManager.isGlyphCallEnabled()) {
-                startCallReceiverService();
-            } else {
-                stopCallReceiverService();
-            }
             if (SettingsManager.isGlyphFlipEnabled()) {
                 startFlipToGlyphService();
             } else {
