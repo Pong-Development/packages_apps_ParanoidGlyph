@@ -501,6 +501,11 @@ public class AnimationSettingsFragment
             callApps.remove(getDefaultDialer());
             callAppsNames.remove(getPackageLabel(getDefaultDialer()));
 
+            if (callApps.isEmpty()) {
+                getPreferenceScreen().removePreference(appListCategory);
+                return;
+            }
+
             for (int i = 0; i < callApps.size(); i++) {
                 PrimarySwitchPreference mSwitchPreference
                         = new PrimarySwitchPreference(getPreferenceScreen().getContext());
