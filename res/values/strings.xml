@@ -79,11 +79,13 @@
     <string name="glyph_settings_call_toggle_summary">Flash LEDs on incoming calls</string>
     <string name="glyph_settings_call_sub_toggle_title">Enable call animation</string>
 
+    <string name="glyph_settings_call_sub_title">Third-party apps</string>
+
     <string name="glyph_settings_call_sub_contact_select_title">Contact-specific settings</string>
     <string name="glyph_settings_call_sub_contact_select_summary">Choose a contact to set options for</string>
 
-    <string name="glyph_call_contact_delete_confirm_message_start">Are you sure you want to delete settings for</string>
-    <string name="glyph_call_contact_delete_confirm_title">Delete settings</string>
+    <string name="glyph_settings_delete_confirm_message_start">Are you sure you want to delete settings for</string>
+    <string name="glyph_settings_delete_title">Delete settings</string>
 
     <string name="glyph_settings_call_sub_animations_title">@string/glyph_settings_sub_animations_title</string>
 

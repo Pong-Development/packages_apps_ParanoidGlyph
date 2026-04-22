@@ -55,4 +55,9 @@
             android:summary="@string/glyph_settings_call_sub_contact_select_summary" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="glyph_settings_call_sub"
+        android:title="@string/glyph_settings_call_sub_title" />
+
+
 </PreferenceScreen>

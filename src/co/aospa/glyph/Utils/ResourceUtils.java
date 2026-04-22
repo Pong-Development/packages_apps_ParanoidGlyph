@@ -17,6 +17,9 @@
 package co.aospa.glyph.Utils;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -318,4 +321,36 @@ public final class ResourceUtils {
 
         return stream;
     }
+
+    public static String[] getApplicationsWithPermission(boolean resolveLabel, String[] permissionList) {
+        List<ApplicationInfo> matched = new ArrayList<>();
+        PackageManager pm = getContext().getPackageManager();
+        List<PackageInfo> allApps = pm.getInstalledPackages(PackageManager.GET_PERMISSIONS);
+        for (PackageInfo pkg : allApps) {
+            int pkgFlags = pkg.applicationInfo.flags;
+            if (pkg.requestedPermissions == null) continue;
+            if (pm.getLaunchIntentForPackage(pkg.packageName) == null) continue;
+            if ((pkgFlags & ApplicationInfo.FLAG_INSTALLED) == 0
+                    || (pkgFlags & ApplicationInfo.FLAG_PERSISTENT) != 0) continue;
+            for (String perm : pkg.requestedPermissions) {
+                for (String requiredPerm : permissionList) {
+                    if (perm.equals(requiredPerm)) {
+                        matched.add(pkg.applicationInfo);
+                    }
+                }
+            }
+        }
+
+        matched.sort((a, b) -> pm.getApplicationLabel(a).toString()
+                .compareToIgnoreCase(pm.getApplicationLabel(b).toString()));
+
+        List<String> result = new ArrayList<>();
+        for (ApplicationInfo app : matched) {
+            result.add(resolveLabel
+                    ? pm.getApplicationLabel(app).toString()
+                    : app.packageName);
+        }
+        return result.toArray(new String[0]);
+    }
+
 }

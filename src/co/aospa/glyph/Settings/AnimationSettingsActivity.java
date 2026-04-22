@@ -42,11 +42,15 @@ public class AnimationSettingsActivity extends CollapsingToolbarBaseActivity {
         }
 
         String contactId = getIntent().getStringExtra("contact_id");
+        String pkg = getIntent().getStringExtra("package");
 
         Bundle args = new Bundle();
         args.putString("type", type);
         if (contactId != null) {
             args.putString("contact_id", contactId);
+        }
+        if (pkg != null) {
+            args.putString("package", pkg);
         }
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(

@@ -26,6 +26,7 @@ import android.os.Looper;
 import android.provider.ContactsContract;
 import android.telecom.Call;
 import android.telecom.InCallService;
+import android.telecom.PhoneAccountHandle;
 import android.util.Log;
 
 import co.aospa.glyph.Manager.AnimationManager;
@@ -43,6 +44,7 @@ public class CallReceiverService extends InCallService {
     private Handler mThreadHandler;
 
     private int contactId = 0;
+    private String callingPkg = null;
 
     private final Runnable playCall = new Runnable() {
         @Override
@@ -51,11 +53,20 @@ public class CallReceiverService extends InCallService {
                     && SettingsManager.contactHasGlyphCallConfig(contactId)) {
                 AnimationManager.playCall(
                         SettingsManager.getGlyphCallAnimation(contactId),
-                        SettingsManager.isGlyphCallAnimationReversed(contactId));
+                        SettingsManager.isGlyphCallAnimationReversed(contactId)
+                );
+            } else if (callingPkg != null && SettingsManager.appHasGlyphCallConfig(callingPkg)) {
+                if (SettingsManager.isGlyphCallEnabled(callingPkg)) {
+                    AnimationManager.playCall(
+                            SettingsManager.getGlyphCallAnimation(callingPkg),
+                            SettingsManager.isGlyphCallAnimationReversed(callingPkg)
+                    );
+                }
             } else {
                 AnimationManager.playCall(
                         SettingsManager.getGlyphCallAnimation(),
-                        SettingsManager.isGlyphCallAnimationReversed());
+                        SettingsManager.isGlyphCallAnimationReversed()
+                );
             }
         }
     };
@@ -66,6 +77,7 @@ public class CallReceiverService extends InCallService {
 
         if (call.getDetails().getState() == Call.STATE_RINGING) {
             tryContactId(call.getDetails());
+            getCallingPkg(call);
             enableCallAnimation();
         }
 
@@ -75,6 +87,7 @@ public class CallReceiverService extends InCallService {
                 switch (state) {
                     case Call.STATE_RINGING:
                         tryContactId(call.getDetails());
+                        getCallingPkg(call);
                         enableCallAnimation();
                         break;
                     case Call.STATE_ACTIVE, Call.STATE_DISCONNECTED:
@@ -121,6 +134,14 @@ public class CallReceiverService extends InCallService {
         disableCallAnimation();
         thread.quit();
         super.onDestroy();
+    }
+
+    private void getCallingPkg(Call call) {
+        PhoneAccountHandle handle = call.getDetails().getAccountHandle();
+        if (handle != null) {
+            callingPkg = handle.getComponentName().getPackageName();
+            Log.d("TAG", "Call from package: " + callingPkg);
+        }
     }
 
     private void tryContactId(Call.Details details) {
