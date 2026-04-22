@@ -37,6 +37,7 @@ import android.provider.Settings;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceGroup;
+import androidx.preference.MultiSelectListPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
@@ -57,7 +58,6 @@ import co.aospa.glyph.Manager.GlyphScheduleManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Services.BatterySaverService;
 import static co.aospa.glyph.Utils.InterfaceUtils.showDialog;
-import static co.aospa.glyph.Utils.InterfaceUtils.showMultiPickerDialog;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -90,10 +90,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     private PreferenceCategory mProgressCategory;
     private SwitchPreferenceCompat mProgressPreference;
     private SwitchPreferenceCompat mProgressMediaPreference;
-    private Preference mProgressMediaWhitelistPreference;
+    private MultiSelectListPreference mProgressMediaWhitelistPreference;
     private PreferenceCategory mRedLedCategory;
     private SwitchPreferenceCompat mMicActivityPreference;
-    private Preference mMicActivityWhitelistPreference;
+    private MultiSelectListPreference mMicActivityWhitelistPreference;
     private ListPreference mRedLedModePreference;
 
     private ContentResolver mContentResolver;
@@ -238,6 +238,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mProgressMediaPreference.setOnPreferenceChangeListener(this);
 
         mProgressMediaWhitelistPreference = findPreference(Constants.GLYPH_PROGRESS_MEDIA_WHITELIST);
+        mProgressMediaWhitelistPreference.setEntries(
+                getApplicationsWithPermission(true, mediaPermissions));
+        mProgressMediaWhitelistPreference.setEntryValues(
+                getApplicationsWithPermission(false, mediaPermissions));
 
         mRedLedCategory = findPreference(Constants.GLYPH_RED_LED_CATEGORY);
         mRedLedCategory.setVisible(Constants.Device.isPhone2() || Constants.Device.isPhone1());
@@ -246,6 +250,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mMicActivityPreference.setOnPreferenceChangeListener(this);
 
         mMicActivityWhitelistPreference = findPreference(Constants.GLYPH_MIC_ACTIVITY_WHITELIST);
+        mMicActivityWhitelistPreference.setEntries(
+                getApplicationsWithPermission(true, micPermissions));
+        mMicActivityWhitelistPreference.setEntryValues(
+                getApplicationsWithPermission(false, micPermissions));
         mMicActivityWhitelistPreference.setOnPreferenceChangeListener(this);
 
         mRedLedModePreference = findPreference(Constants.GLYPH_RED_LED_MODE);
@@ -431,22 +439,6 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
                             android.R.string.cancel, null);
                     return true;
                 }
-        }
-        if (Constants.GLYPH_PROGRESS_MEDIA_WHITELIST.equals(preference.getKey())) {
-            showMultiPickerDialog(
-                    requireActivity(),
-                    preference,
-                    getApplicationsWithPermission(true, mediaPermissions),
-                    getApplicationsWithPermission(false, mediaPermissions)
-            );
-        }
-        if (Constants.GLYPH_MIC_ACTIVITY_WHITELIST.equals(preference.getKey())) {
-            showMultiPickerDialog(
-                    requireActivity(),
-                    preference,
-                    getApplicationsWithPermission(true, micPermissions),
-                    getApplicationsWithPermission(false, micPermissions)
-            );
         }
         return super.onPreferenceTreeClick(preference);
     }

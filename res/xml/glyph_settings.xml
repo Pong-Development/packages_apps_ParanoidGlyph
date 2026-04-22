@@ -130,11 +130,13 @@
             android:title="@string/glyph_settings_mic_activity_toggle_title"
             android:summary="@string/glyph_settings_mic_activity_toggle_summary" />
 
-        <Preference
+        <MultiSelectListPreference
             android:key="glyph_settings_mic_activity_whitelist"
             android:icon="@drawable/ic_app_registration"
             android:title="@string/glyph_settings_mic_activity_whitelist_title"
-            android:summary="@string/glyph_settings_mic_activity_whitelist_summary" />
+            android:summary="@string/glyph_settings_mic_activity_whitelist_summary"
+            android:positiveButtonText="@android:string/ok"
+            android:negativeButtonText="@android:string/cancel" />
 
         <ListPreference
             android:key="glyph_settings_red_led_mode"
@@ -165,11 +167,13 @@
             android:summary="@string/glyph_settings_progress_media_toggle_summary"
             android:dependency="glyph_settings_progress_toggle" />
 
-        <Preference
+        <MultiSelectListPreference
             android:key="glyph_settings_progress_media_app_whitelist"
             android:icon="@drawable/ic_app_registration"
             android:title="@string/glyph_settings_progress_media_app_whitelist_title"
-            android:summary="@string/glyph_settings_progress_media_app_whitelist_summary" />
+            android:summary="@string/glyph_settings_progress_media_app_whitelist_summary"
+            android:positiveButtonText="@android:string/ok"
+            android:negativeButtonText="@android:string/cancel" />
     </PreferenceCategory>
 
     <PreferenceCategory
