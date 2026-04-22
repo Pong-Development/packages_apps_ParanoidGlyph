@@ -23,7 +23,6 @@ import android.os.FileObserver;
 import android.os.IBinder;
 import android.util.Log;
 
-import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Utils.FileUtils;
 import co.aospa.glyph.Utils.ResourceUtils;
@@ -33,8 +32,10 @@ public class PowershareService extends Service {
     private static final String TAG = "GlyphPowershareService";
     private static final boolean DEBUG = true;
 
-    private static final String POWERSHARE_ACTIVE = ResourceUtils.getString("glyph_settings_paths_powershare_active_absolute");
-    private static final String POWERSHARE_ENABLED = ResourceUtils.getString("glyph_settings_paths_powershare_enabled_absolute");
+    private static final String POWERSHARE_ACTIVE =
+            ResourceUtils.getString("glyph_settings_paths_powershare_active_absolute");
+    private static final String POWERSHARE_ENABLED =
+            ResourceUtils.getString("glyph_settings_paths_powershare_enabled_absolute");
 
     private PowershareActiveObserver mPowershareActiveObserver;
     private Context mContext;
@@ -91,7 +92,8 @@ public class PowershareService extends Service {
         }
 
         private void checkIfPowerShareIsEnabled() {
-            if (DEBUG) Log.e(TAG, "FileObserver: checkIfPowerShareIsEnabled: " + FileUtils.readLineInt(POWERSHARE_ENABLED));
+            if (DEBUG) Log.e(TAG, "FileObserver: checkIfPowerShareIsEnabled: "
+                    + FileUtils.readLineInt(POWERSHARE_ENABLED));
             if (FileUtils.readLineInt(POWERSHARE_ENABLED) == 1) {
                 onPowershareEnabled();
             } else {
@@ -137,7 +139,8 @@ public class PowershareService extends Service {
         }
 
         private void updatePowershareState() {
-            if (DEBUG) Log.d(TAG, "updatePowershareState: " + FileUtils.readLineInt(POWERSHARE_ACTIVE));
+            if (DEBUG) Log.d(TAG, "updatePowershareState: "
+                    + FileUtils.readLineInt(POWERSHARE_ACTIVE));
             if (FileUtils.readLineInt(POWERSHARE_ACTIVE) == 1) {
                 if (lastState) return;
                 lastState = true;

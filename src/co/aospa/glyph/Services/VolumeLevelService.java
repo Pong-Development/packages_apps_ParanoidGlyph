@@ -100,7 +100,8 @@ public class VolumeLevelService extends Service {
                 int oldVolume = intent.getIntExtra("android.media.EXTRA_PREV_VOLUME_STREAM_VALUE", -1);
 
                 // Only check streams which are shown in the volume panel
-                if ((streamType >= 0 && streamType <= AudioSystem.NUM_STREAMS) && currentVolume >= 0 && oldVolume >= 0) {
+                if ((streamType >= 0 && streamType <= AudioSystem.NUM_STREAMS)
+                        && currentVolume >= 0 && oldVolume >= 0) {
                     int maxVolume = audioManager.getStreamMaxVolume(streamType);
                     int oldVolumePercent = (int) (Math.round(100D / maxVolume * oldVolume));
                     int currentVolumePercent = (int) (Math.round(100D / maxVolume * currentVolume));
@@ -111,7 +112,8 @@ public class VolumeLevelService extends Service {
                         }
                         if (DEBUG) {
                             Log.d(TAG, "Volume level changed for stream type " + streamType + 
-                                  ": oldVolumePercent: " + oldVolumePercent + ", currentVolumePercent: " + currentVolumePercent);
+                                  ": oldVolumePercent: " + oldVolumePercent + ", currentVolumePercent: "
+                                    + currentVolumePercent);
                         }
                         mThreadHandler.post(() -> {
                             AnimationManager.playVolume(context, currentVolumePercent, false);

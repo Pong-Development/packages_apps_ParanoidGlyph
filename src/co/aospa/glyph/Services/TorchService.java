@@ -9,7 +9,6 @@ import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.StatusManager;
 import co.aospa.glyph.Utils.FileUtils;
-import co.aospa.glyph.Utils.ResourceUtils;
 
 public class TorchService extends Service {
 

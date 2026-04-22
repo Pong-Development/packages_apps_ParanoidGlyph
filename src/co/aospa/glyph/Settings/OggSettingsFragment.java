@@ -7,7 +7,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.preference.Preference;
-import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceScreen;
 
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
@@ -28,10 +27,8 @@ import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.R;
 import co.aospa.glyph.Utils.AnimationUtils;
-import co.aospa.glyph.Utils.ResourceUtils;
 
-public class OggSettingsFragment extends SettingsBasePreferenceFragment
-        implements Preference.OnPreferenceChangeListener {
+public class OggSettingsFragment extends SettingsBasePreferenceFragment {
 
     private Preference mLivePreviewPreference;
 
@@ -135,11 +132,6 @@ public class OggSettingsFragment extends SettingsBasePreferenceFragment
         intent.setType("text/csv");
         intent.putExtra(Intent.EXTRA_TITLE, nameWithoutExt + ".csv");
         mSaveFileLauncher.launch(intent);
-    }
-
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        return true;
     }
 
 

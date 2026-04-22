@@ -5,17 +5,14 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.AudioRecordingConfiguration;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Utils.FileUtils;
 import co.aospa.glyph.Utils.ResourceUtils;
@@ -112,7 +109,7 @@ public class MicActivityService extends Service {
         }
     };
 
-    private AudioManager.AudioRecordingCallback GlyphCallback =
+    private final AudioManager.AudioRecordingCallback GlyphCallback =
         new AudioManager.AudioRecordingCallback() {
             @Override
             public void onRecordingConfigChanged(List<AudioRecordingConfiguration> configs) {

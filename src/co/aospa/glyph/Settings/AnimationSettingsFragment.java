@@ -27,10 +27,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
@@ -95,8 +92,6 @@ public class AnimationSettingsFragment
     private SwitchPreferenceCompat mGlyphFlipAnimationSwitch;
 
     private GlyphAnimationPreference mGlyphAnimationPreference;
-
-    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     private String fragmentTitle = null;
 
@@ -273,8 +268,8 @@ public class AnimationSettingsFragment
                     addPreferencesFromResource(R.xml.glyph_call_contact_settings);
                     PreferenceScreen mScreen = getPreferenceScreen();
 
-                    fragmentTitle =
-                            requireContext().getString(R.string.glyph_settings_call_toggle_title)
+                    fragmentTitle
+                            = requireContext().getString(R.string.glyph_settings_call_toggle_title)
                                     + " (" + contactName + ")";
 
                     PreferenceCategory mCategory = new PreferenceCategory(mScreen.getContext());
@@ -302,8 +297,8 @@ public class AnimationSettingsFragment
                     fragmentTitle =
                             requireContext().getString(R.string.glyph_settings_call_toggle_title);
 
-                    Preference mContactSelectPreference
-                            = findPreference(Constants.GLYPH_CALL_SUB_CONTACT_SELECT);
+                    Preference mContactSelectPreference =
+                            findPreference(Constants.GLYPH_CALL_SUB_CONTACT_SELECT);
 
                     mContactSelectPreference.setOnPreferenceClickListener(pref -> {
                            mContactPickerAction = uri -> {
@@ -530,7 +525,7 @@ public class AnimationSettingsFragment
         return false;
     }
 
-    private void setAnimationEnabled(boolean state){
+    private void setAnimationEnabled(boolean state) {
         switch (fragmentType) {
             case FRAGMENT_TYPE_NOTIF -> {
                 SettingsManager.setGlyphNotifsEnabled(state);

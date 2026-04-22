@@ -41,7 +41,6 @@ import androidx.preference.MultiSelectListPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
-import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.settingslib.PrimarySwitchPreference;
@@ -60,11 +59,9 @@ import co.aospa.glyph.Services.BatterySaverService;
 import static co.aospa.glyph.Utils.InterfaceUtils.showDialog;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.aospa.glyph.Utils.AnimationUtils;
 import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
 

@@ -28,14 +28,11 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 
-import java.io.IOException;
-
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Manager.StatusManager;
 import co.aospa.glyph.Sensors.FlipToGlyphSensor;
-import co.aospa.glyph.Utils.ResourceUtils;
 
 public class FlipToGlyphService extends Service {
 

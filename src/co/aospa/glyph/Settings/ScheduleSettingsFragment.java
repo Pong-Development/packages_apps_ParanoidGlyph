@@ -16,7 +16,6 @@
 
 package co.aospa.glyph.Settings;
 
-import androidx.appcompat.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;

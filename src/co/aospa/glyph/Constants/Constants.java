@@ -143,7 +143,6 @@ public final class Constants {
     public static final String[] APPS_TO_IGNORE = {
         "android",
         "com.android.traceur",
-        //"com.google.android.dialer",
         "com.google.android.setupwizard",
         "dev.kdrag0n.dyntheme.privileged.sys"
     };
@@ -188,7 +187,8 @@ public final class Constants {
 
     public static int[] getSupportedAnimationPatternLengths() {
         if (supportedAnimationPatternLengths == null)
-            supportedAnimationPatternLengths = ResourceUtils.getIntArray("glyph_settings_animations_supported_pattern_lengths");
+            supportedAnimationPatternLengths = ResourceUtils.getIntArray(
+                    "glyph_settings_animations_supported_pattern_lengths");
 
         return supportedAnimationPatternLengths;
     }
