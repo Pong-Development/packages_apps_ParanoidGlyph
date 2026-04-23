@@ -183,9 +183,8 @@ public final class SettingsManager {
 
     public static boolean appHasGlyphCallConfig(String pkg) {
         Context ctx = getContext();
-        return !ctx.getSharedPreferences(Constants.GLYPH_CALL_APP_PREF_PREFIX + pkg,
-                        Context.MODE_PRIVATE)
-                .getAll().isEmpty();
+        return !getGlyphCallAnimation(pkg)
+                .equals(ResourceUtils.getString("glyph_settings_call_animations_default"));
     }
 
     public static String getGlyphCallAnimation(String pkg) {
@@ -267,9 +266,8 @@ public final class SettingsManager {
 
     public static boolean appHasGlyphNotifsConfig(String pkg) {
         Context ctx = getContext();
-        return !ctx.getSharedPreferences(Constants.GLYPH_NOTIF_APP_PREF_PREFIX + pkg,
-                        Context.MODE_PRIVATE)
-                .getAll().isEmpty();
+        return !getGlyphNotifsAnimation(pkg)
+                .equals(ResourceUtils.getString("glyph_settings_notifs_animations_default"));
     }
 
     public static boolean isGlyphNotifsEnabled(String pkg) {
