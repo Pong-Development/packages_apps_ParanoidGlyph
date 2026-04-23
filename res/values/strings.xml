@@ -41,6 +41,8 @@
 
     <string name="glyph_settings_sub_animations_title">Pattern</string>
 
+    <string name="glyph_settings_animation_is_reversed">Reversed</string>
+
     <string name="glyph_settings_battery_saver_toggle_title">Follow battery saver</string>
     <string name="glyph_settings_battery_saver_toggle_summary">Disable glyph interface when battery saver is enabled</string>
 

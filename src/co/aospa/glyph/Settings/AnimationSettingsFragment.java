@@ -575,8 +575,21 @@ public class AnimationSettingsFragment
             setAnimationEnabled(key, (Boolean) newValue);
             return true;
         });
+        resolveAppSummary(mSwitchPreference, pkg);
         appListCategory.addPreference(mSwitchPreference);
 
+    }
+
+    private void resolveAppSummary(PrimarySwitchPreference pref, String pkg) {
+        if (appHasConfig(pkg)) {
+            boolean isReversed = isAppAnimationReversed(pkg);
+            if (isReversed) {
+                pref.setSummary(" " + getGlyphAnimation(pkg, false)
+                        + " (" + getString(R.string.glyph_settings_animation_is_reversed) + ")");
+            } else {
+                pref.setSummary(" " + getGlyphAnimation(pkg, false));
+            }
+        }
     }
 
     private String getPackageLabel(String packageName) {
@@ -658,6 +671,30 @@ public class AnimationSettingsFragment
         return "";
     }
 
+    private String getGlyphAnimation(String pkg, boolean internal) {
+        switch (fragmentType) {
+            case FRAGMENT_TYPE_NOTIF -> {
+                String anim = SettingsManager.getGlyphNotifsAnimation(pkg);
+                if (internal) {
+                    return anim;
+                } else {
+                    return anim.replace(Constants.GLYPH_USER_NOTIF_CSV_PREFIX, "");
+                }
+            }
+
+            case FRAGMENT_TYPE_CALL -> {
+                String anim = SettingsManager.getGlyphCallAnimation(pkg);
+                if (internal) {
+                    return anim;
+                } else {
+                    return anim.replace(Constants.GLYPH_USER_CALL_CSV_PREFIX, "");
+                }
+            }
+        }
+        return "";
+    }
+
+
     private boolean isAnimationEnabled() {
         switch (fragmentType) {
             case FRAGMENT_TYPE_NOTIF -> {
@@ -730,6 +767,30 @@ public class AnimationSettingsFragment
         }
     }
 
+    private boolean appHasConfig(String pkg) {
+        switch (fragmentType) {
+            case FRAGMENT_TYPE_NOTIF -> {
+                return SettingsManager.appHasGlyphNotifsConfig(pkg);
+            }
+            case FRAGMENT_TYPE_CALL -> {
+                return SettingsManager.appHasGlyphCallConfig(pkg);
+            }
+        }
+        return false;
+    }
+
+    private boolean isAppAnimationReversed(String pkg) {
+        switch (fragmentType) {
+            case FRAGMENT_TYPE_NOTIF -> {
+                return SettingsManager.isGlyphNotifsAnimationReversed(pkg);
+            }
+            case FRAGMENT_TYPE_CALL -> {
+                return SettingsManager.isGlyphCallAnimationReversed(pkg);
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
@@ -796,6 +857,7 @@ public class AnimationSettingsFragment
                         case FRAGMENT_TYPE_CALL ->
                                 switchPref.setChecked(SettingsManager.isGlyphCallEnabled(pref.getKey()));
                     }
+                    resolveAppSummary(switchPref, pref.getKey());
                 }
             }
         }
