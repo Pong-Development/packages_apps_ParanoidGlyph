@@ -32,18 +32,21 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 
-import androidx.preference.Preference;
-import androidx.preference.PreferenceGroup;
 import androidx.preference.MultiSelectListPreference;
 import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.SwitchPreferenceCompat;
+import androidx.preference.TwoStatePreference;
 
 import com.android.settingslib.PrimarySwitchPreference;
 import com.android.settingslib.widget.MainSwitchPreference;
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 import com.android.settingslib.widget.SliderPreference;
+
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -58,6 +61,7 @@ import static co.aospa.glyph.Utils.InterfaceUtils.showDialog;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import co.aospa.glyph.Utils.ResourceUtils;
 import co.aospa.glyph.Utils.ServiceUtils;
@@ -96,7 +100,11 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
     private Preference mUtilitiesPreference;
 
+    private CompletableFuture<Boolean> pendingConfirmation;
+
     private Handler mHandler = new Handler();
+
+    private Context context;
 
     String[] mediaPermissions = {
             Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
@@ -117,6 +125,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        context = getPreferenceManager().getContext();
+
         addPreferencesFromResource(R.xml.glyph_settings);
 
         mHandler.post(() -> {
@@ -172,9 +182,11 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mBrightnessPreference.setOnPreferenceChangeListener(this);
 
         mNotifsPreference = (PrimarySwitchPreference) findPreference(Constants.GLYPH_NOTIFS_ENABLE);
-        mNotifsPreference.setChecked(SettingsManager.isGlyphNotifsEnabled());
+        mNotifsPreference.setChecked(SettingsManager.isGlyphNotifsEnabled()
+                && checkNotificationService(false, null));
         mNotifsPreference.setEnabled(glyphEnabled);
-        mNotifsPreference.setSwitchEnabled(glyphEnabled);
+        mNotifsPreference.setSwitchEnabled(glyphEnabled
+                && checkNotificationService(false, null));
         mNotifsPreference.setOnPreferenceChangeListener(this);
 
         mCallPreference = (PrimarySwitchPreference) findPreference(Constants.GLYPH_CALL_ENABLE);
@@ -258,7 +270,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         IntentFilter filter = new IntentFilter("co.aospa.glyph.UPDATE_MAIN_SWITCH");
         requireContext().registerReceiver(mScheduleUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
 
-        mHandler.post(() -> ServiceUtils.checkGlyphService());
+        mHandler.post(ServiceUtils::checkGlyphService);
     }
 
     @Override
@@ -273,6 +285,11 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
                 SettingsManager.setGlyphCallEnabled((Boolean) newValue);
             }
             case Constants.GLYPH_NOTIFS_ENABLE -> {
+                if (!checkNotificationService(true, preference)
+                        && (Boolean) newValue) {
+                    mHandler.post(() -> mNotifsPreference.setChecked(false));
+                    return false;
+                }
                 SettingsManager.setGlyphNotifsEnabled((Boolean) newValue);
             }
             case Constants.GLYPH_AUTO_BRIGHTNESS_ENABLE -> {
@@ -280,6 +297,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             }
             case Constants.GLYPH_PROGRESS_ENABLE -> {
                 boolean enabled = (Boolean) newValue;
+
+                if (enabled && !checkNotificationService(true, preference)) return false;
+
                 mProgressMediaPreference.setEnabled(enabled && SettingsManager.isGlyphEnabled());
 
                 if (enabled) {
@@ -386,23 +406,54 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey())
-            || Constants.GLYPH_PROGRESS_ENABLE.equals(preference.getKey())) {
-                if (!ServiceUtils.isNotificationServiceEnabled()) {
-                    showDialog(
-                            requireActivity(),
-                            R.string.glyph_settings_notifs_permission_dialog_title,
-                            R.string.glyph_settings_notifs_permission_dialog_message,
-                            android.R.string.ok, () -> {
-                                Intent intent
-                                        = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-                                requireContext().startActivity(intent);
-                            },
-                            android.R.string.cancel, null);
-                    return true;
-                }
+        if (Constants.GLYPH_NOTIFS_ENABLE.equals(preference.getKey())) {
+            if (!checkNotificationService(true, preference, true)) return true;
         }
         return super.onPreferenceTreeClick(preference);
+    }
+
+    private boolean checkNotificationService(boolean showDialog, Preference targetPref,
+                                             boolean treeClick) {
+        if (!ServiceUtils.isNotificationServiceEnabled(context)) {
+           if (showDialog) {
+               showDialog(
+                   requireActivity(),
+                   R.string.glyph_settings_notifs_permission_dialog_title,
+                   R.string.glyph_settings_notifs_permission_dialog_message,
+                   android.R.string.ok, () -> {
+                       Intent intent
+                               = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+                       requireContext().startActivity(intent);
+                       pendingConfirmation = new CompletableFuture<>();
+                       pendingConfirmation.thenAccept(confirmed -> {
+                           if (confirmed) {
+                               if (treeClick) {
+                                   mHandler.post(() -> {
+                                       Intent treeIntent = targetPref.getIntent();
+                                       if (treeIntent != null) requireContext().startActivity(treeIntent);
+                                   });
+                               } else {
+                                   targetPref.getSharedPreferences()
+                                           .edit()
+                                           .putBoolean(targetPref.getKey(), true)
+                                           .apply();
+                                   if (targetPref instanceof TwoStatePreference p) {
+                                       p.setChecked(true);
+                                   }
+                               }
+                               if (!treeClick) mHandler.post(ServiceUtils::checkGlyphService);
+                           }
+                       });
+                   },
+                   android.R.string.cancel, null);
+           }
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkNotificationService(boolean showDialog, Preference targetPref) {
+        return checkNotificationService(showDialog, targetPref, false);
     }
 
     @Override
@@ -419,6 +470,14 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
     @Override
     public void onResume() {
         super.onResume();
+        mNotifsPreference.setSwitchEnabled(mSwitchBar.isChecked()
+                && checkNotificationService(false, null));
+        if (pendingConfirmation != null && !pendingConfirmation.isDone()) {
+            if (checkNotificationService(false, null)) {
+                pendingConfirmation.complete(true);
+                pendingConfirmation = null;
+            }
+        }
         updateScheduleSummary();
         updateMainSwitchState();
     }
@@ -439,11 +498,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
             mSwitchBar.setChecked(baseEnabled);
             
             if (baseEnabled && !effectiveEnabled) {
-                mSwitchBar.setSummary(
-                        ResourceUtils.getString("glyph_settings_summary_schedule"));
+                mSwitchBar.setSummary(getString(R.string.glyph_settings_summary_schedule));
             } else if (batterySavingActive) {
-                mSwitchBar.setSummary(
-                        ResourceUtils.getString("glyph_settings_summary_battery_saving"));
+                mSwitchBar.setSummary(getString(R.string.glyph_settings_summary_battery_saving));
             } else {
                  mSwitchBar.setSummary("");
             }

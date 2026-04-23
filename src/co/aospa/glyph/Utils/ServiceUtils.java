@@ -48,9 +48,10 @@ public final class ServiceUtils {
         return context;
     }
 
-    public static boolean isNotificationServiceEnabled() {
-        String pkgName = context.getPackageName();
-        final String flat = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ENABLED_NOTIFICATION_LISTENERS);
+    public static boolean isNotificationServiceEnabled(Context ctx) {
+        String pkgName = ctx.getPackageName();
+        final String flat = Settings.Secure.getString(ctx.getContentResolver(),
+                Settings.Secure.ENABLED_NOTIFICATION_LISTENERS);
         if (flat != null) {
             String[] names = flat.split(":");
             for (String name : names) {
