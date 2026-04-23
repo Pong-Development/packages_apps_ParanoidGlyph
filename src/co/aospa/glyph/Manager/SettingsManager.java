@@ -62,7 +62,7 @@ public final class SettingsManager {
     public static boolean isGlyphEnabled() {
         Context ctx = getContext();
         boolean baseEnabled = (Settings.Secure.getInt(ctx.getContentResolver(),
-                Constants.GLYPH_ENABLE, 1) != 0 
+                Constants.GLYPH_ENABLE, 0) != 0
             || PreferenceManager.getDefaultSharedPreferences(ctx)
                 .getBoolean(Constants.GLYPH_ENABLE, false));
         
@@ -77,7 +77,7 @@ public final class SettingsManager {
     public static boolean isGlyphEnabledIgnoreSchedule() {
         Context ctx = getContext();
         return (Settings.Secure.getInt(ctx.getContentResolver(),
-                Constants.GLYPH_ENABLE, 1) != 0 
+                Constants.GLYPH_ENABLE, 0) != 0
             || PreferenceManager.getDefaultSharedPreferences(ctx)
                 .getBoolean(Constants.GLYPH_ENABLE, false));
     }
@@ -85,7 +85,7 @@ public final class SettingsManager {
     public static boolean isGlyphFlipEnabled() {
         Context ctx = getContext();
         return Settings.Secure.getInt(ctx.getContentResolver(),
-                Constants.GLYPH_FLIP_ENABLE, 1) != 0 && isGlyphEnabled();
+                Constants.GLYPH_FLIP_ENABLE, 0) != 0 && isGlyphEnabled();
     }
 
     public static void setGlyphFlipEnabled(boolean enable) {
@@ -134,7 +134,7 @@ public final class SettingsManager {
     public static boolean isGlyphCallEnabled() {
         Context ctx = getContext();
         return Settings.Secure.getInt(ctx.getContentResolver(),
-                Constants.GLYPH_CALL_ENABLE, 1) != 0 && isGlyphEnabled();
+                Constants.GLYPH_CALL_ENABLE, 0) != 0 && isGlyphEnabled();
     }
 
     public static boolean isGlyphCallEnabled(String pkg) {
@@ -261,7 +261,7 @@ public final class SettingsManager {
     public static boolean isGlyphNotifsEnabled() {
         Context ctx = getContext();
         return Settings.Secure.getInt(ctx.getContentResolver(),
-                Constants.GLYPH_NOTIFS_ENABLE, 1) != 0 && isGlyphEnabled();
+                Constants.GLYPH_NOTIFS_ENABLE, 0) != 0 && isGlyphEnabled();
     }
 
     public static boolean appHasGlyphNotifsConfig(String pkg) {
