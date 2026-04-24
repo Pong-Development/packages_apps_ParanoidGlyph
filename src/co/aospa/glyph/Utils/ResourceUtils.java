@@ -124,6 +124,7 @@ public final class ResourceUtils {
 
         File[] matchingFiles = dir.listFiles(file ->
                 file.isFile() && file.getName().toLowerCase().endsWith(".csv")
+                        && !file.getName().toLowerCase().startsWith(".")
         );
 
         if (matchingFiles != null) {
@@ -147,6 +148,7 @@ public final class ResourceUtils {
 
         File[] matchingFiles = dir.listFiles(file ->
                 file.isFile() && file.getName().toLowerCase().endsWith(".csv")
+                        && !file.getName().toLowerCase().startsWith(".")
         );
 
         if (matchingFiles != null) {
