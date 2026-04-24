@@ -29,6 +29,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -589,6 +590,8 @@ public class AnimationSettingsFragment
             } else {
                 pref.setSummary(" " + getGlyphAnimation(pkg, false));
             }
+        } else if (!TextUtils.isEmpty(pref.getSummary())) {
+            pref.setSummary(null);
         }
     }
 
