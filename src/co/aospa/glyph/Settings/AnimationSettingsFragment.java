@@ -19,14 +19,17 @@ package co.aospa.glyph.Settings;
 import static co.aospa.glyph.Utils.InterfaceUtils.showDialog;
 import static co.aospa.glyph.Utils.InterfaceUtils.showToast;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
@@ -499,11 +502,34 @@ public class AnimationSettingsFragment
             mApps.sort(new ApplicationInfo.DisplayNameComparator(mPackageManager));
             for (ApplicationInfo app : mApps) {
                 if (mPackageManager.getLaunchIntentForPackage(app.packageName) != null
-                        && !ArrayUtils.contains(Constants.APPS_TO_IGNORE, app.packageName)) {// apps with launcher intent
-                    addAppPreference(app.packageName);
+                        // apps with launcher intent
+                        && !ArrayUtils.contains(Constants.APPS_TO_IGNORE, app.packageName)) {
 
-                    mEssentialApps.add(app.packageName);
-                    mEssentialAppsNames.add(app.loadLabel(mPackageManager).toString());
+                    boolean canNotify = true;
+
+                    if (app.targetSdkVersion >= Build.VERSION_CODES.TIRAMISU) {
+                        try {
+                            PackageInfo info = mPackageManager.getPackageInfo(
+                                    app.packageName,
+                                    PackageManager.GET_PERMISSIONS);
+
+                            if (info.requestedPermissions == null) {
+                                canNotify = false;
+                            } else {
+                                canNotify = Arrays.asList(info.requestedPermissions)
+                                        .contains(Manifest.permission.POST_NOTIFICATIONS);
+                            }
+                        } catch (PackageManager.NameNotFoundException e) {
+                            continue;
+                        }
+                    }
+
+                    if (canNotify) {
+                        addAppPreference(app.packageName);
+
+                        mEssentialApps.add(app.packageName);
+                        mEssentialAppsNames.add(app.loadLabel(mPackageManager).toString());
+                    }
                 }
             }
             mMultiSelectListPreference = findPreference(Constants.GLYPH_NOTIFS_SUB_ESSENTIAL);
