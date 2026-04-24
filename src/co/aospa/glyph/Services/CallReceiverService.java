@@ -22,6 +22,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.IBinder;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.telecom.Call;
@@ -100,7 +101,6 @@ public class CallReceiverService extends InCallService {
 
     @Override
     public void onCreate() {
-        if (!SettingsManager.isGlyphCallEnabled()) return;
 
         if (DEBUG) Log.d(TAG, "Creating service");
 
@@ -116,9 +116,12 @@ public class CallReceiverService extends InCallService {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (DEBUG) Log.d(TAG, "Starting service");
-        return START_STICKY;
+    public IBinder onBind(Intent intent) {
+        if (!SettingsManager.isGlyphCallEnabled()) {
+            return null;
+        }
+
+        return super.onBind(intent);
     }
 
     @Override
