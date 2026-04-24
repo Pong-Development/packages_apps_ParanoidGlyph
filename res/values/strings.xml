@@ -199,6 +199,10 @@
     <string name="glyph_settings_utilities_read_ogg_title">Read OGG</string>
     <string name="glyph_settings_utilities_read_ogg_summary">Show metadata found in an ogg file</string>
 
+    <string name="ogg_csv_export_notification_animation">Save as notification animation</string>
+    <string name="ogg_csv_export_call_animation">Save as call animation</string>
+    <string name="ogg_csv_export_complete_message_start">File saved to:</string>
+
     <string name="glyph_utilities_validate_csv_title">Validate CSV</string>
     <string name="glyph_utilities_validate_csv_summary">Check a CSV file for errors</string>
 
@@ -218,5 +222,6 @@
     <string name="metadata_filename">Filename</string>
 
     <string name="file_export_complete_message">File saved successfully!</string>
+    <string name="file_already_exported_summary">File already saved</string>
 
 </resources>

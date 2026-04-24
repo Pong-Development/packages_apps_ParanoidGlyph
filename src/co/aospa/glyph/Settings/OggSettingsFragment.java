@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
 
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
@@ -15,10 +16,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -31,6 +34,7 @@ import co.aospa.glyph.Utils.AnimationUtils;
 public class OggSettingsFragment extends SettingsBasePreferenceFragment {
 
     private Preference mLivePreviewPreference;
+    private PreferenceScreen mScreen;
 
     private Thread livePreviewThread;
 
@@ -38,7 +42,8 @@ public class OggSettingsFragment extends SettingsBasePreferenceFragment {
     public static final String mapKeyAnimLength = "Length";
     public static final String mapKeyFilename = "Filename";
 
-    public String csv;
+    private String csv;
+    private String origFilename;
 
     private Map<String, String> metadata;
 
@@ -47,8 +52,9 @@ public class OggSettingsFragment extends SettingsBasePreferenceFragment {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         metadata = AnimationUtils.Holder.oggMeta.getMap();
+        origFilename = metadata.get(mapKeyFilename);
 
-        PreferenceScreen mScreen = getPreferenceManager().createPreferenceScreen(requireContext());
+        mScreen = getPreferenceManager().createPreferenceScreen(requireContext());
 
         getActivity().setTitle(R.string.glyph_ogg_metadata_title);
 
@@ -106,6 +112,8 @@ public class OggSettingsFragment extends SettingsBasePreferenceFragment {
         if (incompatible) {
             mLivePreviewPreference.setSummary(R.string.glyph_settings_user_animation_incompatible);
             mLivePreviewPreference.setEnabled(false);
+        } else {
+            addSavePreferences();
         }
 
     }
@@ -125,15 +133,89 @@ public class OggSettingsFragment extends SettingsBasePreferenceFragment {
             }
     );
 
-    private void exportCsvFromOgg(String basename) {
-        int dot = basename.lastIndexOf('.');
-        String nameWithoutExt = dot != -1 ? basename.substring(0, dot) : basename;
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.setType("text/csv");
-        intent.putExtra(Intent.EXTRA_TITLE, nameWithoutExt + ".csv");
-        mSaveFileLauncher.launch(intent);
+    private boolean exportCsvFromOgg(int type) {
+        int dot = origFilename.lastIndexOf('.');
+        String nameWithoutExt = dot != -1 ? origFilename.substring(0, dot) : origFilename;
+        String path = "";
+
+        switch (type) {
+            case 0 -> {
+                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                intent.setType("text/csv");
+                intent.putExtra(Intent.EXTRA_TITLE, nameWithoutExt + ".csv");
+                mSaveFileLauncher.launch(intent);
+                return true;
+            }
+            case 1 -> {
+                path = Constants.GLYPH_USER_NOTIF_CSV_PATH;
+            }
+            case 2 -> {
+                path = Constants.GLYPH_USER_CALL_CSV_PATH;
+            }
+        }
+
+        if (!path.isEmpty()) {
+            File target = getUniqueFile(
+                    Environment.getExternalStorageDirectory().toString()
+                            + "/"
+                            + path,
+                    nameWithoutExt + ".csv"
+            );
+            try (FileWriter writer = new FileWriter(target)) {
+                writer.write(csv);
+                showToast(getString(R.string.ogg_csv_export_complete_message_start) + " "
+                        + target.toString());
+                return true;
+            } catch (IOException e) {
+                showToast("Unable to save file!");
+                return false;
+            }
+        }
+        return false;
     }
 
+    private void addSavePreferences() {
+        Preference saveNotifPref = new Preference(mScreen.getContext());
+        PreferenceCategory quickExportCategory = new PreferenceCategory(mScreen.getContext());
+        Preference saveCallPref = new Preference(mScreen.getContext());
+        saveCallPref.setTitle(R.string.ogg_csv_export_call_animation);
+        saveCallPref.setIcon(R.drawable.ic_add_call);
+        saveCallPref.setOnPreferenceClickListener(pref -> {
+            if (exportCsvFromOgg(2)) {
+                pref.setEnabled(false);
+                pref.setSummary(R.string.file_already_exported_summary);
+            }
+            return true;
+        });
+        saveNotifPref.setTitle(R.string.ogg_csv_export_notification_animation);
+        saveNotifPref.setIcon(R.drawable.ic_notification_add);
+        saveNotifPref.setOnPreferenceClickListener(pref -> {
+            if (exportCsvFromOgg(1)) {
+                pref.setEnabled(false);
+                pref.setSummary(R.string.file_already_exported_summary);
+            }
+            return true;
+        });
+        mScreen.addPreference(quickExportCategory);
+        quickExportCategory.addPreference(saveCallPref);
+        quickExportCategory.addPreference(saveNotifPref);
+    }
+
+    private static File getUniqueFile(String directory, String filename) {
+        int dotIndex = filename.lastIndexOf('.');
+        String name = dotIndex != -1 ? filename.substring(0, dotIndex) : filename;
+        String ext  = dotIndex != -1 ? filename.substring(dotIndex) : "";
+
+        File file = new File(directory, filename);
+        int counter = 1;
+
+        while (file.exists()) {
+            file = new File(directory, name + "(" + counter + ")" + ext);
+            counter++;
+        }
+
+        return file;
+    }
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
@@ -159,7 +241,7 @@ public class OggSettingsFragment extends SettingsBasePreferenceFragment {
             livePreviewThread.start();
         }
         if (Constants.GLYPH_UTILITIES_OGG_EXPORT_CSV.equals(preference.getKey())) {
-            exportCsvFromOgg(metadata.get(mapKeyFilename));
+            exportCsvFromOgg(0);
         }
         return true;
     }
