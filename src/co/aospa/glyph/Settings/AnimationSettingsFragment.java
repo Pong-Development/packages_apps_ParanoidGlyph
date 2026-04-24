@@ -83,6 +83,8 @@ public class AnimationSettingsFragment
 
     PackageManager mPackageManager;
 
+    private PreferenceScreen mScreen;
+
     private MainSwitchPreference mSwitchBar;
 
     private List<String> mEssentialApps = new ArrayList<String>();
@@ -236,32 +238,12 @@ public class AnimationSettingsFragment
                     getPreferenceManager().setSharedPreferencesName(Constants.GLYPH_NOTIF_APP_PREF_PREFIX
                             + targetPkg);
                     addPreferencesFromResource(R.xml.glyph_notifs_settings_app);
-                    PreferenceScreen mScreen = getPreferenceScreen();
+                    mScreen = getPreferenceScreen();
                     String pkgLabel = getPackageLabel(targetPkg);
                     fragmentTitle
                             = requireContext().getString(R.string.glyph_settings_notifs_toggle_title)
                             + " (" + pkgLabel + ")";
-
-                    PreferenceCategory mCategory = new PreferenceCategory(mScreen.getContext());
-                    Preference mDeletePreferences = new Preference(mScreen.getContext());
-                    mDeletePreferences.setTitle(R.string.glyph_settings_delete_title);
-                    mDeletePreferences.setOnPreferenceClickListener(pref -> {
-                        showDialog(requireActivity(),
-                                getString(R.string.glyph_settings_delete_title) + "?",
-                                getString(R.string.glyph_settings_delete_confirm_message_start)
-                                        + " " + pkgLabel + "?",
-                                android.R.string.ok,
-                                () -> {
-                                    requireContext().deleteSharedPreferences(
-                                            Constants.GLYPH_NOTIF_APP_PREF_PREFIX + targetPkg);
-                                    getActivity().finish();
-                                },
-                                android.R.string.cancel, null);
-                        return true;
-                    });
-                    mDeletePreferences.setIcon(R.drawable.ic_delete_forever);
-                    mScreen.addPreference(mCategory);
-                    mCategory.addPreference(mDeletePreferences);
+                    addDeletePref(Constants.GLYPH_NOTIF_APP_PREF_PREFIX + targetPkg, pkgLabel);
                 } else {
                         addPreferencesFromResource(R.xml.glyph_notifs_settings);
                         fragmentTitle = requireContext().getString(R.string.glyph_settings_notifs_toggle_title);
@@ -287,7 +269,7 @@ public class AnimationSettingsFragment
                     getPreferenceManager().setSharedPreferencesName(Constants.GLYPH_CALL_APP_PREF_PREFIX
                             + targetPkg);
                     addPreferencesFromResource(R.xml.glyph_call_settings_app);
-                    PreferenceScreen mScreen = getPreferenceScreen();
+                    mScreen = getPreferenceScreen();
                     String pkgLabel = getPackageLabel(targetPkg);
                     fragmentTitle
                             = requireContext().getString(R.string.glyph_settings_call_toggle_title)
@@ -318,32 +300,13 @@ public class AnimationSettingsFragment
                     getPreferenceManager().setSharedPreferencesName(
                             Constants.GLYPH_CALL_CONTACT_PREF_PREFIX + contactId);
                     addPreferencesFromResource(R.xml.glyph_call_settings_generic);
-                    PreferenceScreen mScreen = getPreferenceScreen();
+                    mScreen = getPreferenceScreen();
 
                     fragmentTitle
                             = requireContext().getString(R.string.glyph_settings_call_toggle_title)
                                     + " (" + contactName + ")";
 
-                    PreferenceCategory mCategory = new PreferenceCategory(mScreen.getContext());
-                    Preference mDeletePreferences = new Preference(mScreen.getContext());
-                    mDeletePreferences.setTitle(R.string.glyph_settings_delete_title);
-                    mDeletePreferences.setOnPreferenceClickListener(pref -> {
-                        showDialog(requireActivity(),
-                                getString(R.string.glyph_settings_delete_title) + "?",
-                                getString(R.string.glyph_settings_delete_confirm_message_start)
-                                        + " " + contactName + "?",
-                                android.R.string.ok,
-                                () -> {
-                                    requireContext().deleteSharedPreferences(
-                                            Constants.GLYPH_CALL_CONTACT_PREF_PREFIX + contactId);
-                                    getActivity().finish();
-                                },
-                                android.R.string.cancel, null);
-                        return true;
-                    });
-                    mDeletePreferences.setIcon(R.drawable.ic_delete_forever);
-                    mScreen.addPreference(mCategory);
-                    mCategory.addPreference(mDeletePreferences);
+                    addDeletePref(Constants.GLYPH_CALL_CONTACT_PREF_PREFIX + contactId, contactName);
                 } else {
                     addPreferencesFromResource(R.xml.glyph_call_settings);
                     fragmentTitle =
@@ -579,6 +542,29 @@ public class AnimationSettingsFragment
         resolveAppSummary(mSwitchPreference, pkg);
         appListCategory.addPreference(mSwitchPreference);
 
+    }
+
+    private void addDeletePref(String sharedPref, String msgLabel) {
+        PreferenceCategory mCategory = new PreferenceCategory(mScreen.getContext());
+        Preference mDeletePreferences = new Preference(mScreen.getContext());
+        mDeletePreferences.setTitle(R.string.glyph_settings_delete_title);
+        mDeletePreferences.setOnPreferenceClickListener(pref -> {
+            showDialog(requireActivity(),
+                    getString(R.string.glyph_settings_delete_title) + "?",
+                    getString(R.string.glyph_settings_delete_confirm_message_start)
+                            + " " + msgLabel + "?",
+                    android.R.string.ok,
+                    () -> {
+                        requireContext().deleteSharedPreferences(
+                                sharedPref);
+                        getActivity().finish();
+                    },
+                    android.R.string.cancel, null);
+            return true;
+        });
+        mDeletePreferences.setIcon(R.drawable.ic_delete_forever);
+        mScreen.addPreference(mCategory);
+        mCategory.addPreference(mDeletePreferences);
     }
 
     private void resolveAppSummary(PrimarySwitchPreference pref, String pkg) {
