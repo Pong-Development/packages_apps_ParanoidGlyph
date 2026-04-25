@@ -192,6 +192,18 @@ public final class SettingsManager {
                 || !getGlyphCallAnimation(pkg).equals(getGlyphCallAnimation()));
     }
 
+    public static boolean appHasGlyphCallConfig(String pkg, String comp) {
+        Context ctx = getContext();
+        return !ctx.getSharedPreferences(
+                        Constants.GLYPH_CALL_APP_PREF_PREFIX + pkg,
+                        Context.MODE_PRIVATE)
+                .getAll()
+                .isEmpty()
+                && (isGlyphCallAnimationReversed(pkg)
+                || !getGlyphCallAnimation(pkg).equals(comp));
+    }
+
+
     public static String getGlyphCallAnimation(String pkg) {
         Context ctx = getContext();
         return ctx.getSharedPreferences(Constants.GLYPH_CALL_APP_PREF_PREFIX + pkg,
@@ -278,6 +290,17 @@ public final class SettingsManager {
                 .isEmpty()
                 && (isGlyphNotifsAnimationReversed(pkg)
                 || !getGlyphNotifsAnimation(pkg).equals(getGlyphNotifsAnimation()));
+    }
+
+    public static boolean appHasGlyphNotifsConfig(String pkg, String comp) {
+        Context ctx = getContext();
+        return !ctx.getSharedPreferences(
+                        Constants.GLYPH_NOTIF_APP_PREF_PREFIX + pkg,
+                        Context.MODE_PRIVATE)
+                .getAll()
+                .isEmpty()
+                && (isGlyphNotifsAnimationReversed(pkg)
+                || !getGlyphNotifsAnimation(pkg).equals(comp));
     }
 
     public static boolean isGlyphNotifsEnabled(String pkg) {
