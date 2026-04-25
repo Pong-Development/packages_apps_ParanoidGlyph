@@ -365,6 +365,45 @@ public class AnimationUtils {
             }
         }
 
+        public static class Call {
+            private static String csv;
+
+            public static void setCsv(String c) {
+                csv = c;
+            }
+
+            public static boolean isAvailable() {
+                return (csv != null && !csv.isEmpty());
+            }
+
+            public static String getCsv() {
+                return csv;
+            }
+
+            public static void clear() {
+                csv = null;
+            }
+        }
+
+        public static class Notification {
+            private static String csv;
+            public static void setCsv(String c) {
+                csv = c ;
+            }
+
+            public static boolean isAvailable() {
+                return (csv != null && !csv.isEmpty());
+            }
+
+            public static String getCsv() {
+                return csv;
+            }
+
+            public static void clear() {
+                csv = null;
+            }
+        }
+
     }
 
 }

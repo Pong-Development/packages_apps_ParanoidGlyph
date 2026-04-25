@@ -31,6 +31,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
@@ -81,6 +83,8 @@ public class AnimationSettingsFragment
     private static final String FRAGMENT_TYPE_CALL = "CALL";
     private static final String FRAGMENT_TYPE_FLIP = "FLIP";
 
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+
     private String fragmentType = null;
     private String targetPkg = null;
 
@@ -89,6 +93,8 @@ public class AnimationSettingsFragment
     private PreferenceScreen mScreen;
 
     private MainSwitchPreference mSwitchBar;
+
+    private SwitchPreferenceCompat mToneSyncSwitch;
 
     private List<String> mEssentialApps = new ArrayList<String>();
     private List<String> mEssentialAppsNames = new ArrayList<String>();
@@ -187,6 +193,14 @@ public class AnimationSettingsFragment
         mListPreference = findPreference(animationListKey);
         mListPreference.setOnPreferenceChangeListener(this);
 
+        if (mToneSyncSwitch != null) {
+            if (mToneSyncSwitch.isChecked()) {
+                mListPreference.setTitle(R.string.glyph_settings_sub_animations_title_sync_enabled);
+            } else {
+                mListPreference.setTitle(R.string.glyph_settings_sub_animations_title);
+            }
+        }
+
         bundledAnimationList = getAnimations(0);
         userAnimationList = getAnimations(1);
 
@@ -248,12 +262,16 @@ public class AnimationSettingsFragment
                             + " (" + pkgLabel + ")";
                     addDeletePref(Constants.GLYPH_NOTIF_APP_PREF_PREFIX + targetPkg, pkgLabel);
                 } else {
-                        addPreferencesFromResource(R.xml.glyph_notifs_settings);
-                        fragmentTitle = requireContext().getString(R.string.glyph_settings_notifs_toggle_title);
+                    addPreferencesFromResource(R.xml.glyph_notifs_settings);
+                    fragmentTitle = requireContext().getString(R.string.glyph_settings_notifs_toggle_title);
 
-                        appListCategory = findPreference(Constants.GLYPH_NOTIFS_SUB_CATEGORY);
-                        inflateAppLists();
-                    }
+                    appListCategory = findPreference(Constants.GLYPH_NOTIFS_SUB_CATEGORY);
+                    inflateAppLists();
+
+                    mToneSyncSwitch = findPreference(Constants.GLYPH_NOTIFS_TONE_SYNC);
+                    mToneSyncSwitch.setOnPreferenceChangeListener(this);
+                }
+
                 animationPreviewKey = Constants.GLYPH_NOTIFS_SUB_PREVIEW;
 
                 enableKey = Constants.GLYPH_NOTIFS_SUB_ENABLE;
@@ -344,6 +362,10 @@ public class AnimationSettingsFragment
                     });
                     appListCategory = findPreference(Constants.GLYPH_CALL_SUB_CATEGORY);
                     inflateAppLists();
+
+                    // mToneSyncSwitch = findPreference(Constants.GLYPH_CALL_TONE_SYNC);
+                    // mToneSyncSwitch.setOnPreferenceChangeListener(this);
+
                 }
 
                 animationPreviewKey = Constants.GLYPH_CALL_SUB_PREVIEW;
@@ -463,6 +485,16 @@ public class AnimationSettingsFragment
 
         if (preferenceKey.equals(reverseAnimationKey)) {
             mGlyphAnimationPreference.updateAnimation(isAnimationEnabled(), 1500, (Boolean) newValue);
+        }
+
+        if (preferenceKey.equals(Constants.GLYPH_NOTIFS_TONE_SYNC)) {
+            if ((Boolean) newValue) {
+                mListPreference.setTitle(R.string.glyph_settings_sub_animations_title_sync_enabled);
+            } else {
+                mListPreference.setTitle(R.string.glyph_settings_sub_animations_title);
+            }
+            mHandler.post(ServiceUtils::checkGlyphService);
+
         }
 
         return true;

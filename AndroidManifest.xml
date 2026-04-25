@@ -104,6 +104,10 @@
         </service>
 
         <service
+            android:name=".Services.ToneHelperService">
+        </service>
+
+        <service
             android:name=".Services.MicActivityService"
             android:permission="android.permission.MODIFY_AUDIO_ROUTING">
         </service>

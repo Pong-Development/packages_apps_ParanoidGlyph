@@ -26,38 +26,49 @@
         android:key="glyph_settings_notifs_sub_toggle"
         android:title="@string/glyph_settings_notifs_sub_toggle_title" />
 
-        <ListPreference
-            android:key="glyph_settings_notifs_sub_animations"
-            android:icon="@drawable/ic_animation"
-            android:title="@string/glyph_settings_notifs_sub_animations_title"
-            android:defaultValue="@string/glyph_settings_notifs_animations_default"
-            android:layout="@layout/preference"
-            android:summary="%s" />
+    <SwitchPreferenceCompat
+        android:key="glyph_settings_notifs_ogg_sync_toggle"
+        android:icon="@drawable/ic_sync"
+        android:title="@string/glyph_settings_notifs_ogg_sync_toggle_title"
+        android:defaultValue="false"
+        android:summary="@string/glyph_settings_notifs_ogg_sync_toggle_summary" />
 
-        <Preference
-            android:key="glyph_settings_notifs_sub_animations_live_preview"
-            android:icon="@drawable/ic_live"
-            android:title="@string/glyph_settings_animations_live_preview_title"
-            android:summary="@string/glyph_settings_animations_live_preview_summary" />
+    <PreferenceCategory>
 
-        <SwitchPreferenceCompat
-            android:key="glyph_settings_notifs_sub_animations_reverse_toggle"
-            android:icon="@drawable/ic_rewind"
-            android:title="@string/glyph_settings_sub_animations_reverse_toggle_title"
-            android:defaultValue="false"
-            android:summary="@string/glyph_settings_sub_animations_reverse_toggle_summary" />
+            <ListPreference
+                android:key="glyph_settings_notifs_sub_animations"
+                android:icon="@drawable/ic_animation"
+                android:title="@string/glyph_settings_notifs_sub_animations_title"
+                android:defaultValue="@string/glyph_settings_notifs_animations_default"
+                android:layout="@layout/preference"
+                android:summary="%s" />
 
-        <MultiSelectListPreference
-            android:key="glyph_settings_notifs_sub_essential"
-            android:icon="@drawable/ic_stack_star"
-            android:title="@string/glyph_settings_notifs_sub_essential_title"
-            android:dialogTitle="@string/glyph_settings_notifs_sub_essential_title"
-            android:entries="@array/glyph_settings_empty_array_string"
-            android:entryValues="@array/glyph_settings_empty_array_string"
-            android:summary="@string/glyph_settings_notifs_sub_essential_summary"
-            android:defaultValue="@array/glyph_settings_empty_array_string"
-            android:positiveButtonText="@android:string/ok"
-            android:negativeButtonText="@android:string/cancel" />
+            <Preference
+                android:key="glyph_settings_notifs_sub_animations_live_preview"
+                android:icon="@drawable/ic_live"
+                android:title="@string/glyph_settings_animations_live_preview_title"
+                android:summary="@string/glyph_settings_animations_live_preview_summary" />
+
+            <SwitchPreferenceCompat
+                android:key="glyph_settings_notifs_sub_animations_reverse_toggle"
+                android:icon="@drawable/ic_rewind"
+                android:title="@string/glyph_settings_sub_animations_reverse_toggle_title"
+                android:defaultValue="false"
+                android:summary="@string/glyph_settings_sub_animations_reverse_toggle_summary" />
+
+            <MultiSelectListPreference
+                android:key="glyph_settings_notifs_sub_essential"
+                android:icon="@drawable/ic_stack_star"
+                android:title="@string/glyph_settings_notifs_sub_essential_title"
+                android:dialogTitle="@string/glyph_settings_notifs_sub_essential_title"
+                android:entries="@array/glyph_settings_empty_array_string"
+                android:entryValues="@array/glyph_settings_empty_array_string"
+                android:summary="@string/glyph_settings_notifs_sub_essential_summary"
+                android:defaultValue="@array/glyph_settings_empty_array_string"
+                android:positiveButtonText="@android:string/ok"
+                android:negativeButtonText="@android:string/cancel" />
+
+    </PreferenceCategory>
 
         <PreferenceCategory
             android:key="glyph_settings_notifs_sub"

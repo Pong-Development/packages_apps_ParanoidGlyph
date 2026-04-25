@@ -70,6 +70,18 @@ public final class ServiceUtils {
                 UserHandle.CURRENT);
     }
 
+    private static void startToneHelperService() {
+        if (DEBUG) Log.d(TAG, "Starting Tone helper service");
+        getContext().startServiceAsUser(new Intent(getContext(), ToneHelperService.class),
+                UserHandle.CURRENT);
+    }
+
+    private static void stopToneHelperService() {
+        if (DEBUG) Log.d(TAG, "Starting Tone helper service");
+        getContext().stopServiceAsUser(new Intent(getContext(), ToneHelperService.class),
+                UserHandle.CURRENT);
+    }
+
     private static void startBatterySaverService(){
         if (DEBUG) Log.d(TAG, "Starting Glyph battery saver service");
         getContext().startServiceAsUser(new Intent(getContext(), BatterySaverService.class),
@@ -268,6 +280,12 @@ public final class ServiceUtils {
             } else {
                 stopFlipToGlyphService();
             }
+            if (SettingsManager.isGlyphNotifsEnabled()
+                    && SettingsManager.isGlyphNotifsSyncEnabled()) {
+                startToneHelperService();
+            } else {
+                stopToneHelperService();
+            }
             if (SettingsManager.isGlyphMusicVisualizerEnabled()) {
                 startMusicVisualizerService();
             } else {
@@ -298,6 +316,7 @@ public final class ServiceUtils {
         stopChargingService();
         stopPowershareService();
         stopCallReceiverService();
+        stopToneHelperService();
         stopMicActivityService();
         stopFlipToGlyphService();
         stopMusicVisualizerService();

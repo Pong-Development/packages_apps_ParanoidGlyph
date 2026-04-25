@@ -26,6 +26,15 @@
         android:key="glyph_settings_call_sub_toggle"
         android:title="@string/glyph_settings_call_sub_toggle_title" />
 
+
+<!---    <SwitchPreferenceCompat
+        android:key="glyph_settings_call_ogg_sync_toggle"
+        android:icon="@drawable/ic_sync"
+        android:title="@string/glyph_settings_call_ogg_sync_toggle_title"
+        android:defaultValue="false"
+        android:summary="@string/glyph_settings_call_ogg_sync_toggle_summary" />
+ -->
+
         <ListPreference
             android:key="glyph_settings_call_sub_animations"
             android:icon="@drawable/ic_animation"

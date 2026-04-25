@@ -46,6 +46,7 @@ import java.util.concurrent.Future;
 import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.AnimationManager;
 import co.aospa.glyph.Manager.SettingsManager;
+import co.aospa.glyph.Utils.AnimationUtils;
 
 public class NotificationService extends NotificationListenerService
         implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -138,15 +139,20 @@ public class NotificationService extends NotificationListenerService
         
         try {
             Context packageContext = createPackageContext(packageName, 0);
-            NotificationManager packageNotificationManager = (NotificationManager) packageContext.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel packageChannel = packageNotificationManager.getNotificationChannel(packageChannelID);
+            NotificationManager packageNotificationManager =
+                    (NotificationManager) packageContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel packageChannel =
+                    packageNotificationManager.getNotificationChannel(packageChannelID);
             if (packageChannel != null) {
                 packageImportance = packageChannel.getImportance();
                 packageCanBypassDnd = packageChannel.canBypassDnd();
             }
         } catch (PackageManager.NameNotFoundException ignored) {}
         
-        if (DEBUG) Log.d(TAG, "onNotificationPosted: package:" + packageName + " | channel id: " + packageChannelID + " | importance: " + packageImportance + " | can bypass dnd: " + packageCanBypassDnd);
+        if (DEBUG) Log.d(TAG, "onNotificationPosted: package:" + packageName
+                + " | channel id: " + packageChannelID
+                + " | importance: " + packageImportance
+                + " | can bypass dnd: " + packageCanBypassDnd);
         
         if (SettingsManager.isGlyphNotifsEnabled(packageName)
                         && !sbn.isOngoing() 
@@ -160,8 +166,8 @@ public class NotificationService extends NotificationListenerService
                     if (SettingsManager.isGlyphNotifsAnimationReversed(packageName)) {
                         AnimationManager.playCsvReverse(
                                 mContext,
-                                SettingsManager.getGlyphNotifsAnimation(packageName)
-                            );
+                                SettingsManager.getGlyphNotifsAnimation(packageName))
+                        ;
                     } else {
                         AnimationManager.playCsv(
                                 mContext,
@@ -169,16 +175,24 @@ public class NotificationService extends NotificationListenerService
                         );
                     }
                 } else {
-                    if (SettingsManager.isGlyphNotifsAnimationReversed()) {
-                        AnimationManager.playCsvReverse(
-                                mContext,
-                                SettingsManager.getGlyphNotifsAnimation()
+                    if (SettingsManager.isGlyphNotifsSyncEnabled()
+                            && AnimationUtils.Holder.Notification.isAvailable()) {
+                        AnimationManager.playExternalCsv(
+                                AnimationUtils.Holder.Notification.getCsv(),
+                                "notification"
                         );
                     } else {
-                        AnimationManager.playCsv(
-                                mContext,
-                                SettingsManager.getGlyphNotifsAnimation()
-                        );
+                        if (SettingsManager.isGlyphNotifsAnimationReversed()) {
+                            AnimationManager.playCsvReverse(
+                                    mContext,
+                                    SettingsManager.getGlyphNotifsAnimation()
+                            );
+                        } else {
+                            AnimationManager.playCsv(
+                                    mContext,
+                                    SettingsManager.getGlyphNotifsAnimation()
+                            );
+                        }
                     }
                 }
             };
@@ -319,7 +333,10 @@ public class NotificationService extends NotificationListenerService
                         packageCanBypassDnd = packageChannel.canBypassDnd();
                     }
                 } catch (PackageManager.NameNotFoundException e) {}
-                if (DEBUG) Log.d(TAG, "onNotificationUpdated: package:" + packageName + " | channel id: " + packageChannelID + " | importance: " + packageImportance + " | can bypass dnd: " + packageCanBypassDnd);
+                if (DEBUG) Log.d(TAG, "onNotificationUpdated: package:" + packageName
+                        + " | channel id: " + packageChannelID
+                        + " | importance: " + packageImportance
+                        + " | can bypass dnd: " + packageCanBypassDnd);
                 if (SettingsManager.isGlyphNotifsAppEssential(packageName)
                                 && !sbn.isOngoing()
                                 && !ArrayUtils.contains(Constants.APPS_TO_IGNORE, packageName)

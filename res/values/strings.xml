@@ -40,6 +40,7 @@
     <string name="glyph_settings_brightness">Brightness</string>
 
     <string name="glyph_settings_sub_animations_title">Pattern</string>
+    <string name="glyph_settings_sub_animations_title_sync_enabled">Pattern (Fallback)</string>
 
     <string name="glyph_settings_animation_is_reversed">Reversed</string>
 
@@ -91,12 +92,18 @@
 
     <string name="glyph_settings_call_sub_animations_title">@string/glyph_settings_sub_animations_title</string>
 
+    <string name="glyph_settings_call_ogg_sync_toggle_title">Sync with ringtone</string>
+    <string name="glyph_settings_call_ogg_sync_toggle_summary">Use animation from ringtone (when available)</string>
+
+    <string name="glyph_settings_notifs_ogg_sync_toggle_title">Sync with notification sound</string>
+    <string name="glyph_settings_notifs_ogg_sync_toggle_summary">Use animation from notification sound (when available)</string>
+
     <string name="glyph_settings_notifs_title">Notifications</string>
     <string name="glyph_settings_notifs_toggle_title">Notification animation</string>
     <string name="glyph_settings_notifs_toggle_summary">Flash LEDs on new notifications</string>
     <string name="glyph_settings_notifs_sub_title">Apps to allow</string>
     <string name="glyph_settings_notifs_sub_toggle_title">Enable notification animation</string>
-    <string name="glyph_settings_notifs_sub_animations_title">Pattern</string>
+    <string name="glyph_settings_notifs_sub_animations_title">@string/glyph_settings_sub_animations_title</string>
     <string name="glyph_settings_notifs_sub_essential_title">Essential Notifications</string>
     <string name="glyph_settings_notifs_sub_essential_summary">Essential Glyph will be displayed until Essential notifications are read or dismissed</string>
 
@@ -187,6 +194,15 @@
 
     <string name="glyph_settings_mic_activity_whitelist_title">Mic apps</string>
     <string name="glyph_settings_mic_activity_whitelist_summary">Choose apps to monitor for mic usage</string>
+
+    <!-- Tone helper -->
+    <string name="notification_channel_title">Tone changes</string>
+    <string name="notification_channel_description">Notify on animation changes from OGG files</string>
+
+    <string name="sound_changed_notification_message">Animation imported!</string>
+
+    <string name="ringtone_changed_notification_title">New ringtone set</string>
+    <string name="notification_sound_changed_notification_title">Notification sound changed</string>
     
 
     <!-- Utilities -->
