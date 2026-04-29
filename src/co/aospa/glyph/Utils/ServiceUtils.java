@@ -77,7 +77,7 @@ public final class ServiceUtils {
     }
 
     private static void stopToneHelperService() {
-        if (DEBUG) Log.d(TAG, "Starting Tone helper service");
+        if (DEBUG) Log.d(TAG, "Stopping Tone helper service");
         getContext().stopServiceAsUser(new Intent(getContext(), ToneHelperService.class),
                 UserHandle.CURRENT);
     }
