@@ -71,6 +71,7 @@ android_app {
     defaults: ["ParanoidGlyph_defaults"],
     asset_dirs: ["phone3a/assets"],
     resource_dirs: ["phone3a/res"],
+    required: ["ParanoidGlyphPhone3aProRes"],
 }
 
 prebuilt_etc {
