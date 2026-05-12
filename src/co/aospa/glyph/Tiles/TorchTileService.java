@@ -24,17 +24,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-import android.util.Log;
 
 import java.util.concurrent.Executors;
 
 import co.aospa.glyph.R;
 import co.aospa.glyph.Constants.Constants;
-import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.Manager.StatusManager;
 import co.aospa.glyph.Services.TorchService;
-import co.aospa.glyph.Utils.FileUtils;
-import co.aospa.glyph.Utils.ResourceUtils;
+import co.aospa.glyph.Utils.ServiceUtils;
 
 public class TorchTileService extends TileService {
 
@@ -54,6 +51,10 @@ public class TorchTileService extends TileService {
         super.onCreate();
         IntentFilter filter = new IntentFilter(ACTION_UPDATE_TILE);
         registerReceiver(mUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        if (Constants.CONTEXT == null) {
+            Constants.CONTEXT = getApplicationContext();
+        }
+        if (!TorchService.isRunning) ServiceUtils.startTorchService();
     }
 
     @Override
@@ -68,17 +69,12 @@ public class TorchTileService extends TileService {
     @Override
     public void onStartListening() {
         super.onStartListening();
+        if (!TorchService.isRunning) ServiceUtils.startTorchService();
         updateState();
     }
 
     private void updateState() {
-        if (Constants.CONTEXT == null) {
-            Constants.CONTEXT = getApplicationContext();
-        }
-        
-        boolean glyphEnabled = SettingsManager.isGlyphEnabledIgnoreSchedule();
-        
-        if (!glyphEnabled) {
+        if (!TorchService.isRunning) {
             getQsTile().setState(Tile.STATE_UNAVAILABLE);
             getQsTile().setSubtitle(getString(R.string.glyph_accessibility_quick_settings_unavailable));
             getQsTile().updateTile();
@@ -96,9 +92,6 @@ public class TorchTileService extends TileService {
     @Override
     public void onClick() {
         super.onClick();
-        if (!SettingsManager.isGlyphEnabledIgnoreSchedule()) {
-            return;
-        }
         boolean newState = !getEnabled();
         setEnabled(newState);
 

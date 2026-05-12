@@ -14,6 +14,8 @@ public class TorchService extends Service {
 
     private PowerManager.WakeLock wakeLock;
 
+    public static volatile boolean isRunning = false;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -24,12 +26,13 @@ public class TorchService extends Service {
         if (Constants.CONTEXT == null) {
             Constants.CONTEXT = getApplicationContext();
         }
-        PowerManager pm = getApplicationContext().getSystemService(PowerManager.class);
+        PowerManager pm = Constants.CONTEXT.getSystemService(PowerManager.class);
         wakeLock = pm.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
                 getApplication().getPackageName() +
                         ":" +  getClass().getSimpleName()
         );
+        if (!isRunning) isRunning = true;
         super.onCreate();
     }
 
@@ -45,6 +48,7 @@ public class TorchService extends Service {
                 setTorch(false);
             }
         }
+        if (!isRunning) isRunning = true;
 
         return START_STICKY;
     }
@@ -52,6 +56,7 @@ public class TorchService extends Service {
     @Override
     public void onDestroy() {
         setTorch(false);
+        isRunning = false;
         super.onDestroy();
     }
     

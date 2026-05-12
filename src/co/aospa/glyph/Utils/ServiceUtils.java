@@ -252,11 +252,9 @@ public final class ServiceUtils {
         if (glyphBaseEnabled) {
             startThirdPartyService();
             startBatterySaverService();
-            startTorchService();
         } else {
             stopThirdPartyService();
             stopBatterySaverService();
-            stopTorchService();
         }
 
         if (glyphEnabled) {
