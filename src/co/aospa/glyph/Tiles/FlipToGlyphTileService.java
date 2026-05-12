@@ -18,9 +18,15 @@
 
 package co.aospa.glyph.Tiles;
 
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
+import co.aospa.glyph.Constants.Constants;
 import co.aospa.glyph.Manager.SettingsManager;
 import co.aospa.glyph.R;
 import co.aospa.glyph.Utils.ServiceUtils;
@@ -28,18 +34,39 @@ import co.aospa.glyph.Utils.ServiceUtils;
 /** Quick settings tile: Flip to Glyph **/
 public class FlipToGlyphTileService extends TileService {
 
+    Uri uri = Settings.Secure.getUriFor(Constants.GLYPH_ENABLE);
+
+    ContentObserver observer = new ContentObserver(new Handler(Looper.getMainLooper())) {
+        @Override
+        public void onChange(boolean selfChange) {
+            updateState();
+        }
+    };
+    
     @Override
     public void onStartListening() {
         super.onStartListening();
         updateState();
+        getContentResolver().registerContentObserver(uri, false, observer);
+    }
+
+    @Override
+    public void onStopListening() {
+        super.onStopListening();
+        if (observer != null) getContentResolver().unregisterContentObserver(observer);
     }
 
     private void updateState() {
-        boolean enabled = getEnabled();
-        getQsTile().setSubtitle(enabled ?
-                getString(R.string.glyph_accessibility_quick_settings_on) :
-                getString(R.string.glyph_accessibility_quick_settings_off));
-        getQsTile().setState(enabled ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
+        if (getAvailable()) {
+            boolean enabled = getEnabled();
+            getQsTile().setSubtitle(enabled ?
+                    getString(R.string.glyph_accessibility_quick_settings_on) :
+                    getString(R.string.glyph_accessibility_quick_settings_off));
+            getQsTile().setState(enabled ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE);
+        } else {
+            getQsTile().setSubtitle(getString(R.string.glyph_accessibility_quick_settings_unavailable));
+            getQsTile().setState(Tile.STATE_UNAVAILABLE);
+        }
         getQsTile().updateTile();
     }
 
@@ -52,6 +79,10 @@ public class FlipToGlyphTileService extends TileService {
 
     private boolean getEnabled() {
         return SettingsManager.isGlyphFlipEnabled();
+    }
+
+    private boolean getAvailable() {
+        return SettingsManager.isGlyphEnabledIgnoreSchedule();
     }
 
     private void setEnabled(boolean enabled) {
