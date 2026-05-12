@@ -51,10 +51,10 @@ public class TorchService extends Service {
 
     @Override
     public void onDestroy() {
-        StatusManager.setAllLedsActive(false);
-        if (wakeLock.isHeld()) wakeLock.release();
+        setTorch(false);
         super.onDestroy();
     }
+    
     public void setTorch(boolean state) {
         if (state && !wakeLock.isHeld()) wakeLock.acquire();
 
