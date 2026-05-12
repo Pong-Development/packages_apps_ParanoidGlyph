@@ -80,7 +80,7 @@ public class TorchTileService extends TileService {
         
         if (!glyphEnabled) {
             getQsTile().setState(Tile.STATE_UNAVAILABLE);
-            getQsTile().setSubtitle(getString(R.string.glyph_accessibility_quick_settings_disabled));
+            getQsTile().setSubtitle(getString(R.string.glyph_accessibility_quick_settings_unavailable));
             getQsTile().updateTile();
             return;
         }
