@@ -114,6 +114,12 @@ public class TorchTileService extends TileService {
         getQsTile().updateTile();
     }
 
+    @Override
+    public void onTileRemoved() {
+        super.onTileRemoved();
+        ServiceUtils.stopTorchService();
+    }
+
     private boolean getEnabled() {
         return StatusManager.isAllLedActive();
     }
