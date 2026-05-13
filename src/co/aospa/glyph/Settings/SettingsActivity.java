@@ -19,8 +19,12 @@
 package co.aospa.glyph.Settings;
 
 import androidx.fragment.app.Fragment;
+
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import co.aospa.glyph.Constants.Constants;
+import co.aospa.glyph.Tiles.FlipToGlyphTileService;
 
 import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
 
@@ -36,14 +40,25 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity {
             Constants.CONTEXT = getApplicationContext();
         }
 
-        Fragment fragment = getSupportFragmentManager().findFragmentById(com.android.settingslib.collapsingtoolbar.R.id.content_frame);
-        if (fragment == null) {
-            mSettingsFragment = new SettingsFragment();
-            getSupportFragmentManager().beginTransaction()
-                .add(com.android.settingslib.collapsingtoolbar.R.id.content_frame, mSettingsFragment)
-                .commit();
+        ComponentName component = getIntent().getParcelableExtra(Intent.EXTRA_COMPONENT_NAME);
+
+        if (component != null
+                && component.getClassName().equals(FlipToGlyphTileService.class.getName())) {
+            Intent intent = new Intent(Constants.CONTEXT, AnimationSettingsActivity.class);
+            intent.putExtra("type", "flip");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
         } else {
-            mSettingsFragment = (SettingsFragment) fragment;
+            Fragment fragment = getSupportFragmentManager().findFragmentById(com.android.settingslib.collapsingtoolbar.R.id.content_frame);
+            if (fragment == null) {
+                mSettingsFragment = new SettingsFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .add(com.android.settingslib.collapsingtoolbar.R.id.content_frame, mSettingsFragment)
+                        .commit();
+            } else {
+                mSettingsFragment = (SettingsFragment) fragment;
+            }
         }
     }
 }
