@@ -59,7 +59,7 @@ public class MusicVisualizerTileService extends TileService {
     private void updateState() {
         if (!SettingsManager.isGlyphEnabled()) {
             getQsTile().setSubtitle(getString(R.string.glyph_accessibility_quick_settings_unavailable));
-            getQsTile().setState(Tile.STATE_INACTIVE);
+            getQsTile().setState(Tile.STATE_UNAVAILABLE);
         } else {
             boolean enabled = getEnabled();
             getQsTile().setSubtitle(enabled ?
