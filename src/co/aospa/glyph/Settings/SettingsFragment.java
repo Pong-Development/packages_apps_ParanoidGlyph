@@ -254,6 +254,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
 
         mMicActivityPreference = findPreference(Constants.GLYPH_MIC_ACTIVITY_ENABLE);
         mMicActivityPreference.setOnPreferenceChangeListener(this);
+        mMicActivityPreference.setEnabled(glyphEnabled);
 
         mMicActivityWhitelistPreference = findPreference(Constants.GLYPH_MIC_ACTIVITY_WHITELIST);
         mMicActivityWhitelistPreference.setEntries(
@@ -261,9 +262,11 @@ public class SettingsFragment extends SettingsBasePreferenceFragment implements 
         mMicActivityWhitelistPreference.setEntryValues(
                 ResourceUtils.getApplicationsWithPermission(false, micPermissions));
         mMicActivityWhitelistPreference.setOnPreferenceChangeListener(this);
+        mMicActivityWhitelistPreference.setEnabled(glyphEnabled);
 
         mRedLedModePreference = findPreference(Constants.GLYPH_RED_LED_MODE);
         mRedLedModePreference.setOnPreferenceChangeListener(this);
+        mRedLedModePreference.setEnabled(glyphEnabled);
 
         mUtilitiesPreference = findPreference(Constants.GLYPH_UTILITIES);
 
